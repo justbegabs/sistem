@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha de Personagem</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <button class="voltar">← Voltar</button>
+            <div class="header-buttons">
+                <button class="obs">OBS</button>
+                <button class="salvar">Salvar</button>
+            </div>
+        </header>
+
+        <section class="informacoes-basicas">
+            <h2>Informações Básicas</h2>
+            <div class="grid-container">
+                <div class="input-group full">
+                    <label>Nome</label>
+                    <input type="text" placeholder="Nome do personagem">
+                </div>
+                <div class="input-group">
+                    <label>Idade</label>
+                    <input type="number" placeholder="Idade">
+                </div>
+                <div class="input-group">
+                    <label>Data de Nascimento</label>
+                    <input type="date" placeholder="Ex: 01/01/1990">
+                </div>
+                <div class="input-group">
+                    <label>Altura</label>
+                    <input type="text" placeholder="Ex: 1,75m">
+                </div>
+                <div class="input-group">
+                    <label>Tipo Sanguíneo</label>
+                    <input type="text" placeholder="Ex: A+">
+                </div>
+                <div class="input-group full">
+                    <label>Sexualidade</label>
+                    <input type="text" placeholder="Sexualidade">
+                </div>
+            </div>
+        </section>
+
+        <section class="nivel">
+            <h2>Nível</h2>
+            <div class="nivel-container">
+                <span class="nivel-valor">0</span>
+                <div class="nivel-barra"></div>
+            </div>
+        </section>
+
+        <section class="status-vitais">
+            <h2>Status Vitais</h2>
+            <div class="status-grid">
+                <div class="status-item">
+                    <label>❤️ Vida</label>
+                    <div class="status-bar">
+                        <input type="number" value="0"> / <span>20</span>
+                    </div>
+                    <div class="barra-progresso"></div>
+                </div>
+                <div class="status-item">
+                    <label>🧠 Sanidade</label>
+                    <div class="status-bar">
+                        <input type="number" value="0"> / <span>10</span>
+                    </div>
+                    <div class="barra-progresso"></div>
+                </div>
+                <div class="status-item">
+                    <label>⚡ Mana</label>
+                    <div class="status-bar">
+                        <input type="number" value="0"> / <span>15</span>
+                    </div>
+                    <div class="barra-progresso"></div>
+                </div>
+                <div class="status-item">
+                    <label>⭐ Alma</label>
+                    <div class="status-bar">
+                        <input type="number" value="0"> / <span>15</span>
+                    </div>
+                    <div class="barra-progresso"></div>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid-2-columns">
+            <section class="status-combate">
+                <h2>Status de Combate</h2>
+                <div class="status-list">
+                    <div class="status-item">
+                        <label>Defesa</label>
+                        <input type="number" value="10" readonly>
+                    </div>
+                    <div class="status-item">
+                        <label>Esquiva</label>
+                        <input type="number" value="10" readonly>
+                    </div>
+                    <div class="status-item">
+                        <label>Bloqueio</label>
+                        <input type="number" value="0" readonly>
+                    </div>
+                </div>
+            </section>
+
+            <section class="info-personagem">
+                <h2>Informações do Personagem</h2>
+                <div class="info-list">
+                    <div class="info-item">
+                        <label>Raça</label>
+                        <input type="text" placeholder="Raça">
+                    </div>
+                    <div class="info-item">
+                        <label>Classe</label>
+                        <input type="text" placeholder="Classe">
+                    </div>
+                    <div class="info-item">
+                        <label>Origem</label>
+                        <input type="text" placeholder="Origem">
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="grid-2-columns">
+            <section class="atributos-teste">
+                <h2>Atributos de Teste <span>0/12</span></h2>
+                <div class="atributos-list">
+                    <div class="atributo-item">
+                        <label>Força</label>
+                        <input type="number" value="0">
+                    </div>
+                    <div class="atributo-item">
+                        <label>Destreza</label>
+                        <input type="number" value="0">
+                    </div>
+                    <div class="atributo-item">
+                        <label>Intelecto</label>
+                        <input type="number" value="0">
+                    </div>
+                    <div class="atributo-item">
+                        <label>Carisma</label>
+                        <input type="number" value="0">
+                    </div>
+                    <div class="atributo-item">
+                        <label>Magia</label>
+                        <input type="number" value="0">
+                    </div>
+                    <div class="atributo-item">
+                        <label>Constituição</label>
+                        <input type="number" value="0">
+                    </div>
+                </div>
+            </section>
+
+            <section class="atributos-sorte">
+                <h2>Atributos de Sorte <span>0/12</span></h2>
+                <div class="atributos-list">
+                    <div class="atributo-item">
+                        <label>Sorte</label>
+                        <input type="number" value="0">
+                    </div>
+                    <div class="atributo-item">
+                        <label>Fama</label>
+                        <input type="number" value="0">
+                    </div>
+                    <div class="atributo-item">
+                        <label>Resiliência</label>
+                        <input type="number" value="0">
+                    </div>
+                    <div class="atributo-item">
+                        <label>Fé</label>
+                        <input type="number" value="0">
+                    </div>
+                    <div class="atributo-item">
+                        <label>Criatividade</label>
+                        <input type="number" value="0">
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
