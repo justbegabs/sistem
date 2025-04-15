@@ -24,6 +24,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ficha de Personagem</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
@@ -31,6 +32,10 @@
         <header>
             <button class="voltar">← Voltar</button>
             <div class="header-buttons">
+                <button class="tema" onclick="toggleTheme()">
+                    <i id="themeIcon" class="fas fa-sun"></i>
+                    Tema
+                </button>
                 <button class="obs">OBS</button>
                 <button class="salvar">Salvar</button>
             </div>

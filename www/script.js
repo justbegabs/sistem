@@ -1,3 +1,19 @@
+// Função para alternar o tema
+function toggleTheme() {
+    const root = document.documentElement;
+    const currentTheme = root.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    root.setAttribute('data-theme', newTheme);
+
+    // Salva a preferência do usuário
+    localStorage.setItem('theme', newTheme);
+
+    // Atualiza o ícone do botão
+    const themeIcon = document.querySelector('#themeIcon');
+    themeIcon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Atualizar barras de progresso dos status vitais
     const statusItems = document.querySelectorAll('.status-item');
@@ -10,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const porcentagem = (input.value / maxValue) * 100;
             barra.style.background = `linear-gradient(to right, 
                 ${getCorBarra(input.parentElement.previousElementSibling.textContent)} ${porcentagem}%, 
-                #eee ${porcentagem}%)`;
+                var(--cor-cinza-clara) ${porcentagem}%)`;
         }
 
         input.addEventListener('input', () => {
@@ -44,8 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (label.includes('❤️')) return '#ff4444';
         if (label.includes('🧠')) return '#9933cc';
         if (label.includes('⚡')) return '#33b5e5';
-        if (label.includes('⭐')) return '#ffbb33';
-        return '#666';
+        if (label.includes('⭐')) return 'var(--cor-primaria)';
+        return 'var(--cor-cinza)';
     }
 
     // Botões do cabeçalho
@@ -98,4 +114,13 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Dados salvos:', dados);
         // Aqui você pode implementar a chamada para sua API para salvar os dados
     });
+
+    // Carrega a preferência do usuário ao iniciar
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    const themeIcon = document.querySelector('#themeIcon');
+    if (themeIcon) {
+        themeIcon.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    }
 }); 
