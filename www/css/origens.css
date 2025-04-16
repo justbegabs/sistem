@@ -1,0 +1,200 @@
+.origin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.origin-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.origin-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.origin-card.selected {
+    border: 3px solid #F2780C;
+    box-shadow: 0 0 15px rgba(242, 120, 12, 0.5);
+}
+
+.origin-card img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    object-fit: cover;
+}
+
+.origin-card h3 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+
+.origin-card p {
+    color: #666;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 600px;
+    width: 90%;
+    margin: auto;
+    position: relative;
+    transform: scale(0.7);
+    transition: transform 0.3s ease;
+}
+
+.modal.active .modal-content {
+    transform: scale(1);
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    background: none;
+    border: none;
+    padding: 5px;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+.button-section {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.btn {
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    outline: none;
+}
+
+.btn-back {
+    background: #666;
+    color: white;
+}
+
+.btn-back:hover {
+    background: #555;
+}
+
+.btn-continue {
+    background: #F2780C;
+    color: white;
+}
+
+.btn-continue:hover:not(:disabled) {
+    background: #D66A0B;
+}
+
+.btn-continue:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.select-origin {
+    background: #F2780C;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.select-origin:hover {
+    background: #D66A0B;
+}
+
+@media (max-width: 768px) {
+    .origin-grid {
+        grid-template-columns: 1fr;
+        padding: 10px;
+    }
+
+    .button-section {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+}
+
+[data-theme="dark"] .origin-card {
+    background: rgba(40, 40, 40, 0.9);
+}
+
+[data-theme="dark"] .origin-card h3 {
+    color: #fff;
+}
+
+[data-theme="dark"] .origin-card p {
+    color: #ddd;
+}
+
+[data-theme="dark"] .modal-content {
+    background: #333;
+    color: #fff;
+}
+
+[data-theme="dark"] .close-modal {
+    color: #fff;
+}
+
+[data-theme="dark"] .close-modal:hover {
+    color: #ddd;
+}

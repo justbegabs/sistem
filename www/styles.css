@@ -555,17 +555,17 @@ body::before {
 }
 
 .origem-card {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 235, 205, 0.9);
     border-radius: 10px;
     padding: 20px;
+    text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .origem-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .origem-card.selected {
@@ -663,67 +663,175 @@ body.dark-mode .origem-beneficios {
 /* Estilos para a grid de raças */
 .grid-racas {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
-    padding: 20px;
+    margin-top: 20px;
 }
 
 .raca-card {
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 10px;
-    padding: 20px;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.2s;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 2px solid transparent;
 }
 
 .raca-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    background: rgba(227, 100, 20, 0.9);
-    color: white;
+}
+
+.raca-card.selected {
+    border-color: #F2780C;
+    background-color: #fff5eb;
 }
 
 .raca-card h3 {
-    color: #E36414;
+    color: #333;
     margin-bottom: 10px;
-    font-size: 1.3em;
-}
-
-.raca-card:hover h3 {
-    color: white;
 }
 
 .raca-card p {
-    color: #333;
+    color: #666;
     font-size: 0.9em;
-    line-height: 1.4;
+    margin-bottom: 15px;
 }
 
-.raca-card:hover p {
+.selecionar-raca {
+    background-color: #F2780C;
     color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-/* Dark mode para os cards de raça */
-:root[data-theme="dark"] .raca-card {
-    background: rgba(40, 40, 40, 0.9);
-    border: 1px solid rgba(227, 100, 20, 0.3);
+.selecionar-raca:hover {
+    background-color: #D66A0B;
 }
 
-:root[data-theme="dark"] .raca-card h3 {
-    color: #E36414;
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    .modal-content {
+        background-color: #333;
+    }
+
+    .raca-card {
+        background-color: #444;
+    }
+
+    .raca-card.selected {
+        background-color: #555;
+        border-color: #F2780C;
+    }
+
+    .raca-card h3 {
+        color: #fff;
+    }
+
+    .raca-card p {
+        color: #ccc;
+    }
+
+    .close-modal {
+        color: #ccc;
+    }
+
+    .close-modal:hover {
+        color: #fff;
+    }
 }
 
-:root[data-theme="dark"] .raca-card p {
-    color: #ddd;
+/* Estilos para o Modal de Raças */
+.modal-racas {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    overflow-y: auto;
 }
 
-:root[data-theme="dark"] .raca-card:hover {
-    background: rgba(227, 100, 20, 0.9);
-    border-color: rgba(255, 255, 255, 0.2);
+.modal-racas .modal-content {
+    position: relative;
+    background: rgba(255, 255, 255, 0.95);
+    margin: 5% auto;
+    padding: 30px;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
-:root[data-theme="dark"] .raca-card:hover h3,
-:root[data-theme="dark"] .raca-card:hover p {
-    color: white;
+.modal-racas .raca-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px 5px;
+    max-height: calc(80vh - 100px);
+    overflow-y: auto;
+}
+
+/* Estilizando a barra de rolagem */
+.modal-racas .raca-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-racas .raca-grid::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.modal-racas .raca-grid::-webkit-scrollbar-thumb {
+    background: #F2780C;
+    border-radius: 4px;
+}
+
+.modal-racas .raca-grid::-webkit-scrollbar-thumb:hover {
+    background: #D66A0B;
+}
+
+/* Tema escuro para a barra de rolagem */
+:root[data-theme="dark"] .modal-racas .raca-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+:root[data-theme="dark"] .modal-racas .raca-grid::-webkit-scrollbar-thumb {
+    background: #D66A0B;
+}
+
+:root[data-theme="dark"] .modal-racas .raca-grid::-webkit-scrollbar-thumb:hover {
+    background: #F2780C;
+}
+
+/* Ajustes para o tema escuro do modal */
+:root[data-theme="dark"] .modal-racas .modal-content {
+    background: rgba(40, 40, 40, 0.95);
+}
+
+:root[data-theme="dark"] .modal-racas h2 {
+    color: #fff;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .modal-racas .modal-content {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    .modal-racas .raca-grid {
+        grid-template-columns: 1fr;
+        max-height: calc(100vh - 100px);
+    }
 }
