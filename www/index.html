@@ -23,13 +23,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ficha de Personagem</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        html,
+        body {
+            background: #C24914 !important;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        :root[data-theme="dark"] body {
+            background: #000000 !important;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container">
-        <header>
+    <header>
+        <div class="header-content">
             <button class="voltar">← Voltar</button>
             <div class="header-buttons">
                 <button class="tema" onclick="toggleTheme()">
@@ -39,8 +52,9 @@
                 <button class="obs">OBS</button>
                 <button class="salvar">Salvar</button>
             </div>
-        </header>
-
+        </div>
+    </header>
+    <div class="container">
         <section class="informacoes-basicas">
             <h2>Informações Básicas</h2>
             <div class="grid-container">
