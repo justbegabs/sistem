@@ -37,10 +37,34 @@
         :root[data-theme="dark"] body {
             background: #000000 !important;
         }
+
+        /* Teste de imagens */
+        .teste-imagens {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 9999;
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .teste-imagens img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            margin: 5px;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Div de teste para verificar os caminhos das imagens -->
+    <div class="teste-imagens">
+        <img src="fundolaranja.jpg" alt="Teste Laranja">
+        <img src="fundopreto.jpg" alt="Teste Preto">
+    </div>
+
     <header>
         <div class="header-content">
             <button class="voltar">← Voltar</button>
@@ -55,6 +79,9 @@
         </div>
     </header>
     <div class="container">
+        <!-- Div específica para o background -->
+        <div class="background-container"></div>
+
         <section class="informacoes-basicas">
             <h2>Informações Básicas</h2>
             <div class="grid-container">
