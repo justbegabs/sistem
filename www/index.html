@@ -158,11 +158,11 @@
                     </div>
                     <div class="info-item">
                         <label>Classe</label>
-                        <input type="text" placeholder="Classe">
+                        <input type="text" placeholder="Classe" readonly onclick="openClasseModal()">
                     </div>
                     <div class="info-item">
                         <label>Origem</label>
-                        <input type="text" placeholder="Origem">
+                        <input type="text" placeholder="Origem" readonly onclick="openOrigemModal()">
                     </div>
                 </div>
             </section>
@@ -347,6 +347,314 @@
         </div>
     </div>
 
+    <!-- Modal de Seleção de Classe -->
+    <div class="modal-classes" id="modal-classes">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeClasseModal()">&times;</span>
+            <h2>Selecione sua Classe</h2>
+            <div class="classe-grid">
+                <div class="classe-card" data-classe="Armadilheiro">
+                    <h3>Armadilheiro</h3>
+                    <p>Especialista em criar e desarmar armadilhas, mestre da preparação tática.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Criar Armadilhas</li>
+                            <li>Detectar Perigos</li>
+                            <li>Sabotagem</li>
+                        </ul>
+                    </div>
+                    <button class="selecionar-classe"
+                        onclick="selecionarClasse('Armadilheiro', this)">Selecionar</button>
+                </div>
+                <div class="classe-card" data-classe="Atirador">
+                    <h3>Atirador</h3>
+                    <p>Mestre em combate à distância com precisão letal.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Tiro Preciso</li>
+                            <li>Mira Aprimorada</li>
+                            <li>Disparo Rápido</li>
+                        </ul>
+                    </div>
+                    <button class="selecionar-classe" onclick="selecionarClasse('Atirador', this)">Selecionar</button>
+                </div>
+                <div class="classe-card" data-classe="Carteado">
+                    <h3>Carteado</h3>
+                    <p>Manipulador de cartas místicas com poderes sobrenaturais.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Leitura de Cartas</li>
+                            <li>Truques Mágicos</li>
+                            <li>Destino Alterado</li>
+                        </ul>
+                    </div>
+                    <button class="selecionar-classe" onclick="selecionarClasse('Carteado', this)">Selecionar</button>
+                </div>
+                <div class="classe-card" data-classe="Clérigo">
+                    <h3>Clérigo</h3>
+                    <p>Sacerdote divino com poderes de cura e proteção.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Cura Divina</li>
+                            <li>Benção</li>
+                            <li>Proteção Sagrada</li>
+                        </ul>
+                    </div>
+                    <button class="selecionar-classe" onclick="selecionarClasse('Clérigo', this)">Selecionar</button>
+                </div>
+                <div class="classe-card" data-classe="Combatente">
+                    <h3>Combatente</h3>
+                    <p>Guerreiro versátil especializado em diversos estilos de luta.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Técnicas de Combate</li>
+                            <li>Adaptação Tática</li>
+                            <li>Contra-ataque</li>
+                        </ul>
+                    </div>
+                    <button class="selecionar-classe" onclick="selecionarClasse('Combatente', this)">Selecionar</button>
+                </div>
+                <div class="classe-card" data-classe="Curandeiro">
+                    <h3>Curandeiro</h3>
+                    <p>Especialista em artes curativas e medicina natural.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Primeiros Socorros</li>
+                            <li>Medicina Natural</li>
+                            <li>Remédios Caseiros</li>
+                        </ul>
+                    </div>
+                    <button class="selecionar-classe" onclick="selecionarClasse('Curandeiro', this)">Selecionar</button>
+                </div>
+                <div class="classe-card" data-classe="Demonologista">
+                    <h3>Demonologista</h3>
+                    <p>Estudioso das artes demoníacas e poderes infernais.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Invocação Demoníaca</li>
+                            <li>Pactos Sombrios</li>
+                            <li>Conhecimento Infernal</li>
+                        </ul>
+                    </div>
+                    <button class="selecionar-classe"
+                        onclick="selecionarClasse('Demonologista', this)">Selecionar</button>
+                </div>
+                <div class="classe-card" data-classe="Domador">
+                    <h3>Domador</h3>
+                    <p>Mestre na arte de treinar e controlar criaturas.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Domar Criaturas</li>
+                            <li>Empatia Animal</li>
+                            <li>Comando de Besta</li>
+                        </ul>
+                    </div>
+                    <button class="selecionar-classe" onclick="selecionarClasse('Domador', this)">Selecionar</button>
+                </div>
+                <div class="classe-card" data-classe="Espião">
+                    <h3>Espião</h3>
+                    <p>Mestre da infiltração e coleta de informações.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Furtividade</li>
+                            <li>Disfarce</li>
+                            <li>Coleta de Informações</li>
+                        </ul>
+                    </div>
+                    <button class="selecionar-classe" onclick="selecionarClasse('Espião', this)">Selecionar</button>
+                </div>
+                <div class="classe-card" data-classe="Investigador">
+                    <h3>Investigador</h3>
+                    <p>Especialista em resolver mistérios e encontrar pistas ocultas.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Dedução</li>
+                            <li>Análise de Cena</li>
+                            <li>Interrogatório</li>
+                        </ul>
+                    </div>
+                    <button class="selecionar-classe"
+                        onclick="selecionarClasse('Investigador', this)">Selecionar</button>
+                </div>
+                <div class="classe-card" data-classe="Mago">
+                    <h3>Mago</h3>
+                    <p>Manipulador de energias arcanas e feitiços poderosos.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Magias Arcanas</li>
+                            <li>Ritual Místico</li>
+                            <li>Conhecimento Mágico</li>
+                        </ul>
+                    </div>
+                    <button class="selecionar-classe" onclick="selecionarClasse('Mago', this)">Selecionar</button>
+                </div>
+                <div class="classe-card" data-classe="Suporte">
+                    <h3>Suporte</h3>
+                    <p>Especialista em auxiliar e fortalecer aliados.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Fortificação</li>
+                            <li>Inspiração</li>
+                            <li>Proteção Aliada</li>
+                        </ul>
+                    </div>
+                    <button class="selecionar-classe" onclick="selecionarClasse('Suporte', this)">Selecionar</button>
+                </div>
+                <div class="classe-card" data-classe="Tecnológico">
+                    <h3>Tecnológico</h3>
+                    <p>Mestre em tecnologia avançada e gadgets.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Hackear</li>
+                            <li>Criar Dispositivos</li>
+                            <li>Reparo Técnico</li>
+                        </ul>
+                    </div>
+                    <button class="selecionar-classe"
+                        onclick="selecionarClasse('Tecnológico', this)">Selecionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Seleção de Origem -->
+    <div class="modal-origens" id="modal-origens">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeOrigemModal()">&times;</span>
+            <h2>Selecione sua Origem</h2>
+            <div class="origem-grid">
+                <div class="origem-card" data-origem="amnesico">
+                    <h3>Amnésico</h3>
+                    <p>Indivíduo que perdeu suas memórias, em busca de seu passado perdido.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Amnésico', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="artista">
+                    <h3>Artista</h3>
+                    <p>Criador talentoso que expressa sua arte de diversas formas.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Artista', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="conspiracionista">
+                    <h3>Conspiracionista</h3>
+                    <p>Investigador de teorias ocultas e segredos obscuros.</p>
+                    <button class="selecionar-origem"
+                        onclick="selecionarOrigem('Conspiracionista', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="crianca-perdida">
+                    <h3>Criança Perdida</h3>
+                    <p>Jovem que se perdeu de seu lar e cresceu em circunstâncias extraordinárias.</p>
+                    <button class="selecionar-origem"
+                        onclick="selecionarOrigem('Criança Perdida', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="eremita">
+                    <h3>Eremita</h3>
+                    <p>Solitário que encontrou sabedoria no isolamento.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Eremita', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="escolhido">
+                    <h3>Escolhido</h3>
+                    <p>Destinado a cumprir uma profecia ou missão divina.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Escolhido', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="exilado">
+                    <h3>Exilado</h3>
+                    <p>Banido de sua terra natal, carrega consigo as marcas do passado.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Exilado', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="experimento">
+                    <h3>Experimento</h3>
+                    <p>Resultado de experiências científicas ou místicas.</p>
+                    <button class="selecionar-origem"
+                        onclick="selecionarOrigem('Experimento', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="forasteiro">
+                    <h3>Forasteiro</h3>
+                    <p>Viajante de terras distantes com costumes diferentes.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Forasteiro', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="ginasta">
+                    <h3>Ginasta</h3>
+                    <p>Atleta com extraordinária destreza física e disciplina.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Ginasta', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="herdeiro">
+                    <h3>Herdeiro</h3>
+                    <p>Descendente de uma linhagem importante ou poderosa.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Herdeiro', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="inventor">
+                    <h3>Inventor</h3>
+                    <p>Criador de dispositivos e soluções inovadoras.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Inventor', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="jornalista">
+                    <h3>Jornalista</h3>
+                    <p>Investigador da verdade e revelador de histórias.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Jornalista', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="militar">
+                    <h3>Militar</h3>
+                    <p>Treinado nas artes da guerra e disciplina militar.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Militar', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="nomade">
+                    <h3>Nômade</h3>
+                    <p>Viajante sem lar fixo, adaptável a diferentes culturas.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Nômade', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="profeta">
+                    <h3>Profeta</h3>
+                    <p>Visionário com a capacidade de prever eventos futuros.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Profeta', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="programador">
+                    <h3>Programador</h3>
+                    <p>Mestre em códigos e sistemas computacionais.</p>
+                    <button class="selecionar-origem"
+                        onclick="selecionarOrigem('Programador', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="psicologo">
+                    <h3>Psicólogo</h3>
+                    <p>Estudioso da mente e comportamento humano.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Psicólogo', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="religioso">
+                    <h3>Religioso</h3>
+                    <p>Devoto seguidor de crenças e práticas espirituais.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Religioso', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="servente">
+                    <h3>Servente</h3>
+                    <p>Trabalhador leal que serve a outros com dedicação.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Servente', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="universitario">
+                    <h3>Universitário</h3>
+                    <p>Estudante em busca de conhecimento acadêmico.</p>
+                    <button class="selecionar-origem"
+                        onclick="selecionarOrigem('Universitário', this)">Selecionar</button>
+                </div>
+                <div class="origem-card" data-origem="vingativo">
+                    <h3>Vingativo</h3>
+                    <p>Motivado pela busca de vingança por eventos do passado.</p>
+                    <button class="selecionar-origem" onclick="selecionarOrigem('Vingativo', this)">Selecionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
     <script>
         function openRacaModal() {
@@ -358,25 +666,57 @@
         }
 
         function selecionarRaca(raca, button) {
-            // Remove a seleção anterior
             document.querySelectorAll('.raca-card').forEach(card => {
                 card.classList.remove('selected');
             });
-
-            // Adiciona a seleção ao card atual
             button.closest('.raca-card').classList.add('selected');
-
-            // Atualiza o input com a raça selecionada
             document.querySelector('input[placeholder="Raça"]').value = raca;
-
-            // Fecha o modal
             closeRacaModal();
         }
 
-        // Fecha o modal quando clicar fora dele
+        function openClasseModal() {
+            document.getElementById('modal-classes').style.display = 'block';
+        }
+
+        function closeClasseModal() {
+            document.getElementById('modal-classes').style.display = 'none';
+        }
+
+        function selecionarClasse(classe, button) {
+            document.querySelectorAll('.classe-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            button.closest('.classe-card').classList.add('selected');
+            document.querySelector('input[placeholder="Classe"]').value = classe;
+            closeClasseModal();
+        }
+
+        function openOrigemModal() {
+            document.getElementById('modal-origens').style.display = 'block';
+        }
+
+        function closeOrigemModal() {
+            document.getElementById('modal-origens').style.display = 'none';
+        }
+
+        function selecionarOrigem(origem, button) {
+            document.querySelectorAll('.origem-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            button.closest('.origem-card').classList.add('selected');
+            document.querySelector('input[placeholder="Origem"]').value = origem;
+            closeOrigemModal();
+        }
+
         window.onclick = function (event) {
             if (event.target == document.getElementById('modal-racas')) {
                 closeRacaModal();
+            }
+            if (event.target == document.getElementById('modal-classes')) {
+                closeClasseModal();
+            }
+            if (event.target == document.getElementById('modal-origens')) {
+                closeOrigemModal();
             }
         }
     </script>

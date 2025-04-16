@@ -835,3 +835,218 @@ body.dark-mode .origem-beneficios {
         max-height: calc(100vh - 100px);
     }
 }
+
+/* Estilos para os Modais (Raça, Classe e Origem) */
+.modal-racas,
+.modal-classes,
+.modal-origens {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.modal-racas .modal-content,
+.modal-classes .modal-content,
+.modal-origens .modal-content {
+    position: relative;
+    background: rgba(255, 255, 255, 0.95);
+    margin: 5% auto;
+    padding: 30px;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.raca-grid,
+.classe-grid,
+.origem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px 5px;
+    max-height: calc(80vh - 100px);
+    overflow-y: auto;
+}
+
+/* Estilizando a barra de rolagem para todos os modais */
+.raca-grid::-webkit-scrollbar,
+.classe-grid::-webkit-scrollbar,
+.origem-grid::-webkit-scrollbar,
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.raca-grid::-webkit-scrollbar-track,
+.classe-grid::-webkit-scrollbar-track,
+.origem-grid::-webkit-scrollbar-track,
+.modal-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.raca-grid::-webkit-scrollbar-thumb,
+.classe-grid::-webkit-scrollbar-thumb,
+.origem-grid::-webkit-scrollbar-thumb,
+.modal-content::-webkit-scrollbar-thumb {
+    background: #F2780C;
+    border-radius: 4px;
+}
+
+.raca-grid::-webkit-scrollbar-thumb:hover,
+.classe-grid::-webkit-scrollbar-thumb:hover,
+.origem-grid::-webkit-scrollbar-thumb:hover,
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #D66A0B;
+}
+
+/* Estilos dos cards */
+.raca-card,
+.classe-card,
+.origem-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.raca-card:hover,
+.classe-card:hover,
+.origem-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.raca-card.selected,
+.classe-card.selected,
+.origem-card.selected {
+    border-color: #F2780C;
+    background: rgba(242, 120, 12, 0.1);
+}
+
+/* Estilos específicos para cards de classe */
+.classe-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.classe-habilidades {
+    text-align: left;
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+}
+
+.classe-habilidades h4 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+}
+
+.classe-habilidades ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.classe-habilidades li {
+    color: #666;
+    font-size: 0.85em;
+    margin-bottom: 5px;
+    padding-left: 15px;
+    position: relative;
+}
+
+.classe-habilidades li:before {
+    content: "•";
+    color: #F2780C;
+    position: absolute;
+    left: 0;
+}
+
+/* Botões de seleção */
+.selecionar-raca,
+.selecionar-classe,
+.selecionar-origem {
+    background: #F2780C;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.3s ease;
+    margin-top: 10px;
+}
+
+.selecionar-raca:hover,
+.selecionar-classe:hover,
+.selecionar-origem:hover {
+    background: #D66A0B;
+}
+
+/* Tema escuro */
+:root[data-theme="dark"] .modal-content {
+    background: rgba(40, 40, 40, 0.95);
+}
+
+:root[data-theme="dark"] .raca-card,
+:root[data-theme="dark"] .classe-card,
+:root[data-theme="dark"] .origem-card {
+    background: rgba(60, 60, 60, 0.9);
+}
+
+:root[data-theme="dark"] .classe-habilidades {
+    background: rgba(80, 80, 80, 0.5);
+}
+
+:root[data-theme="dark"] h3,
+:root[data-theme="dark"] .classe-habilidades h4 {
+    color: #fff;
+}
+
+:root[data-theme="dark"] p,
+:root[data-theme="dark"] .classe-habilidades li {
+    color: #ddd;
+}
+
+:root[data-theme="dark"] .raca-card.selected,
+:root[data-theme="dark"] .classe-card.selected,
+:root[data-theme="dark"] .origem-card.selected {
+    background: rgba(242, 120, 12, 0.2);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .modal-content {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    .raca-grid,
+    .classe-grid,
+    .origem-grid {
+        grid-template-columns: 1fr;
+        max-height: calc(100vh - 100px);
+        padding: 10px;
+    }
+
+    .classe-habilidades {
+        margin: 10px 0;
+    }
+}
