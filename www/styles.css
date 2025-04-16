@@ -545,4 +545,185 @@ body::before {
     background-position: center;
     background-repeat: repeat-y;
 }
+
+/* Estilos para a página de origens */
+.origens-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.origem-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.origem-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.origem-card.selected {
+    background: #E36414;
+    color: white;
+}
+
+.origem-card h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.5em;
+}
+
+.origem-card p {
+    margin: 0;
+    font-size: 1em;
+    line-height: 1.4;
+}
+
+.botoes {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-voltar {
+    background: #666;
+    color: white;
+}
+
+.btn-continuar {
+    background: #E36414;
+    color: white;
+}
+
+.btn-voltar:hover:not(:disabled) {
+    background: #555;
+}
+
+.btn-continuar:hover:not(:disabled) {
+    background: #C24914;
+}
+
+/* Dark mode */
+body.dark-mode .origem-card {
+    background: rgba(45, 45, 45, 0.9);
+}
+
+body.dark-mode .origem-card p,
+body.dark-mode .origem-beneficios li {
+    color: #ddd;
+}
+
+body.dark-mode .origem-beneficios {
+    background: rgba(227, 100, 20, 0.2);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .grid-origens {
+        grid-template-columns: 1fr;
+        padding: 10px;
+    }
+
+    .origem-card {
+        padding: 15px;
+    }
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.button-group .btn {
+    min-width: 120px;
+}
+
+/* Estilos para a grid de raças */
+.grid-racas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.raca-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.raca-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    background: rgba(227, 100, 20, 0.9);
+    color: white;
+}
+
+.raca-card h3 {
+    color: #E36414;
+    margin-bottom: 10px;
+    font-size: 1.3em;
+}
+
+.raca-card:hover h3 {
+    color: white;
+}
+
+.raca-card p {
+    color: #333;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+.raca-card:hover p {
+    color: white;
+}
+
+/* Dark mode para os cards de raça */
+:root[data-theme="dark"] .raca-card {
+    background: rgba(40, 40, 40, 0.9);
+    border: 1px solid rgba(227, 100, 20, 0.3);
+}
+
+:root[data-theme="dark"] .raca-card h3 {
+    color: #E36414;
+}
+
+:root[data-theme="dark"] .raca-card p {
+    color: #ddd;
+}
+
+:root[data-theme="dark"] .raca-card:hover {
+    background: rgba(227, 100, 20, 0.9);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+:root[data-theme="dark"] .raca-card:hover h3,
+:root[data-theme="dark"] .raca-card:hover p {
+    color: white;
 }

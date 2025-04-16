@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classes - Ficha de Personagem</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <button class="voltar" onclick="window.location.href='origens.html'">← Voltar</button>
+            <div class="header-buttons">
+                <button class="tema" onclick="toggleTheme()">
+                    <i id="themeIcon" class="fas fa-sun"></i>
+                    Tema
+                </button>
+                <button class="obs">OBS</button>
+                <button class="salvar">Salvar</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="background-container"></div>
+
+        <section class="lista-classes">
+            <h2>Classes Disponíveis</h2>
+            <div class="grid-classes">
+                <div class="classe-card">
+                    <h3>Armadilheiro</h3>
+                    <p>Especialista em criar e desarmar armadilhas, mestre da preparação tática.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Criar Armadilhas</li>
+                            <li>Detectar Perigos</li>
+                            <li>Sabotagem</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="classe-card">
+                    <h3>Atirador</h3>
+                    <p>Mestre em combate à distância com precisão letal.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Tiro Preciso</li>
+                            <li>Mira Aprimorada</li>
+                            <li>Disparo Rápido</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="classe-card">
+                    <h3>Carteado</h3>
+                    <p>Manipulador de cartas místicas com poderes sobrenaturais.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Leitura de Cartas</li>
+                            <li>Truques Mágicos</li>
+                            <li>Destino Alterado</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="classe-card">
+                    <h3>Clérigo</h3>
+                    <p>Sacerdote divino com poderes de cura e proteção.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Cura Divina</li>
+                            <li>Benção</li>
+                            <li>Proteção Sagrada</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="classe-card">
+                    <h3>Combatente</h3>
+                    <p>Guerreiro versátil especializado em diversos estilos de luta.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Técnicas de Combate</li>
+                            <li>Adaptação Tática</li>
+                            <li>Contra-ataque</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="classe-card">
+                    <h3>Curandeiro</h3>
+                    <p>Especialista em artes curativas e medicina natural.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Primeiros Socorros</li>
+                            <li>Medicina Natural</li>
+                            <li>Remédios Caseiros</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="classe-card">
+                    <h3>Demonologista</h3>
+                    <p>Estudioso das artes demoníacas e poderes infernais.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Invocação Demoníaca</li>
+                            <li>Pactos Sombrios</li>
+                            <li>Conhecimento Infernal</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="classe-card">
+                    <h3>Domador</h3>
+                    <p>Mestre na arte de treinar e controlar criaturas.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Domar Criaturas</li>
+                            <li>Empatia Animal</li>
+                            <li>Comando de Besta</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="classe-card">
+                    <h3>Espião</h3>
+                    <p>Mestre da infiltração e coleta de informações.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Furtividade</li>
+                            <li>Disfarce</li>
+                            <li>Coleta de Informações</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="classe-card">
+                    <h3>Investigador</h3>
+                    <p>Especialista em resolver mistérios e encontrar pistas ocultas.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Dedução</li>
+                            <li>Análise de Cena</li>
+                            <li>Interrogatório</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="classe-card">
+                    <h3>Mago</h3>
+                    <p>Manipulador de energias arcanas e feitiços poderosos.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Magias Arcanas</li>
+                            <li>Ritual Místico</li>
+                            <li>Conhecimento Mágico</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="classe-card">
+                    <h3>Suporte</h3>
+                    <p>Especialista em auxiliar e fortalecer aliados.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Fortificação</li>
+                            <li>Inspiração</li>
+                            <li>Proteção Aliada</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="classe-card">
+                    <h3>Tecnológico</h3>
+                    <p>Mestre em tecnologia avançada e gadgets.</p>
+                    <div class="classe-habilidades">
+                        <h4>Habilidades Iniciais:</h4>
+                        <ul>
+                            <li>Hackear</li>
+                            <li>Criar Dispositivos</li>
+                            <li>Reparo Técnico</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
