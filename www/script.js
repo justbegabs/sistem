@@ -15,6 +15,13 @@ function toggleTheme() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Inicializar a barra de nível
+    const nivelInput = document.getElementById('nivel');
+    const nivelProgress = document.getElementById('nivel-progress');
+    if (nivelInput) {
+        atualizarNivel();
+    }
+
     // Atualizar barras de progresso dos status vitais
     const statusItems = document.querySelectorAll('.status-item');
     statusItems.forEach(item => {
@@ -24,10 +31,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function atualizarBarra() {
             const porcentagem = (input.value / maxValue) * 100;
-            barra.style.background = `linear-gradient(to right, 
-                ${getCorBarra(input.parentElement.previousElementSibling.textContent)} ${porcentagem}%, 
-                var(--cor-cinza-clara) ${porcentagem}%)`;
+            barra.style.setProperty('--progresso', `${porcentagem}%`);
+
+            // Define a cor da barra baseado no tipo de status
+            let corBarra = '#4CAF50'; // Verde padrão
+            if (item.querySelector('label').textContent.includes('❤️')) corBarra = '#ff4444'; // Vermelho para vida
+            if (item.querySelector('label').textContent.includes('🧠')) corBarra = '#9933cc'; // Roxo para mana
+            if (item.querySelector('label').textContent.includes('⚡')) corBarra = '#33b5e5'; // Azul para alma
+            if (item.querySelector('label').textContent.includes('⭐')) corBarra = '#ffd700'; // Amarelo para sanidade
+
+            barra.style.setProperty('--cor-barra', corBarra);
         }
+
+        // Adiciona evento de clique na barra
+        barra.addEventListener('click', (e) => {
+            const rect = barra.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const porcentagem = (x / rect.width) * 100;
+            const novoValor = Math.round((porcentagem / 100) * maxValue);
+
+            input.value = novoValor;
+            atualizarBarra();
+        });
 
         input.addEventListener('input', () => {
             if (input.value < 0) input.value = 0;
@@ -123,4 +148,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (themeIcon) {
         themeIcon.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
     }
-}); 
+});
+
+function atualizarNivel() {
+    const nivelInput = document.getElementById('nivel');
+    const nivelProgress = document.getElementById('nivel-progress');
+    const nivel = parseInt(nivelInput.value) || 0;
+
+    // Limita o valor entre 0 e 100
+    nivelInput.value = Math.min(Math.max(nivel, 0), 100);
+
+    // Atualiza a barra de progresso
+    nivelProgress.style.width = `${nivelInput.value}%`;
+
+    // Atualiza o contador de atributos baseado no nível
+    atualizarContadorAtributos();
+}
+
+function atualizarContadorAtributos() {
+    const nivel = parseInt(document.getElementById('nivel').value) || 0;
+    const contador = document.querySelector('.atributos-teste h2 span');
+    const totalAtributos = 12;
+    const atributosAtivos = Math.min(Math.max(nivel, 0), totalAtributos);
+
+    contador.textContent = `${atributosAtivos}/${totalAtributos}`;
+} 

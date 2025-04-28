@@ -37,6 +37,317 @@
         :root[data-theme="dark"] body {
             background: #000000 !important;
         }
+
+        .pericias {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .pericias h2 {
+            color: var(--cor-preta);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .pericias-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .pericia-principal {
+            background: rgba(255, 180, 100, 0.55);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(3px);
+        }
+
+        .pericia-principal:hover {
+            transform: translateY(-2px);
+        }
+
+        .pericia-principal h3 {
+            color: var(--cor-cinza);
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        .pericia-principal::after {
+            content: '›';
+            color: var(--cor-cinza);
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+
+        .pericia-principal:hover::after {
+            transform: translateX(5px);
+        }
+
+        .modal-pericias {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-pericias .modal-content {
+            background: #ffffff;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .modal-pericias h2 {
+            color: #F2780C;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .pericia-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Estilização da barra de rolagem */
+        .pericia-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .pericia-list::-webkit-scrollbar-track {
+            background: rgba(242, 120, 12, 0.1);
+            border-radius: 4px;
+        }
+
+        .pericia-list::-webkit-scrollbar-thumb {
+            background: rgba(242, 120, 12, 0.3);
+            border-radius: 4px;
+        }
+
+        .pericia-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(242, 120, 12, 0.5);
+        }
+
+        /* Ajuste para o tema escuro */
+        :root[data-theme="dark"] .pericia-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        :root[data-theme="dark"] .pericia-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        :root[data-theme="dark"] .pericia-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .pericia-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255, 180, 100, 0.1);
+            border-radius: 5px;
+            border: 1px solid rgba(242, 120, 12, 0.2);
+        }
+
+        .pericia-item label {
+            color: #F2780C;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pericia-item .dado-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            object-fit: contain;
+            background-color: transparent;
+            padding: 2px;
+            border-radius: 4px;
+        }
+
+        .pericia-item .dado-icon:hover {
+            transform: rotate(180deg);
+            background-color: rgba(242, 120, 12, 0.1);
+        }
+
+        .pericia-item .valor-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pericia-item label:hover {
+            color: #D66A0B;
+        }
+
+        .pericia-item input {
+            width: 60px;
+            text-align: center;
+            background: rgba(255, 180, 100, 0.1);
+            border: 1px solid rgba(242, 120, 12, 0.3);
+            color: #F2780C;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        :root[data-theme="dark"] .modal-pericias .modal-content {
+            background: #1a1a1a;
+        }
+
+        :root[data-theme="dark"] .modal-pericias h2 {
+            color: #F2780C;
+        }
+
+        :root[data-theme="dark"] .pericia-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        :root[data-theme="dark"] .pericia-item label {
+            color: #F2780C;
+        }
+
+        :root[data-theme="dark"] .pericia-item input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #F2780C;
+        }
+
+        :root[data-theme="dark"] .pericias {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        :root[data-theme="dark"] .pericia-principal {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        :root[data-theme="dark"] .pericia-principal h3 {
+            color: #F2780C;
+        }
+
+        .inventario {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .inventario h2 {
+            color: var(--cor-preta);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .inventario-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--cor-cinza);
+        }
+
+        .lista-itens {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .item-inventario {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-inventario input[type="text"] {
+            flex: 1;
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .item-inventario button {
+            background: #F2780C;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .item-inventario button:hover {
+            background: #c95e09;
+        }
+
+        #adicionar-item {
+            width: 100%;
+            background: #F2780C;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        #adicionar-item:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        :root[data-theme="dark"] .inventario {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        :root[data-theme="dark"] .inventario h2 {
+            color: #F2780C;
+        }
+
+        :root[data-theme="dark"] .inventario-info {
+            color: #F2780C;
+        }
+
+        :root[data-theme="dark"] .item-inventario input[type="text"] {
+            background: #222;
+            color: #fff;
+            border: 1px solid #444;
+        }
+
+        :root[data-theme="dark"] .item-inventario button {
+            background: #F2780C;
+            color: #fff;
+        }
+
+        :root[data-theme="dark"] #adicionar-item {
+            background: #F2780C;
+        }
     </style>
 </head>
 
@@ -89,10 +400,16 @@
         </section>
 
         <section class="nivel">
-            <h2>Nível</h2>
-            <div class="nivel-container">
-                <span class="nivel-valor">0</span>
-                <div class="nivel-barra"></div>
+            <label>Nível</label>
+            <div class="status-bar">
+                <button onmousedown="startDecrementNivel()" onmouseup="stopNivelInterval()"
+                    onmouseleave="stopNivelInterval()">-</button>
+                <input type="number" id="nivel-input" value="0" min="0" max="100" onchange="atualizarNivel(this)">
+                <button onmousedown="startIncrementNivel()" onmouseup="stopNivelInterval()"
+                    onmouseleave="stopNivelInterval()">+</button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" id="nivel-progress" style="width: 0%;"></div>
             </div>
         </section>
 
@@ -102,30 +419,34 @@
                 <div class="status-item">
                     <label>❤️ Vida</label>
                     <div class="status-bar">
-                        <input type="number" value="0"> / <span>20</span>
+                        <input type="number" value="0" min="0" max="20" onchange="atualizarStatus(this, 20, 'vida')"> /
+                        <span>20</span>
                     </div>
-                    <div class="barra-progresso"></div>
+                    <div class="barra-progresso vida"></div>
                 </div>
                 <div class="status-item">
                     <label>🧠 Sanidade</label>
                     <div class="status-bar">
-                        <input type="number" value="0"> / <span>10</span>
+                        <input type="number" value="0" min="0" max="10"
+                            onchange="atualizarStatus(this, 10, 'sanidade')"> / <span>10</span>
                     </div>
-                    <div class="barra-progresso"></div>
+                    <div class="barra-progresso sanidade"></div>
                 </div>
                 <div class="status-item">
                     <label>⚡ Mana</label>
                     <div class="status-bar">
-                        <input type="number" value="0"> / <span>15</span>
+                        <input type="number" value="0" min="0" max="15" onchange="atualizarStatus(this, 15, 'mana')"> /
+                        <span>15</span>
                     </div>
-                    <div class="barra-progresso"></div>
+                    <div class="barra-progresso mana"></div>
                 </div>
                 <div class="status-item">
                     <label>⭐ Alma</label>
                     <div class="status-bar">
-                        <input type="number" value="0"> / <span>15</span>
+                        <input type="number" value="0" min="0" max="15" onchange="atualizarStatus(this, 15, 'alma')"> /
+                        <span>15</span>
                     </div>
-                    <div class="barra-progresso"></div>
+                    <div class="barra-progresso alma"></div>
                 </div>
             </div>
         </section>
@@ -150,7 +471,7 @@
             </section>
 
             <section class="info-personagem">
-                <h2>Informações do Personagem</h2>
+                <h2 id="titulo-info-personagem">Informações do Personagem</h2>
                 <div class="info-list">
                     <div class="info-item">
                         <label>Raça</label>
@@ -164,6 +485,10 @@
                         <label>Origem</label>
                         <input type="text" placeholder="Origem" readonly onclick="openOrigemModal()">
                     </div>
+                    <div class="info-item" id="familia-base-item" style="display: none;">
+                        <label>Família-Base</label>
+                        <input type="text" placeholder="Família-Base" readonly onclick="openFamiliaBaseModal()">
+                    </div>
                 </div>
             </section>
         </div>
@@ -174,27 +499,27 @@
                 <div class="atributos-list">
                     <div class="atributo-item">
                         <label>Força</label>
-                        <input type="number" value="0">
+                        <input type="number" value="0" min="-5">
                     </div>
                     <div class="atributo-item">
                         <label>Destreza</label>
-                        <input type="number" value="0">
+                        <input type="number" value="0" min="-5">
                     </div>
                     <div class="atributo-item">
                         <label>Intelecto</label>
-                        <input type="number" value="0">
+                        <input type="number" value="0" min="-5">
                     </div>
                     <div class="atributo-item">
                         <label>Carisma</label>
-                        <input type="number" value="0">
+                        <input type="number" value="0" min="-5">
                     </div>
                     <div class="atributo-item">
                         <label>Magia</label>
-                        <input type="number" value="0">
+                        <input type="number" value="0" min="-5">
                     </div>
                     <div class="atributo-item">
                         <label>Constituição</label>
-                        <input type="number" value="0">
+                        <input type="number" value="0" min="-5">
                     </div>
                 </div>
             </section>
@@ -204,26 +529,72 @@
                 <div class="atributos-list">
                     <div class="atributo-item">
                         <label>Sorte</label>
-                        <input type="number" value="0">
+                        <input type="number" value="0" min="-5">
                     </div>
                     <div class="atributo-item">
                         <label>Fama</label>
-                        <input type="number" value="0">
+                        <input type="number" value="0" min="-5">
                     </div>
                     <div class="atributo-item">
                         <label>Resiliência</label>
-                        <input type="number" value="0">
+                        <input type="number" value="0" min="-5">
                     </div>
                     <div class="atributo-item">
                         <label>Fé</label>
-                        <input type="number" value="0">
+                        <input type="number" value="0" min="-5">
                     </div>
                     <div class="atributo-item">
                         <label>Criatividade</label>
-                        <input type="number" value="0">
+                        <input type="number" value="0" min="-5">
                     </div>
                 </div>
             </section>
+        </div>
+
+        <section class="pericias">
+            <h2>Perícias</h2>
+            <div class="pericias-grid">
+                <div class="pericia-principal" onclick="abrirModalPericia('Força')">
+                    <h3>Força</h3>
+                </div>
+                <div class="pericia-principal" onclick="abrirModalPericia('Destreza')">
+                    <h3>Destreza</h3>
+                </div>
+                <div class="pericia-principal" onclick="abrirModalPericia('Intelecto')">
+                    <h3>Intelecto</h3>
+                </div>
+                <div class="pericia-principal" onclick="abrirModalPericia('Carisma')">
+                    <h3>Carisma</h3>
+                </div>
+                <div class="pericia-principal" onclick="abrirModalPericia('Magia')">
+                    <h3>Magia</h3>
+                </div>
+                <div class="pericia-principal" onclick="abrirModalPericia('Constituição')">
+                    <h3>Constituição</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- Caixa de Inventário -->
+        <section class="inventario">
+            <h2>Inventário</h2>
+            <div class="inventario-info">
+                <span>Capacidade: <span id="capacidade-inventario">0</span></span>
+                <span>Itens: <span id="contador-itens">0</span></span>
+            </div>
+            <div id="lista-itens" class="lista-itens"></div>
+            <button type="button" id="adicionar-item">Adicionar Item</button>
+        </section>
+
+        <!-- Modal de Perícias -->
+        <div class="modal-pericias" id="modal-pericias">
+            <div class="modal-content">
+                <span class="close-modal" onclick="fecharModalPericia()">&times;</span>
+                <h2 id="modal-pericia-titulo">Perícias de </h2>
+                <div class="pericia-list" id="modal-pericia-lista">
+                    <!-- Lista de perícias será preenchida via JavaScript -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -655,6 +1026,82 @@
         </div>
     </div>
 
+    <!-- Modal de Seleção de Família-Base -->
+    <div class="modal-origens" id="modal-familias">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeFamiliaBaseModal()">&times;</span>
+            <h2>Selecione sua Família-Base</h2>
+            <div class="origem-grid">
+                <div class="origem-card">
+                    <h3>Ryu</h3>
+                    <p>Florescer carmesim</p>
+                    <button class="selecionar-origem" onclick="selecionarFamiliaBase('Ryu', this)">Selecionar</button>
+                </div>
+                <div class="origem-card">
+                    <h3>Baek</h3>
+                    <p>Manipulação vocal</p>
+                    <button class="selecionar-origem" onclick="selecionarFamiliaBase('Baek', this)">Selecionar</button>
+                </div>
+                <div class="origem-card">
+                    <h3>Sun</h3>
+                    <p>Invocação solar</p>
+                    <button class="selecionar-origem" onclick="selecionarFamiliaBase('Sun', this)">Selecionar</button>
+                </div>
+                <div class="origem-card">
+                    <h3>Beaumont</h3>
+                    <p>Toque primaveril</p>
+                    <button class="selecionar-origem"
+                        onclick="selecionarFamiliaBase('Beaumont', this)">Selecionar</button>
+                </div>
+                <div class="origem-card">
+                    <h3>De Lune</h3>
+                    <p>Sussurro prismático</p>
+                    <button class="selecionar-origem"
+                        onclick="selecionarFamiliaBase('De Lune', this)">Selecionar</button>
+                </div>
+                <div class="origem-card">
+                    <h3>Brightmoon</h3>
+                    <p>Fragmentos de estrelas</p>
+                    <button class="selecionar-origem"
+                        onclick="selecionarFamiliaBase('Brightmoon', this)">Selecionar</button>
+                </div>
+                <div class="origem-card">
+                    <h3>Emberfell</h3>
+                    <p>Colapso do vazio</p>
+                    <button class="selecionar-origem"
+                        onclick="selecionarFamiliaBase('Emberfell', this)">Selecionar</button>
+                </div>
+                <div class="origem-card">
+                    <h3>MontClair</h3>
+                    <p>Sanguessuga de mana</p>
+                    <button class="selecionar-origem"
+                        onclick="selecionarFamiliaBase('MontClair', this)">Selecionar</button>
+                </div>
+                <div class="origem-card">
+                    <h3>Fireheart</h3>
+                    <p>Aurora ígnea</p>
+                    <button class="selecionar-origem"
+                        onclick="selecionarFamiliaBase('Fireheart', this)">Selecionar</button>
+                </div>
+                <div class="origem-card">
+                    <h3>Kaito</h3>
+                    <p>Ressonância arcana</p>
+                    <button class="selecionar-origem" onclick="selecionarFamiliaBase('Kaito', this)">Selecionar</button>
+                </div>
+                <div class="origem-card">
+                    <h3>Kyung</h3>
+                    <p>Fenda do destino</p>
+                    <button class="selecionar-origem" onclick="selecionarFamiliaBase('Kyung', this)">Selecionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pop-up de Secreto -->
+    <div class="secreto-popup" id="secretoPopup">
+        <p>Você descobriu um segredo! 🎉</p>
+    </div>
+
     <script src="script.js"></script>
     <script>
         function openRacaModal() {
@@ -708,6 +1155,23 @@
             closeOrigemModal();
         }
 
+        function openFamiliaBaseModal() {
+            document.getElementById('modal-familias').style.display = 'block';
+        }
+
+        function closeFamiliaBaseModal() {
+            document.getElementById('modal-familias').style.display = 'none';
+        }
+
+        function selecionarFamiliaBase(familiaBase, button) {
+            document.querySelectorAll('#modal-familias .origem-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            button.closest('.origem-card').classList.add('selected');
+            document.querySelector('input[placeholder="Família-Base"]').value = familiaBase;
+            closeFamiliaBaseModal();
+        }
+
         window.onclick = function (event) {
             if (event.target == document.getElementById('modal-racas')) {
                 closeRacaModal();
@@ -718,7 +1182,765 @@
             if (event.target == document.getElementById('modal-origens')) {
                 closeOrigemModal();
             }
+            if (event.target == document.getElementById('modal-familias')) {
+                closeFamiliaBaseModal();
+            }
         }
+
+        let clickCount = 0;
+        const tituloInfo = document.getElementById('titulo-info-personagem');
+        const familiaBaseItem = document.getElementById('familia-base-item');
+        const secretoPopup = document.getElementById('secretoPopup');
+
+        tituloInfo.addEventListener('click', () => {
+            clickCount++;
+            console.log('Clicks:', clickCount);
+
+            if (clickCount === 5) {
+                familiaBaseItem.style.display = 'block';
+                familiaBaseItem.style.opacity = '0';
+                setTimeout(() => {
+                    familiaBaseItem.style.opacity = '1';
+                }, 10);
+
+                secretoPopup.style.display = 'block';
+                setTimeout(() => {
+                    secretoPopup.classList.add('show');
+                }, 10);
+
+                setTimeout(() => {
+                    secretoPopup.classList.remove('show');
+                    setTimeout(() => {
+                        secretoPopup.style.display = 'none';
+                        clickCount = 0;
+                    }, 300);
+                }, 2000);
+            }
+        });
+
+        function atualizarStatus(input, max, tipo) {
+            // Garante que o valor está entre 0 e o máximo
+            let valor = Math.min(Math.max(parseInt(input.value) || 0, 0), max);
+
+            // Atualiza o valor do input
+            input.value = valor;
+
+            // Encontra a barra de progresso correspondente
+            const barra = input.closest('.status-item').querySelector('.barra-progresso');
+
+            // Calcula a porcentagem
+            const porcentagem = (valor / max) * 100;
+
+            // Atualiza a barra de progresso
+            barra.style.setProperty('--progress-width', `${porcentagem}%`);
+        }
+
+        let nivelInterval = null;
+
+        function startIncrementNivel() {
+            // Limpa qualquer intervalo existente
+            if (nivelInterval) clearInterval(nivelInterval);
+
+            // Incrementa imediatamente
+            incrementarNivel();
+
+            // Configura o intervalo para incrementar a cada 100ms
+            nivelInterval = setInterval(incrementarNivel, 100);
+        }
+
+        function startDecrementNivel() {
+            // Limpa qualquer intervalo existente
+            if (nivelInterval) clearInterval(nivelInterval);
+
+            // Decrementa imediatamente
+            decrementarNivel();
+
+            // Configura o intervalo para decrementar a cada 100ms
+            nivelInterval = setInterval(decrementarNivel, 100);
+        }
+
+        function stopNivelInterval() {
+            // Limpa o intervalo quando o botão é solto
+            if (nivelInterval) {
+                clearInterval(nivelInterval);
+                nivelInterval = null;
+            }
+        }
+
+        function incrementarNivel() {
+            const input = document.getElementById('nivel-input');
+            const valor = parseInt(input.value) + 1;
+            if (valor <= 100) {
+                input.value = valor;
+                atualizarNivel(input);
+            } else {
+                // Para o intervalo se atingir o máximo
+                stopNivelInterval();
+            }
+        }
+
+        function decrementarNivel() {
+            const input = document.getElementById('nivel-input');
+            const valor = parseInt(input.value) - 1;
+            if (valor >= 0) {
+                input.value = valor;
+                atualizarNivel(input);
+            } else {
+                // Para o intervalo se atingir o mínimo
+                stopNivelInterval();
+            }
+        }
+
+        function atualizarNivel(input) {
+            // Garante que o valor está entre 0 e 100
+            let valor = Math.min(Math.max(parseInt(input.value) || 0, 0), 100);
+
+            // Atualiza o valor do input
+            input.value = valor;
+
+            const progressBar = document.getElementById('nivel-progress');
+            if (progressBar) {
+                progressBar.style.width = valor + '%';
+                console.log('Nível atualizado:', valor + '%');
+            } else {
+                console.error('Elemento de barra de progresso não encontrado');
+            }
+
+            // Atualiza o contador de atributos com base no nível
+            atualizarContadorAtributos(valor);
+        }
+
+        // Função para atualizar o contador de atributos
+        function atualizarContadorAtributos(nivel) {
+            // Obtém o nível atual
+            const nivelAtual = parseInt(document.getElementById('nivel-input').value) || 0;
+
+            // Define os limites de nível e seus respectivos valores de atributos
+            const limites = [
+                { nivel: 5, atributos: 15 },
+                { nivel: 20, atributos: 17 },
+                { nivel: 35, atributos: 19 },
+                { nivel: 50, atributos: 21 },
+                { nivel: 65, atributos: 23 },
+                { nivel: 80, atributos: 25 },
+                { nivel: 95, atributos: 27 },
+                { nivel: 100, atributos: 30 }
+            ];
+
+            // Encontra o valor máximo de atributos para o nível atual
+            let valorMaximo = 12;
+            for (const limite of limites) {
+                if (nivelAtual >= limite.nivel) {
+                    valorMaximo = limite.atributos;
+                }
+            }
+
+            // Calcula a soma total de todos os atributos (Teste + Sorte)
+            const todosInputs = document.querySelectorAll('.atributos-teste input, .atributos-sorte input');
+            let somaTotal = 0;
+            todosInputs.forEach(input => {
+                somaTotal += parseInt(input.value) || 0;
+            });
+
+            // Atualiza ambos os contadores com a soma total
+            const spanTeste = document.querySelector('.atributos-teste h2 span');
+            const spanSorte = document.querySelector('.atributos-sorte h2 span');
+
+            if (spanTeste && spanSorte) {
+                spanTeste.textContent = `${somaTotal}/${valorMaximo}`;
+                spanSorte.textContent = `${somaTotal}/${valorMaximo}`;
+            }
+        }
+
+        // Função para lidar com a mudança de atributos
+        function mudarAtributo(input) {
+            // Garante que o valor está entre -5 e não tem limite superior
+            let valor = parseInt(input.value) || 0;
+            if (valor < -5) valor = -5;
+
+            // Atualiza o valor do input
+            input.value = valor;
+
+            // Atualiza os contadores
+            atualizarContadorAtributos();
+        }
+
+        // Inicializar os atributos e contadores
+        document.addEventListener('DOMContentLoaded', function () {
+            // Inicializa o nível
+            const nivelInput = document.getElementById('nivel-input');
+            if (nivelInput) {
+                atualizarNivel(nivelInput);
+                console.log('Nível inicializado');
+            } else {
+                console.error('Input de nível não encontrado');
+            }
+
+            // Adiciona eventos de mudança para todos os inputs de atributos
+            const atributosInputs = document.querySelectorAll('.atributos-teste input, .atributos-sorte input');
+            atributosInputs.forEach(input => {
+                input.addEventListener('change', function () {
+                    mudarAtributo(this);
+                });
+            });
+
+            // Inicializa os contadores
+            atualizarContadorAtributos();
+        });
+
+        // Função para rolar dados
+        function rolarDados(label) {
+            // Encontra o input associado ao label clicado
+            const input = label.nextElementSibling;
+            const valor = parseInt(input.value) || 0;
+            let quantidadeDados;
+            let resultados = [];
+
+            if (valor >= 1) {
+                // Se for positivo, rola a quantidade equivalente de dados e pega o maior
+                quantidadeDados = valor;
+                for (let i = 0; i < quantidadeDados; i++) {
+                    resultados.push(Math.floor(Math.random() * 20) + 1);
+                }
+                const maiorResultado = Math.max(...resultados);
+                mostrarResultadoDado(label, maiorResultado, resultados);
+            } else {
+                // Se for 0 ou negativo, calcula quantidade de dados e pega o pior resultado
+                if (valor === 0) {
+                    quantidadeDados = 2;
+                } else {
+                    // Para -1 são 3 dados, para -2 são 4 dados, etc
+                    quantidadeDados = Math.abs(valor) + 2;
+                }
+
+                // Rola a quantidade de dados calculada e pega o pior resultado
+                for (let i = 0; i < quantidadeDados; i++) {
+                    resultados.push(Math.floor(Math.random() * 20) + 1);
+                }
+                const piorResultado = Math.min(...resultados);
+                mostrarResultadoDado(label, piorResultado, resultados);
+            }
+        }
+
+        // Função para mostrar o resultado do dado
+        function mostrarResultadoDado(label, resultado, todosResultados) {
+            const popupResultado = document.createElement('div');
+            popupResultado.className = 'resultado-dado';
+
+            const resultadoClass = resultado === Math.max(...todosResultados) ? 'resultado-maior' : 'resultado-menor';
+            let mensagem = `<strong class="${resultadoClass}">${resultado}</strong>`;
+            mensagem += `<br><small>(${todosResultados.join(', ')})</small>`;
+
+            popupResultado.innerHTML = mensagem;
+
+            // Posiciona o popup próximo ao label
+            const rect = label.getBoundingClientRect();
+            popupResultado.style.position = 'fixed';
+            popupResultado.style.left = `${rect.left}px`;
+            popupResultado.style.top = `${rect.bottom + 5}px`;
+
+            document.body.appendChild(popupResultado);
+
+            // Remove o popup após 2 segundos
+            setTimeout(() => {
+                popupResultado.classList.add('fadeout');
+                setTimeout(() => {
+                    document.body.removeChild(popupResultado);
+                }, 300);
+            }, 2000);
+        }
+
+        // Adiciona o evento de clique para todos os labels de atributos
+        document.addEventListener('DOMContentLoaded', function () {
+            // ... existing code ...
+
+            // Adiciona o evento de clique para rolagem de dados nos labels
+            const atributosLabels = document.querySelectorAll('.atributos-teste label, .atributos-sorte label');
+            atributosLabels.forEach(label => {
+                label.style.cursor = 'pointer'; // Adiciona cursor pointer para indicar que é clicável
+                label.addEventListener('click', function () {
+                    rolarDados(this);
+                });
+            });
+        });
+
+        // Adiciona o evento de clique para rolagem de dados nas perícias
+        document.addEventListener('DOMContentLoaded', function () {
+            const periciasLabels = document.querySelectorAll('.pericia-item label');
+            periciasLabels.forEach(label => {
+                label.addEventListener('click', function () {
+                    rolarDados(this);
+                });
+            });
+        });
+
+        // Dados das perícias
+        const periciasData = {
+            'Força': ['Acrobacia', 'Escudos', 'Espadas', 'Luta'],
+            'Destreza': ['Arcos', 'Armadilhas', 'Armas de Fogo ( grandes )', 'Armas de Fogo ( pequenas )', 'Dardos', 'Explosivos', 'Furtividade', 'Iniciativa', 'Pilotagem', 'Pontaria', 'Reflexos'],
+            'Intelecto': ['Alquimia', 'Antropologia', 'Artes', 'Atualidades', 'Ciências', 'Cozinhar', 'Crime', 'Diplomacia', 'Enganação', 'Forense', 'Genealogia', 'Herbologia', 'História', 'Investigação', 'Medicina', 'Percepção', 'Psicologia', 'Raciocínio', 'Tecnologia', 'Trapaça', 'Vontade'],
+            'Carisma': ['Empatia', 'Intimidação', 'Lábia', 'Sedução'],
+            'Magia': ['Astrologia', 'Conhecimento Arcano', 'Conjuração', 'Demonologia', 'Encantamento', 'Exorcismo', 'Ilusão', 'Necromancia', 'Religião', 'Runas'],
+            'Constituição': ['Atletismo', 'Fortitude', 'Sobrevivência']
+        };
+
+        // Objeto para armazenar os valores das subperícias
+        const valoresPericias = {};
+
+        // Função para abrir o modal de perícias
+        function abrirModalPericia(tipo) {
+            const modal = document.getElementById('modal-pericias');
+            const titulo = document.getElementById('modal-pericia-titulo');
+            const lista = document.getElementById('modal-pericia-lista');
+
+            // Atualiza o título
+            titulo.textContent = `Perícias de ${tipo}`;
+
+            // Limpa a lista atual
+            lista.innerHTML = '';
+
+            // Inicializa o objeto de valores se não existir
+            if (!valoresPericias[tipo]) valoresPericias[tipo] = {};
+
+            // Adiciona as perícias do tipo selecionado
+            periciasData[tipo].forEach(pericia => {
+                const valorSalvo = valoresPericias[tipo][pericia] ?? 0;
+                const item = document.createElement('div');
+                item.className = 'pericia-item';
+                item.innerHTML = `
+                    <label>
+                        ${pericia}
+                        <img src="./img/dado.png" class="dado-icon" onclick="rolarD10(this)" alt="Rolar dado">
+                    </label>
+                    <div class="valor-container">
+                        <input type="number" value="${valorSalvo}" min="-5">
+                    </div>
+                `;
+                // Evento para salvar o valor ao alterar
+                item.querySelector('input').addEventListener('input', function () {
+                    valoresPericias[tipo][pericia] = parseInt(this.value) || 0;
+                });
+                lista.appendChild(item);
+            });
+
+            // Mostra o modal
+            modal.style.display = 'block';
+        }
+
+        // Função para fechar o modal
+        function fecharModalPericia() {
+            document.getElementById('modal-pericias').style.display = 'none';
+        }
+
+        // Fecha o modal quando clicar fora dele
+        window.onclick = function (event) {
+            const modal = document.getElementById('modal-pericias');
+            if (event.target == modal) {
+                fecharModalPericia();
+            }
+        }
+
+        // Adiciona o evento de clique para rolagem de dados nas perícias
+        document.addEventListener('DOMContentLoaded', function () {
+            const periciasLabels = document.querySelectorAll('.pericia-item label');
+            periciasLabels.forEach(label => {
+                label.addEventListener('click', function () {
+                    rolarDados(this);
+                });
+            });
+        });
+
+        // Função para rolar o d10
+        function rolarD10(elemento) {
+            const resultado = Math.floor(Math.random() * 10) + 1;
+            const input = elemento.closest('.pericia-item').querySelector('input');
+            input.value = resultado;
+            // Salva o valor sorteado
+            const label = elemento.closest('.pericia-item').querySelector('label').childNodes[0].textContent.trim();
+            const tipo = document.getElementById('modal-pericia-titulo').textContent.replace('Perícias de ', '').trim();
+            if (valoresPericias[tipo]) valoresPericias[tipo][label] = resultado;
+
+            // Efeito visual de rotação
+            elemento.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                elemento.style.transform = 'rotate(0deg)';
+            }, 500);
+        }
+
+        // Função para atualizar o valor máximo de vida com base em Resiliência
+        function atualizarVidaMaxima() {
+            // Pega o valor do atributo Resiliência
+            let resiliencia = 0;
+            document.querySelectorAll('.atributos-sorte .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Resiliência') {
+                    resiliencia = parseInt(item.querySelector('input').value) || 0;
+                }
+            });
+            // Calcula a vida máxima
+            const vidaMaxima = resiliencia * 3 + 20;
+            // Busca o status-item correto de Vida
+            document.querySelectorAll('.status-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.replace(/\s/g, '').includes('❤️Vida')) {
+                    // Atualiza o campo de vida máxima
+                    const vidaSpan = item.querySelector('span');
+                    if (vidaSpan) vidaSpan.textContent = vidaMaxima;
+                    // Atualiza o atributo max do input de vida
+                    const vidaInput = item.querySelector('input');
+                    if (vidaInput) vidaInput.max = vidaMaxima;
+                }
+            });
+        }
+
+        // Atualiza a vida máxima ao carregar a página e ao mudar Resiliência
+        document.addEventListener('DOMContentLoaded', function () {
+            atualizarVidaMaxima();
+            // Adiciona evento para atualizar ao mudar Resiliência
+            document.querySelectorAll('.atributos-sorte .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Resiliência') {
+                    item.querySelector('input').addEventListener('change', atualizarVidaMaxima);
+                }
+            });
+        });
+
+        // Função para atualizar o valor máximo de sanidade com base em Intelecto e Carisma
+        function atualizarSanidadeMaxima() {
+            let intelecto = 0;
+            let carisma = 0;
+            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Intelecto') {
+                    intelecto = parseInt(item.querySelector('input').value) || 0;
+                }
+                if (label && label.textContent.trim() === 'Carisma') {
+                    carisma = parseInt(item.querySelector('input').value) || 0;
+                }
+            });
+            // Calcula a sanidade máxima
+            const sanidadeMaxima = intelecto * 5 + carisma * 3 + 10;
+            // Busca o status-item correto de Sanidade
+            document.querySelectorAll('.status-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.replace(/\s/g, '').includes('🧠Sanidade')) {
+                    // Atualiza o campo de sanidade máxima
+                    const sanidadeSpan = item.querySelector('span');
+                    if (sanidadeSpan) sanidadeSpan.textContent = sanidadeMaxima;
+                    // Atualiza o atributo max do input de sanidade
+                    const sanidadeInput = item.querySelector('input');
+                    if (sanidadeInput) sanidadeInput.max = sanidadeMaxima;
+                }
+            });
+        }
+
+        // Atualiza a sanidade máxima ao carregar a página e ao mudar Intelecto ou Carisma
+        document.addEventListener('DOMContentLoaded', function () {
+            atualizarSanidadeMaxima();
+            // Adiciona evento para atualizar ao mudar Intelecto ou Carisma
+            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && (label.textContent.trim() === 'Intelecto' || label.textContent.trim() === 'Carisma')) {
+                    item.querySelector('input').addEventListener('change', atualizarSanidadeMaxima);
+                }
+            });
+        });
+
+        // Função para atualizar o valor máximo de mana com base em Magia
+        function atualizarManaMaxima() {
+            let magia = 0;
+            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Magia') {
+                    magia = parseInt(item.querySelector('input').value) || 0;
+                }
+            });
+            // Calcula a mana máxima
+            const manaMaxima = magia * 5 + 15;
+            // Busca o status-item correto de Mana
+            document.querySelectorAll('.status-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.replace(/\s/g, '').includes('⚡Mana')) {
+                    // Atualiza o campo de mana máxima
+                    const manaSpan = item.querySelector('span');
+                    if (manaSpan) manaSpan.textContent = manaMaxima;
+                    // Atualiza o atributo max do input de mana
+                    const manaInput = item.querySelector('input');
+                    if (manaInput) manaInput.max = manaMaxima;
+                }
+            });
+        }
+
+        // Atualiza a mana máxima ao carregar a página e ao mudar Magia
+        document.addEventListener('DOMContentLoaded', function () {
+            atualizarManaMaxima();
+            // Adiciona evento para atualizar ao mudar Magia
+            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Magia') {
+                    item.querySelector('input').addEventListener('change', atualizarManaMaxima);
+                }
+            });
+        });
+
+        // Função para atualizar o valor máximo de alma com base em Magia, Resiliência e Intelecto
+        function atualizarAlmaMaxima() {
+            let magia = 0;
+            let resiliencia = 0;
+            let intelecto = 0;
+            // Busca Magia e Intelecto nos atributos de teste
+            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Magia') {
+                    magia = parseInt(item.querySelector('input').value) || 0;
+                }
+                if (label && label.textContent.trim() === 'Intelecto') {
+                    intelecto = parseInt(item.querySelector('input').value) || 0;
+                }
+            });
+            // Busca Resiliência nos atributos de sorte
+            document.querySelectorAll('.atributos-sorte .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Resiliência') {
+                    resiliencia = parseInt(item.querySelector('input').value) || 0;
+                }
+            });
+            // Calcula a alma máxima
+            const almaMaxima = magia * 5 + resiliencia * 3 + intelecto * 2 + 15;
+            // Busca o status-item correto de Alma
+            document.querySelectorAll('.status-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.replace(/\s/g, '').includes('⭐Alma')) {
+                    // Atualiza o campo de alma máxima
+                    const almaSpan = item.querySelector('span');
+                    if (almaSpan) almaSpan.textContent = almaMaxima;
+                    // Atualiza o atributo max do input de alma
+                    const almaInput = item.querySelector('input');
+                    if (almaInput) almaInput.max = almaMaxima;
+                }
+            });
+        }
+
+        // Atualiza a alma máxima ao carregar a página e ao mudar Magia, Resiliência ou Intelecto
+        document.addEventListener('DOMContentLoaded', function () {
+            atualizarAlmaMaxima();
+            // Adiciona evento para atualizar ao mudar Magia ou Intelecto
+            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && (label.textContent.trim() === 'Magia' || label.textContent.trim() === 'Intelecto')) {
+                    item.querySelector('input').addEventListener('change', atualizarAlmaMaxima);
+                }
+            });
+            // Adiciona evento para atualizar ao mudar Resiliência
+            document.querySelectorAll('.atributos-sorte .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Resiliência') {
+                    item.querySelector('input').addEventListener('change', atualizarAlmaMaxima);
+                }
+            });
+        });
+
+        // ... existing code ...
+        // Função para atualizar a Defesa com base em Constituição
+        function atualizarDefesa() {
+            let constituicao = 0;
+            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Constituição') {
+                    constituicao = parseInt(item.querySelector('input').value) || 0;
+                }
+            });
+            const defesa = constituicao + 10;
+            // Busca o campo de Defesa de forma robusta
+            document.querySelectorAll('.status-combate .status-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.replace(/\s/g, '').toLowerCase() === 'defesa') {
+                    const defesaInput = item.querySelector('input');
+                    if (defesaInput) defesaInput.value = defesa;
+                }
+            });
+        }
+
+        // Atualiza a Defesa ao carregar a página e ao mudar Constituição
+        document.addEventListener('DOMContentLoaded', function () {
+            atualizarDefesa();
+            // Adiciona evento para atualizar ao mudar Constituição
+            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Constituição') {
+                    item.querySelector('input').addEventListener('input', atualizarDefesa);
+                }
+            });
+        });
+        // ... existing code ...
+
+        // ... existing code ...
+        // Função para atualizar a Esquiva com base em Defesa e Reflexos (Perícia)
+        function atualizarEsquiva() {
+            // Busca Defesa
+            let defesa = 10;
+            document.querySelectorAll('.status-combate .status-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Defesa') {
+                    defesa = parseInt(item.querySelector('input').value) || 0;
+                }
+            });
+            // Busca Reflexos (Perícia de Destreza)
+            let reflexos = 0;
+            // Procura a perícia Reflexos no modal de Destreza, se estiver aberto
+            document.querySelectorAll('.pericia-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Reflexos') {
+                    reflexos = parseInt(item.querySelector('input').value) || 0;
+                }
+            });
+            // Atualiza o campo de Esquiva
+            document.querySelectorAll('.status-combate .status-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Esquiva') {
+                    const esquivaInput = item.querySelector('input');
+                    if (esquivaInput) esquivaInput.value = defesa + reflexos;
+                }
+            });
+        }
+
+        // Atualiza a Esquiva ao carregar a página, ao mudar Constituição e ao mudar Reflexos
+        document.addEventListener('DOMContentLoaded', function () {
+            atualizarEsquiva();
+            // Atualiza ao mudar Constituição
+            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Constituição') {
+                    item.querySelector('input').addEventListener('input', atualizarEsquiva);
+                }
+            });
+            // Atualiza ao mudar Reflexos (quando o modal de Destreza estiver aberto)
+            document.body.addEventListener('input', function (e) {
+                if (e.target && e.target.closest('.pericia-item')) {
+                    const label = e.target.closest('.pericia-item').querySelector('label');
+                    if (label && label.textContent.trim() === 'Reflexos') {
+                        atualizarEsquiva();
+                    }
+                }
+            });
+        });
+        // ... existing code ...
+
+        // ... existing code ...
+        // Função para atualizar o Bloqueio com base em Constituição e Fortitude (Perícia)
+        function atualizarBloqueio() {
+            // Busca Constituição
+            let constituicao = 0;
+            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Constituição') {
+                    constituicao = parseInt(item.querySelector('input').value) || 0;
+                }
+            });
+            // Busca Fortitude (Perícia de Constituição)
+            let fortitude = 0;
+            document.querySelectorAll('.pericia-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Fortitude') {
+                    fortitude = parseInt(item.querySelector('input').value) || 0;
+                }
+            });
+            // Calcula o bloqueio
+            const bloqueio = Math.floor(constituicao * 2 + (fortitude / 2));
+            // Atualiza o campo de Bloqueio
+            document.querySelectorAll('.status-combate .status-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Bloqueio') {
+                    const bloqueioInput = item.querySelector('input');
+                    if (bloqueioInput) bloqueioInput.value = bloqueio;
+                }
+            });
+        }
+
+        // Atualiza o Bloqueio ao carregar a página, ao mudar Constituição e ao mudar Fortitude
+        document.addEventListener('DOMContentLoaded', function () {
+            atualizarBloqueio();
+            // Atualiza ao mudar Constituição
+            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Constituição') {
+                    item.querySelector('input').addEventListener('input', atualizarBloqueio);
+                }
+            });
+            // Atualiza ao mudar Fortitude (quando o modal de Constituição estiver aberto)
+            document.body.addEventListener('input', function (e) {
+                if (e.target && e.target.closest('.pericia-item')) {
+                    const label = e.target.closest('.pericia-item').querySelector('label');
+                    if (label && label.textContent.trim() === 'Fortitude') {
+                        atualizarBloqueio();
+                    }
+                }
+            });
+        });
+        // ... existing code ...
+
+        // INVENTÁRIO
+        function calcularCapacidadeInventario() {
+            let forca = 0;
+            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Força') {
+                    forca = parseInt(item.querySelector('input').value) || 0;
+                }
+            });
+            return 3 + (forca * 2);
+        }
+
+        function atualizarInventarioUI() {
+            const capacidade = calcularCapacidadeInventario();
+            const lista = document.getElementById('lista-itens');
+            const itens = lista.querySelectorAll('.item-inventario');
+            document.getElementById('capacidade-inventario').textContent = capacidade;
+            document.getElementById('contador-itens').textContent = itens.length;
+            document.getElementById('adicionar-item').disabled = itens.length >= capacidade;
+        }
+
+        function adicionarItemInventario(valor = '') {
+            const lista = document.getElementById('lista-itens');
+            const capacidade = calcularCapacidadeInventario();
+            if (lista.querySelectorAll('.item-inventario').length >= capacidade) return;
+            const div = document.createElement('div');
+            div.className = 'item-inventario';
+            div.innerHTML = `<input type="text" placeholder="Nome do item" value="${valor}"><button type="button" title="Remover">✖</button>`;
+            div.querySelector('button').onclick = function () {
+                div.remove();
+                atualizarInventarioUI();
+            };
+            lista.appendChild(div);
+            atualizarInventarioUI();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            atualizarInventarioUI();
+            document.getElementById('adicionar-item').onclick = function () {
+                adicionarItemInventario();
+            };
+            // Atualiza capacidade ao mudar Força
+            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+                const label = item.querySelector('label');
+                if (label && label.textContent.trim() === 'Força') {
+                    item.querySelector('input').addEventListener('input', function () {
+                        atualizarInventarioUI();
+                        // Remove itens extras se capacidade diminuir
+                        const capacidade = calcularCapacidadeInventario();
+                        const lista = document.getElementById('lista-itens');
+                        while (lista.querySelectorAll('.item-inventario').length > capacidade) {
+                            lista.lastChild.remove();
+                        }
+                    });
+                }
+            });
+        });
+
+        document.getElementById('nivel-input').addEventListener('input', function () {
+            const progress = document.querySelector('.progress');
+            progress.style.width = this.value + '%';
+        });
     </script>
 </body>
 
