@@ -41,7 +41,8 @@ function atualizarNivel() {
 
     if (nivelInput && nivelProgress) {
         const nivel = parseInt(nivelInput.value) || 0;
-        const porcentagem = (nivel % 10) * 10;
+        // Calcula a porcentagem diretamente baseada no nível (0-100)
+        const porcentagem = Math.min(nivel, 100);
         nivelProgress.style.width = `${porcentagem}%`;
 
         // Atualizar pontos disponíveis
