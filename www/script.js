@@ -5,88 +5,655 @@ function toggleTheme() {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
     root.setAttribute('data-theme', newTheme);
-
-    // Salva a preferência do usuário
     localStorage.setItem('theme', newTheme);
 
-    // Atualiza o ícone do botão
     const themeIcon = document.querySelector('#themeIcon');
     themeIcon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Inicializar a barra de nível
-    const nivelInput = document.getElementById('nivel');
-    const nivelProgress = document.getElementById('nivel-progress');
-    if (nivelInput) {
-        atualizarNivel();
+function atualizarBarra(statusItem) {
+    if (!statusItem) return;
+
+    const input = statusItem.querySelector('input');
+    const maxValue = statusItem.querySelector('span')?.textContent;
+    const barra = statusItem.querySelector('.barra-progresso');
+
+    if (input && maxValue && barra) {
+        const valor = parseInt(input.value) || 0;
+        const max = parseInt(maxValue) || 100;
+        const porcentagem = (valor / max) * 100;
+        barra.style.setProperty('--progresso', `${porcentagem}%`);
     }
+}
 
-    // Atualizar barras de progresso dos status vitais
-    const statusItems = document.querySelectorAll('.status-item');
-    statusItems.forEach(item => {
-        const input = item.querySelector('input');
-        const maxValue = item.querySelector('span').textContent;
-        const barra = item.querySelector('.barra-progresso');
+function getCorBarra(label) {
+    const cores = {
+        'Vida': '#ff0000',
+        'Energia': '#0000ff',
+        'Sanidade': '#00ff00'
+    };
+    return cores[label] || '#gray';
+}
 
-        function atualizarBarra() {
-            const porcentagem = (input.value / maxValue) * 100;
-            barra.style.setProperty('--progresso', `${porcentagem}%`);
+function atualizarNivel() {
+    const nivelInput = document.getElementById('nivel-input');
+    const nivelProgress = document.getElementById('nivel-progress');
 
-            // Define a cor da barra baseado no tipo de status
-            let corBarra = '#4CAF50'; // Verde padrão
-            if (item.querySelector('label').textContent.includes('❤️')) corBarra = '#ff4444'; // Vermelho para vida
-            if (item.querySelector('label').textContent.includes('🧠')) corBarra = '#9933cc'; // Roxo para mana
-            if (item.querySelector('label').textContent.includes('⚡')) corBarra = '#33b5e5'; // Azul para alma
-            if (item.querySelector('label').textContent.includes('⭐')) corBarra = '#ffd700'; // Amarelo para sanidade
+    if (nivelInput && nivelProgress) {
+        const nivel = parseInt(nivelInput.value) || 0;
+        const porcentagem = (nivel % 10) * 10;
+        nivelProgress.style.width = `${porcentagem}%`;
 
-            barra.style.setProperty('--cor-barra', corBarra);
+        // Atualizar pontos disponíveis
+        const pontosDisponiveis = nivel * 5;
+        const contadorDados = document.querySelector('.contador-dados');
+        if (contadorDados) {
+            contadorDados.textContent = pontosDisponiveis;
         }
 
-        // Adiciona evento de clique na barra
-        barra.addEventListener('click', (e) => {
-            const rect = barra.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const porcentagem = (x / rect.width) * 100;
-            const novoValor = Math.round((porcentagem / 100) * maxValue);
+        // Atualizar contador de atributos
+        atualizarContadorAtributos();
+    }
+}
 
-            input.value = novoValor;
-            atualizarBarra();
-        });
+function atualizarContadorAtributos() {
+    const nivelInput = document.getElementById('nivel-input');
+    const contadorSpan = document.querySelector('.contador-atributos');
 
-        input.addEventListener('input', () => {
-            if (input.value < 0) input.value = 0;
-            if (input.value > maxValue) input.value = maxValue;
-            atualizarBarra();
-        });
+    if (nivelInput && contadorSpan) {
+        const nivel = parseInt(nivelInput.value) || 0;
+        const pontosDisponiveis = nivel * 5;
+        contadorSpan.textContent = pontosDisponiveis;
 
-        atualizarBarra();
-    });
-
-    // Atualizar contadores de atributos
-    const secoes = ['atributos-teste', 'atributos-sorte'];
-    secoes.forEach(secao => {
-        const inputs = document.querySelector(`.${secao}`).querySelectorAll('input');
-        const contador = document.querySelector(`.${secao} h2 span`);
-
+        // Atualizar dados
+        const inputs = document.querySelectorAll('.dados-container input');
         inputs.forEach(input => {
-            input.addEventListener('input', () => {
-                if (input.value < 0) input.value = 0;
-                if (input.value > 12) input.value = 12;
-
-                const total = Array.from(inputs).reduce((sum, inp) => sum + Number(inp.value), 0);
-                contador.textContent = `${total}/12`;
-            });
+            const maxValue = Math.min(pontosDisponiveis, 20); // Máximo de 20 pontos por atributo
+            if (parseInt(input.value) > maxValue) {
+                input.value = maxValue;
+            }
         });
+    }
+}
+
+// Função para abrir o modal de perícias
+function abrirModalPericia(tipo) {
+    const modal = document.getElementById('modal-pericias');
+    const titulo = document.getElementById('modal-pericia-titulo');
+    const lista = document.getElementById('modal-pericia-lista');
+
+    // Atualiza o título
+    titulo.textContent = `Perícias de ${tipo}`;
+
+    // Limpa a lista atual
+    lista.innerHTML = '';
+
+    // Inicializa o objeto de valores se não existir
+    if (!valoresPericias[tipo]) valoresPericias[tipo] = {};
+
+    // Adiciona as perícias do tipo selecionado
+    periciasData[tipo].forEach(pericia => {
+        const valorSalvo = valoresPericias[tipo][pericia] ?? 0;
+        console.log(`Carregando perícia ${pericia} do tipo ${tipo} com valor:`, valorSalvo);
+
+        const item = document.createElement('div');
+        item.className = 'pericia-item';
+        item.innerHTML = `
+            <label>
+                ${pericia}
+                <img src="./img/dado.png" class="dado-icon" onclick="rolarD10(this)" alt="Rolar dado">
+            </label>
+            <div class="valor-container">
+                <input type="number" value="${valorSalvo}" min="-5">
+            </div>
+        `;
+
+        // Evento para salvar o valor ao alterar
+        const input = item.querySelector('input');
+        input.addEventListener('input', function () {
+            const novoValor = parseInt(this.value) || 0;
+            valoresPericias[tipo][pericia] = novoValor;
+            console.log(`Valor atualizado: ${tipo} -> ${pericia} = ${novoValor}`);
+        });
+
+        lista.appendChild(item);
     });
 
-    // Função para determinar a cor da barra baseado no tipo de status
-    function getCorBarra(label) {
-        if (label.includes('❤️')) return '#ff4444';
-        if (label.includes('🧠')) return '#9933cc';
-        if (label.includes('⚡')) return '#33b5e5';
-        if (label.includes('⭐')) return 'var(--cor-primaria)';
-        return 'var(--cor-cinza)';
+    // Mostra o modal
+    modal.style.display = 'block';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM carregado, iniciando...');
+
+    // Carregar dados da API
+    if (window.location.pathname.includes('index.html')) {
+        console.log('Carregando dados da API...');
+        fetch('https://sistema-dos-deuses-o9ih.onrender.com/items')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erro ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(dados => {
+                if (!dados || !Array.isArray(dados)) {
+                    console.error('Dados inválidos recebidos da API:', dados);
+                    return;
+                }
+
+                // Pegar o último registro (mais recente)
+                const dadosRecentes = dados[dados.length - 1];
+                if (!dadosRecentes) {
+                    console.log('Nenhum dado encontrado');
+                    return;
+                }
+
+                console.log('Carregando dados:', dadosRecentes);
+
+                try {
+                    // No carregamento
+                    console.log('Dados recebidos para carregar:', dadosRecentes);
+
+                    // Carregar nível
+                    const nivelInput = document.getElementById('nivel-input');
+                    if (nivelInput && dadosRecentes.nivel !== undefined) {
+                        const nivelValue = parseInt(dadosRecentes.nivel) || 0;
+                        console.log('Nível antes do carregamento:', nivelInput.value);
+                        console.log('Nível a ser carregado:', nivelValue);
+                        nivelInput.value = nivelValue;
+                        nivelInput.dispatchEvent(new Event('input'));
+                        console.log('Nível após carregamento:', nivelInput.value);
+                        atualizarNivel();
+                    } else {
+                        console.error('Elemento de nível não encontrado ou dados inválidos:', {
+                            elementoEncontrado: !!nivelInput,
+                            nivelNosDados: dadosRecentes.nivel
+                        });
+                    }
+
+                    // Carregar informações do personagem
+                    if (dadosRecentes.infoPersonagem) {
+                        console.log('Carregando informações do personagem:', dadosRecentes.infoPersonagem);
+                        const campos = {
+                            raca: 'Raça',
+                            classe: 'Classe',
+                            origem: 'Origem'
+                        };
+
+                        Object.entries(campos).forEach(([key, placeholder]) => {
+                            const input = document.querySelector(`input[placeholder="${placeholder}"]`);
+                            if (input && dadosRecentes.infoPersonagem[key]) {
+                                console.log(`Carregando ${key} - Valor anterior:`, input.value);
+                                input.value = dadosRecentes.infoPersonagem[key];
+                                console.log(`${key} carregado - Novo valor:`, input.value);
+                            } else {
+                                console.error(`Erro ao carregar ${key}:`, {
+                                    inputEncontrado: !!input,
+                                    valorNosDados: dadosRecentes.infoPersonagem[key]
+                                });
+                            }
+                        });
+                    }
+
+                    // Carregar perícias
+                    if (Array.isArray(dadosRecentes.pericias)) {
+                        console.log('Iniciando carregamento de perícias:', dadosRecentes.pericias);
+
+                        // Agrupar perícias por categoria
+                        dadosRecentes.pericias.forEach(pericia => {
+                            if (!pericia || !pericia.nome) {
+                                console.error('Perícia inválida:', pericia);
+                                return;
+                            }
+
+                            // Encontrar a categoria da perícia
+                            let categoriaEncontrada = null;
+                            for (const [categoria, pericias] of Object.entries(periciasData)) {
+                                if (pericias.includes(pericia.nome)) {
+                                    categoriaEncontrada = categoria;
+                                    break;
+                                }
+                            }
+
+                            if (categoriaEncontrada) {
+                                // Inicializar a categoria se não existir
+                                if (!valoresPericias[categoriaEncontrada]) {
+                                    valoresPericias[categoriaEncontrada] = {};
+                                }
+
+                                // Armazenar o valor
+                                valoresPericias[categoriaEncontrada][pericia.nome] = pericia.valor;
+                                console.log(`Valor carregado: ${categoriaEncontrada} -> ${pericia.nome} = ${pericia.valor}`);
+                            } else {
+                                console.error(`Categoria não encontrada para perícia: ${pericia.nome}`);
+                            }
+                        });
+
+                        console.log('Estado final dos valores das perícias:', valoresPericias);
+                    } else {
+                        console.error('Dados de perícias inválidos:', dadosRecentes.pericias);
+                    }
+
+                    // Carregar informações básicas
+                    if (dadosRecentes.informacoesBasicas) {
+                        const mapeamentoCampos = {
+                            nome: 'Nome do personagem',
+                            idade: 'Idade',
+                            dataNascimento: 'Ex: 01/01/1990',
+                            altura: 'Ex: 1,75m',
+                            tipoSanguineo: 'Ex: A+',
+                            sexualidade: 'Sexualidade'
+                        };
+
+                        Object.entries(dadosRecentes.informacoesBasicas).forEach(([campo, valor]) => {
+                            const placeholder = mapeamentoCampos[campo];
+                            if (placeholder) {
+                                const input = document.querySelector(`[placeholder="${placeholder}"]`);
+                                if (input) {
+                                    input.value = valor || '';
+                                    console.log(`Campo ${campo} carregado:`, valor);
+                                }
+                            }
+                        });
+                    }
+
+                    // Carregar status vitais
+                    if (dadosRecentes.statusVitais) {
+                        dadosRecentes.statusVitais.forEach(status => {
+                            const item = Array.from(document.querySelectorAll('.status-item'))
+                                .find(el => el.querySelector('label')?.textContent.trim() === status.tipo);
+                            if (item) {
+                                const input = item.querySelector('input');
+                                const span = item.querySelector('span');
+                                if (input) input.value = status.valor || '0';
+                                if (span) span.textContent = status.maximo || '100';
+                                atualizarBarra(item);
+                                console.log(`Status ${status.tipo} carregado:`, status);
+                            }
+                        });
+                    }
+
+                    // Carregar status de combate
+                    if (dadosRecentes.statusCombate) {
+                        const statusCombate = {
+                            defesa: 'Defesa',
+                            esquiva: 'Esquiva',
+                            bloqueio: 'Bloqueio'
+                        };
+
+                        Object.entries(statusCombate).forEach(([key, label]) => {
+                            const input = document.querySelector(`.status-combate input[placeholder="${label}"]`);
+                            if (input && dadosRecentes.statusCombate[key]) {
+                                input.value = dadosRecentes.statusCombate[key];
+                                console.log(`${label} carregado:`, input.value);
+                            }
+                        });
+                    }
+
+                    // Carregar atributos
+                    ['atributosTeste', 'atributosSorte'].forEach(tipo => {
+                        if (dadosRecentes[tipo]) {
+                            dadosRecentes[tipo].forEach(atributo => {
+                                const container = tipo === 'atributosTeste' ? '.atributos-teste' : '.atributos-sorte';
+                                const item = Array.from(document.querySelectorAll(`${container} .atributo-item`))
+                                    .find(el => el.querySelector('label')?.textContent === atributo.nome);
+
+                                if (item) {
+                                    const input = item.querySelector('input');
+                                    if (input) {
+                                        input.value = atributo.valor || '0';
+                                        input.dispatchEvent(new Event('input'));
+                                        console.log(`${tipo} ${atributo.nome} carregado:`, atributo.valor);
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+                    // Carregar inventário
+                    if (dadosRecentes.inventario) {
+                        const container = document.querySelector('.inventario-container');
+                        if (container) {
+                            container.innerHTML = ''; // Limpar inventário existente
+
+                            dadosRecentes.inventario.forEach(item => {
+                                const itemElement = document.createElement('div');
+                                itemElement.className = 'inventario-item';
+                                itemElement.innerHTML = `
+                                    <input type="text" placeholder="Nome do item" value="${item.nome || ''}">
+                                    <input type="text" placeholder="Descrição" value="${item.descricao || ''}">
+                                    <input type="number" placeholder="Peso" value="${item.peso || '0'}">
+                                    <input type="number" placeholder="Quantidade" value="${item.quantidade || '1'}">
+                                `;
+                                container.appendChild(itemElement);
+                                console.log('Item do inventário carregado:', item);
+                            });
+                        }
+                    }
+
+                    // Atualizar todos os contadores e cálculos
+                    atualizarNivel();
+                    atualizarContadorAtributos();
+                    document.querySelectorAll('.status-item').forEach(item => atualizarBarra(item));
+
+                    console.log('Carregamento concluído com sucesso!');
+                } catch (error) {
+                    console.error('Erro ao carregar dados:', error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar dados da API:', error);
+            });
+    }
+
+    const botaoSalvar = document.querySelector('.salvar');
+    console.log('Botão de salvar encontrado:', botaoSalvar);
+
+    if (botaoSalvar) {
+        botaoSalvar.addEventListener('click', () => {
+            console.log('Botão de salvar clicado!');
+
+            if (!window.location.pathname.includes('index.html')) {
+                console.log('Não estamos na página principal - ignorando função de salvar');
+                return;
+            }
+
+            // Criar e mostrar o spinner
+            const spinnerOverlay = document.createElement('div');
+            spinnerOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            `;
+
+            const spinnerContainer = document.createElement('div');
+            spinnerContainer.style.cssText = `
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                text-align: center;
+                box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            `;
+
+            const spinner = document.createElement('div');
+            spinner.style.cssText = `
+                width: 50px;
+                height: 50px;
+                border: 5px solid #f3f3f3;
+                border-top: 5px solid #F2780C;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 10px auto;
+            `;
+
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
+
+            const spinnerText = document.createElement('div');
+            spinnerText.textContent = 'Salvando...';
+            spinnerText.style.cssText = `
+                color: #333;
+                font-family: Arial, sans-serif;
+                font-size: 16px;
+                margin-top: 10px;
+            `;
+
+            spinnerContainer.appendChild(spinner);
+            spinnerContainer.appendChild(spinnerText);
+            spinnerOverlay.appendChild(spinnerContainer);
+            document.body.appendChild(spinnerOverlay);
+
+            try {
+                const mapeamentoCampos = {
+                    nome: 'Nome do personagem',
+                    idade: 'Idade',
+                    dataNascimento: 'Ex: 01/01/1990',
+                    altura: 'Ex: 1,75m',
+                    tipoSanguineo: 'Ex: A+',
+                    sexualidade: 'Sexualidade'
+                };
+
+                // Coletar nível
+                const nivelInput = document.getElementById('nivel-input');
+                if (!nivelInput) {
+                    console.error('Input de nível não encontrado');
+                } else {
+                    console.log('Input de nível encontrado:', nivelInput.value);
+                }
+                const nivel = nivelInput ? parseInt(nivelInput.value) || 0 : 0;
+                console.log('Salvando nível:', nivel);
+
+                // Coletar informações do personagem
+                const infoPersonagem = {
+                    raca: document.querySelector('input[placeholder="Raça"]')?.value || '',
+                    classe: document.querySelector('input[placeholder="Classe"]')?.value || '',
+                    origem: document.querySelector('input[placeholder="Origem"]')?.value || ''
+                };
+                console.log('Salvando informações do personagem:', infoPersonagem);
+
+                // Coletar perícias de todas as categorias
+                const pericias = [];
+                Object.entries(valoresPericias).forEach(([categoria, periciasCategoria]) => {
+                    Object.entries(periciasCategoria).forEach(([nome, valor]) => {
+                        pericias.push({ nome, valor });
+                        console.log(`Coletando perícia para salvar - Categoria: ${categoria}, Nome: ${nome}, Valor: ${valor}`);
+                    });
+                });
+
+                console.log('Perícias coletadas para salvar:', pericias);
+
+                const dados = {
+                    nivel,
+                    infoPersonagem,
+                    pericias,
+                    informacoesBasicas: Object.entries(mapeamentoCampos).reduce((acc, [campo, placeholder]) => {
+                        const input = document.querySelector(`[placeholder="${placeholder}"]`);
+                        acc[campo] = input ? input.value : '';
+                        return acc;
+                    }, {}),
+                    statusVitais: Array.from(document.querySelectorAll('.status-item')).map(item => {
+                        const label = item.querySelector('label');
+                        const input = item.querySelector('input');
+                        const span = item.querySelector('span');
+                        return {
+                            tipo: label ? label.textContent.trim() : '',
+                            valor: input ? input.value : '0',
+                            maximo: span ? span.textContent : '100'
+                        };
+                    }),
+                    statusCombate: {
+                        defesa: document.querySelector('.status-combate input[placeholder="Defesa"]')?.value || '10',
+                        esquiva: document.querySelector('.status-combate input[placeholder="Esquiva"]')?.value || '10',
+                        bloqueio: document.querySelector('.status-combate input[placeholder="Bloqueio"]')?.value || '0'
+                    },
+                    atributosTeste: Array.from(document.querySelectorAll('.atributos-teste .atributo-item')).map(item => {
+                        const label = item.querySelector('label');
+                        const input = item.querySelector('input');
+                        return {
+                            nome: label ? label.textContent : '',
+                            valor: input ? input.value : '0'
+                        };
+                    }),
+                    atributosSorte: Array.from(document.querySelectorAll('.atributos-sorte .atributo-item')).map(item => {
+                        const label = item.querySelector('label');
+                        const input = item.querySelector('input');
+                        return {
+                            nome: label ? label.textContent : '',
+                            valor: input ? input.value : '0'
+                        };
+                    }),
+                    inventario: Array.from(document.querySelectorAll('.inventario-item')).map(item => {
+                        return {
+                            nome: item.querySelector('input[placeholder="Nome do item"]')?.value || '',
+                            descricao: item.querySelector('input[placeholder="Descrição"]')?.value || '',
+                            peso: item.querySelector('input[placeholder="Peso"]')?.value || '0',
+                            quantidade: item.querySelector('input[placeholder="Quantidade"]')?.value || '1'
+                        };
+                    })
+                };
+
+                console.log('Dados completos sendo salvos:', dados);
+
+                // Primeiro, buscar dados existentes
+                fetch('https://sistema-dos-deuses-o9ih.onrender.com/items')
+                    .then(response => response.json())
+                    .then(dadosExistentes => {
+                        let fetchPromise;
+                        let isUpdate = false;
+
+                        // Se já existem dados, atualizar o último registro
+                        if (Array.isArray(dadosExistentes) && dadosExistentes.length > 0) {
+                            const ultimoId = dadosExistentes[dadosExistentes.length - 1].id;
+                            console.log('Atualizando registro existente:', ultimoId);
+                            isUpdate = true;
+
+                            fetchPromise = fetch(`https://sistema-dos-deuses-o9ih.onrender.com/items/${ultimoId}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(dados)
+                            });
+                        } else {
+                            console.log('Criando novo registro');
+                            fetchPromise = fetch('https://sistema-dos-deuses-o9ih.onrender.com/items', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(dados)
+                            });
+                        }
+
+                        return fetchPromise.then(response => {
+                            if (!response.ok) {
+                                throw new Error(`Erro ${response.status}: ${response.statusText}`);
+                            }
+                            return response.json().then(data => ({ data, isUpdate }));
+                        });
+                    })
+                    .then(({ data, isUpdate }) => {
+                        // Remover o spinner
+                        spinnerOverlay.remove();
+
+                        console.log('Dados salvos com sucesso:', data);
+
+                        // Criar mensagem detalhada
+                        let mensagem = 'Dados salvos com sucesso!\n\n';
+                        mensagem += `Nível: ${dados.nivel}\n`;
+                        mensagem += `Raça: ${dados.infoPersonagem.raca}\n`;
+                        mensagem += `Classe: ${dados.infoPersonagem.classe}\n`;
+                        mensagem += `Origem: ${dados.infoPersonagem.origem}\n`;
+                        mensagem += `Perícias salvas: ${dados.pericias.length}\n`;
+
+                        // Mostrar mensagem em um alert estilizado
+                        const modalMensagem = document.createElement('div');
+                        modalMensagem.style.cssText = `
+                            position: fixed;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            background: rgba(242, 120, 12, 0.9);
+                            color: white;
+                            padding: 20px;
+                            border-radius: 10px;
+                            z-index: 1000;
+                            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+                            font-family: Arial, sans-serif;
+                            white-space: pre-line;
+                            text-align: left;
+                        `;
+                        modalMensagem.textContent = mensagem;
+
+                        // Adicionar botão de fechar
+                        const botaoFechar = document.createElement('button');
+                        botaoFechar.textContent = '✕';
+                        botaoFechar.style.cssText = `
+                            position: absolute;
+                            top: 5px;
+                            right: 5px;
+                            background: none;
+                            border: none;
+                            color: white;
+                            font-size: 20px;
+                            cursor: pointer;
+                            padding: 5px;
+                        `;
+                        botaoFechar.onclick = () => modalMensagem.remove();
+                        modalMensagem.appendChild(botaoFechar);
+
+                        // Remover automaticamente após 5 segundos
+                        document.body.appendChild(modalMensagem);
+                        setTimeout(() => modalMensagem.remove(), 5000);
+                    })
+                    .catch(error => {
+                        // Remover o spinner
+                        spinnerOverlay.remove();
+
+                        console.error('Erro ao salvar dados:', error);
+
+                        // Mostrar mensagem de erro
+                        const modalErro = document.createElement('div');
+                        modalErro.style.cssText = `
+                            position: fixed;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            background: rgba(220, 53, 69, 0.9);
+                            color: white;
+                            padding: 20px;
+                            border-radius: 10px;
+                            z-index: 1000;
+                            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+                            font-family: Arial, sans-serif;
+                            white-space: pre-line;
+                            text-align: left;
+                        `;
+                        modalErro.textContent = `Erro ao salvar os dados:\n${error.message}`;
+
+                        // Adicionar botão de fechar
+                        const botaoFechar = document.createElement('button');
+                        botaoFechar.textContent = '✕';
+                        botaoFechar.style.cssText = `
+                            position: absolute;
+                            top: 5px;
+                            right: 5px;
+                            background: none;
+                            border: none;
+                            color: white;
+                            font-size: 20px;
+                            cursor: pointer;
+                            padding: 5px;
+                        `;
+                        botaoFechar.onclick = () => modalErro.remove();
+                        modalErro.appendChild(botaoFechar);
+
+                        // Remover automaticamente após 5 segundos
+                        document.body.appendChild(modalErro);
+                        setTimeout(() => modalErro.remove(), 5000);
+                    });
+            } catch (error) {
+                // Remover o spinner em caso de erro na coleta de dados
+                spinnerOverlay.remove();
+
+                console.error('Erro ao coletar dados:', error);
+                alert('Erro ao coletar os dados do formulário: ' + error.message);
+            }
+        });
     }
 
     // Botões do cabeçalho
@@ -100,46 +667,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Observações');
     });
 
-    document.querySelector('.salvar').addEventListener('click', () => {
-        // Implementar função de salvar
-        const dados = {
-            informacoesBasicas: {
-                nome: document.querySelector('[placeholder="Nome do personagem"]').value,
-                idade: document.querySelector('[placeholder="Idade"]').value,
-                dataNascimento: document.querySelector('[placeholder="Ex: 01/01/1990"]').value,
-                altura: document.querySelector('[placeholder="Ex: 1,75m"]').value,
-                tipoSanguineo: document.querySelector('[placeholder="Ex: A+"]').value,
-                sexualidade: document.querySelector('[placeholder="Sexualidade"]').value
-            },
-            statusVitais: Array.from(document.querySelectorAll('.status-item')).map(item => ({
-                tipo: item.querySelector('label').textContent.trim(),
-                valor: item.querySelector('input').value,
-                maximo: item.querySelector('span').textContent
-            })),
-            statusCombate: {
-                defesa: document.querySelector('.status-combate input[value="10"]').value,
-                esquiva: document.querySelector('.status-combate input[value="10"]').value,
-                bloqueio: document.querySelector('.status-combate input[value="0"]').value
-            },
-            infoPersonagem: {
-                raca: document.querySelector('[placeholder="Raça"]').value,
-                classe: document.querySelector('[placeholder="Classe"]').value,
-                origem: document.querySelector('[placeholder="Origem"]').value
-            },
-            atributosTeste: Array.from(document.querySelectorAll('.atributos-teste .atributo-item')).map(item => ({
-                nome: item.querySelector('label').textContent,
-                valor: item.querySelector('input').value
-            })),
-            atributosSorte: Array.from(document.querySelectorAll('.atributos-sorte .atributo-item')).map(item => ({
-                nome: item.querySelector('label').textContent,
-                valor: item.querySelector('input').value
-            }))
-        };
-
-        console.log('Dados salvos:', dados);
-        // Aqui você pode implementar a chamada para sua API para salvar os dados
-    });
-
     // Carrega a preferência do usuário ao iniciar
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
@@ -149,27 +676,3 @@ document.addEventListener('DOMContentLoaded', () => {
         themeIcon.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
     }
 });
-
-function atualizarNivel() {
-    const nivelInput = document.getElementById('nivel');
-    const nivelProgress = document.getElementById('nivel-progress');
-    const nivel = parseInt(nivelInput.value) || 0;
-
-    // Limita o valor entre 0 e 100
-    nivelInput.value = Math.min(Math.max(nivel, 0), 100);
-
-    // Atualiza a barra de progresso
-    nivelProgress.style.width = `${nivelInput.value}%`;
-
-    // Atualiza o contador de atributos baseado no nível
-    atualizarContadorAtributos();
-}
-
-function atualizarContadorAtributos() {
-    const nivel = parseInt(document.getElementById('nivel').value) || 0;
-    const contador = document.querySelector('.atributos-teste h2 span');
-    const totalAtributos = 12;
-    const atributosAtivos = Math.min(Math.max(nivel, 0), totalAtributos);
-
-    contador.textContent = `${atributosAtivos}/${totalAtributos}`;
-} 
