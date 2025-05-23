@@ -1,3 +1,5 @@
+console.log('script.js carregado');
+
 // Função para alternar o tema
 function toggleTheme() {
     const root = document.documentElement;
@@ -78,7 +80,8 @@ function atualizarContadorAtributos() {
 }
 
 // Função para abrir o modal de perícias
-function abrirModalPericia(tipo) {
+window.abrirModalPericia = function abrirModalPericia(tipo) {
+    console.log('[GLOBAL abrirModalPericia] chamada para tipo:', tipo);
     const modal = document.getElementById('modal-pericias');
     const titulo = document.getElementById('modal-pericia-titulo');
     const lista = document.getElementById('modal-pericia-lista');
@@ -94,8 +97,15 @@ function abrirModalPericia(tipo) {
 
     // Adiciona as perícias do tipo selecionado
     periciasData[tipo].forEach(pericia => {
-        const valorSalvo = valoresPericias[tipo][pericia] ?? 0;
-        console.log(`Carregando perícia ${pericia} do tipo ${tipo} com valor:`, valorSalvo);
+        const valorBase = valoresPericias[tipo][pericia] ?? 0;
+        const tipoKey = normalizarChave(tipo);
+        const labelKey = normalizarChave(pericia);
+        let d10 = 0;
+        if (window.dadosRoladosPericias && window.dadosRoladosPericias[tipoKey] && typeof window.dadosRoladosPericias[tipoKey][labelKey] !== 'undefined') {
+            d10 = parseInt(window.dadosRoladosPericias[tipoKey][labelKey]) || 0;
+        }
+        const valorExibido = valorBase + d10;
+        console.log(`[abrirModalPericia] ${tipo} - ${pericia}: valorBase=${valorBase}, d10=${d10}, valorExibido=${valorExibido}`);
 
         const item = document.createElement('div');
         item.className = 'pericia-item';
@@ -105,7 +115,7 @@ function abrirModalPericia(tipo) {
                 <img src="./img/dado.png" class="dado-icon" onclick="rolarD10(this)" alt="Rolar dado">
             </label>
             <div class="valor-container">
-                <input type="number" value="${valorSalvo}" min="-5">
+                <input type="number" value="${valorExibido}" min="-5">
             </div>
         `;
 
@@ -113,12 +123,14 @@ function abrirModalPericia(tipo) {
         const input = item.querySelector('input');
         input.addEventListener('input', function () {
             const novoValor = parseInt(this.value) || 0;
+            // Ao editar manualmente, zera o d10 salvo
             valoresPericias[tipo][pericia] = novoValor;
-            console.log(`Valor atualizado: ${tipo} -> ${pericia} = ${novoValor}`);
+            if (window.dadosRoladosPericias && window.dadosRoladosPericias[tipoKey]) {
+                window.dadosRoladosPericias[tipoKey][labelKey] = 0;
+            }
+            console.log(`[input] ${tipo} - ${pericia}: novoValor=${novoValor}, d10 zerado`);
 
             // Atualizar Esquiva se Reflexos, ou Bloqueio se Fortitude
-            const tipoKey = normalizarChave(tipo);
-            const labelKey = normalizarChave(pericia);
             if (tipoKey === normalizarChave('Destreza') && labelKey === normalizarChave('Reflexos')) {
                 atualizarEsquiva();
             }
@@ -132,6 +144,9 @@ function abrirModalPericia(tipo) {
 
     // Mostra o modal
     modal.style.display = 'block';
+    // Log geral ao abrir o modal
+    console.log('[abrirModalPericia] valoresPericias:', window.valoresPericias);
+    console.log('[abrirModalPericia] dadosRoladosPericias:', window.dadosRoladosPericias);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -140,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Carregar dados da API
     if (window.location.pathname.includes('index.html')) {
         console.log('Carregando dados da API...');
-        fetch('https://sistema-dos-deuses-o9ih.onrender.com/items')
+        fetch('https://sistem-h473.onrender.com/items')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`Erro ${response.status}: ${response.statusText}`);
@@ -242,8 +257,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
 
                         console.log('Estado final dos valores das perícias:', valoresPericias);
+                        console.log('Após carregar: valoresPericias =', window.valoresPericias);
                     } else {
                         console.error('Dados de perícias inválidos:', dadosRecentes.pericias);
+                    }
+
+                    // Restaurar dadosRoladosPericias se vier da API
+                    if (dadosRecentes.dadosRoladosPericias) {
+                        window.dadosRoladosPericias = dadosRecentes.dadosRoladosPericias;
+                        console.log('Após carregar: dadosRoladosPericias =', window.dadosRoladosPericias);
                     }
 
                     // Carregar informações básicas
@@ -514,13 +536,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             peso: item.querySelector('input[placeholder="Peso"]')?.value || '0',
                             quantidade: item.querySelector('input[placeholder="Quantidade"]')?.value || '1'
                         };
-                    })
+                    }),
+                    dadosRoladosPericias: window.dadosRoladosPericias
                 };
 
                 console.log('Dados completos sendo salvos:', dados);
 
                 // Primeiro, buscar dados existentes
-                fetch('https://sistema-dos-deuses-o9ih.onrender.com/items')
+                fetch('https://sistem-h473.onrender.com/items')
                     .then(response => response.json())
                     .then(dadosExistentes => {
                         let fetchPromise;
@@ -532,7 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             console.log('Atualizando registro existente:', ultimoId);
                             isUpdate = true;
 
-                            fetchPromise = fetch(`https://sistema-dos-deuses-o9ih.onrender.com/items/${ultimoId}`, {
+                            fetchPromise = fetch(`https://sistem-h473.onrender.com/items/${ultimoId}`, {
                                 method: 'PUT',
                                 headers: {
                                     'Content-Type': 'application/json'
@@ -541,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             });
                         } else {
                             console.log('Criando novo registro');
-                            fetchPromise = fetch('https://sistema-dos-deuses-o9ih.onrender.com/items', {
+                            fetchPromise = fetch('https://sistem-h473.onrender.com/items', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
@@ -702,9 +725,6 @@ if (!window.valoresPericias) window.valoresPericias = {};
 
 // Função para rolar o d10
 function rolarD10(elemento) {
-    // Impede que o clique no dado propague para o evento de rolagem de d20
-    if (window.event) window.event.stopPropagation();
-
     const resultado = Math.floor(Math.random() * 10) + 1;
     const input = elemento.closest('.pericia-item').querySelector('input');
     let tipo = document.getElementById('modal-pericia-titulo').textContent.replace('Perícias de ', '').trim();
@@ -901,70 +921,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Mapeamento de perícia para atributo relacionado (exemplo, adicione todas as suas perícias)
     const periciaParaAtributo = {
-        // Força
-        'Acrobacia': 'Força',
-        'Escudos': 'Força',
         'Espadas': 'Força',
-        'Luta': 'Força',
-
-        // Destreza
-        'Arcos': 'Destreza',
-        'Explosivos': 'Destreza',
-        'Pontaria': 'Destreza',
-        'Armas de Fogo ( grandes )': 'Destreza',
-        'Armas de Fogo ( pequenas )': 'Destreza',
-        'Armadilhas': 'Destreza',
-        'Dardos': 'Destreza',
-        'Pilotagem': 'Destreza',
-        'Reflexos': 'Destreza',
-        'Furtividade': 'Destreza',
-        'Iniciativa': 'Destreza',
-
-        // Intelecto
-        'Investigação': 'Intelecto',
-        'Percepção': 'Intelecto',
-        'Raciocínio': 'Intelecto',
-        'Tecnologia': 'Intelecto',
-        'Herbologia': 'Intelecto',
-        'Forense': 'Intelecto',
-        'Genealogia': 'Intelecto',
-        'Antropologia': 'Intelecto',
-        'Atualidades': 'Intelecto',
-        'História': 'Intelecto',
-        'Ciências': 'Intelecto',
-        'Enganação': 'Intelecto',
-        'Trapaça': 'Intelecto',
-        'Diplomacia': 'Intelecto',
-        'Vontade': 'Intelecto',
-        'Alquimia': 'Intelecto',
-        'Crime': 'Intelecto',
-        'Cozinhar': 'Intelecto',
-        'Artes': 'Intelecto',
-        'Medicina': 'Intelecto',
-        'Psicologia': 'Intelecto',
-
-        // Carisma
-        'Intimidação': 'Carisma',
-        'Empatia': 'Carisma',
-        'Sedução': 'Carisma',
-        'Lábia': 'Carisma',
-
-        // Magia
         'Religião': 'Magia',
-        'Conhecimento Arcano': 'Magia',
-        'Conjuração': 'Magia',
-        'Encantamento': 'Magia',
-        'Ilusão': 'Magia',
-        'Necromancia': 'Magia',
-        'Exorcismo': 'Magia',
-        'Runas': 'Magia',
-        'Demonologia': 'Magia',
-        'Astrologia': 'Magia',
-
-        // Constituição
-        'Sobrevivência': 'Constituição',
-        'Atletismo': 'Constituição',
-        'Fortitude': 'Constituição'
+        'Acrobacia': 'Destreza',
+        'Fortitude': 'Constituição',
+        'Furtividade': 'Destreza',
+        'Intimidação': 'Carisma',
+        'Persuasão': 'Carisma',
+        'Investigação': 'Intelecto',
+        'Sobrevivência': 'Sabedoria',
+        'Arcanismo': 'Magia',
+        'Atletismo': 'Força',
+        'Percepção': 'Sabedoria',
+        'Reflexos': 'Destreza',
+        // ...adicione todas as perícias do seu sistema...
     };
 
     // Evento para cada label de perícia (funciona para todas as perícias)
@@ -1097,3 +1067,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Salvar perícias e dadosRoladosPericias no backend Render (PUT no último registro)
+function salvarPericiasRender() {
+    fetch('https://sistem-h473.onrender.com/items')
+        .then(response => response.json())
+        .then(dadosExistentes => {
+            if (!Array.isArray(dadosExistentes) || dadosExistentes.length === 0) return;
+            const ultimo = dadosExistentes[dadosExistentes.length - 1];
+            const ultimoId = ultimo.id;
+
+            // Monta o array de perícias no formato { nome, valor }
+            const pericias = [];
+            Object.entries(window.valoresPericias).forEach(([categoria, periciasCategoria]) => {
+                Object.entries(periciasCategoria).forEach(([nome, valor]) => {
+                    pericias.push({ nome, valor });
+                });
+            });
+
+            // Salva também o objeto dadosRoladosPericias
+            const dadosAtualizados = { ...ultimo, pericias, dadosRoladosPericias: window.dadosRoladosPericias };
+
+            fetch(`https://sistem-h473.onrender.com/items/${ultimoId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dadosAtualizados)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Erro ao salvar perícias');
+                return response.json();
+            })
+            .then(() => {
+                // Opcional: feedback visual rápido
+                // console.log('Perícias e dadosRoladosPericias salvos no Render!');
+            })
+            .catch(() => {
+                // Opcional: feedback de erro
+                // console.error('Erro ao salvar perícias no Render');
+            });
+        });
+}

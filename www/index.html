@@ -1425,46 +1425,6 @@
         // Objeto para armazenar os valores das subperícias
         const valoresPericias = {};
 
-        // Função para abrir o modal de perícias
-        function abrirModalPericia(tipo) {
-            const modal = document.getElementById('modal-pericias');
-            const titulo = document.getElementById('modal-pericia-titulo');
-            const lista = document.getElementById('modal-pericia-lista');
-
-            // Atualiza o título
-            titulo.textContent = `Perícias de ${tipo}`;
-
-            // Limpa a lista atual
-            lista.innerHTML = '';
-
-            // Inicializa o objeto de valores se não existir
-            if (!valoresPericias[tipo]) valoresPericias[tipo] = {};
-
-            // Adiciona as perícias do tipo selecionado
-            periciasData[tipo].forEach(pericia => {
-                const valorSalvo = valoresPericias[tipo][pericia] ?? 0;
-                const item = document.createElement('div');
-                item.className = 'pericia-item';
-                item.innerHTML = `
-                    <label>
-                        ${pericia}
-                        <img src="./img/dado.png" class="dado-icon" onclick="rolarD10(this)" alt="Rolar dado">
-                    </label>
-                    <div class="valor-container">
-                        <input type="number" value="${valorSalvo}" min="-5">
-                    </div>
-                `;
-                // Evento para salvar o valor ao alterar
-                item.querySelector('input').addEventListener('input', function () {
-                    valoresPericias[tipo][pericia] = parseInt(this.value) || 0;
-                });
-                lista.appendChild(item);
-            });
-
-            // Mostra o modal
-            modal.style.display = 'block';
-        }
-
         // Função para fechar o modal
         function fecharModalPericia() {
             document.getElementById('modal-pericias').style.display = 'none';
@@ -1659,7 +1619,7 @@
             // Adiciona evento para atualizar ao mudar Resiliência
             document.querySelectorAll('.atributos-sorte .atributo-item').forEach(item => {
                 const label = item.querySelector('label');
-                if (label && label.textContent.trim() === 'Resiliência') {
+                               if (label && label.textContent.trim() === 'Resiliência') {
                     item.querySelector('input').addEventListener('change', atualizarAlmaMaxima);
                 }
             });
