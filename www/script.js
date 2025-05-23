@@ -115,6 +115,16 @@ function abrirModalPericia(tipo) {
             const novoValor = parseInt(this.value) || 0;
             valoresPericias[tipo][pericia] = novoValor;
             console.log(`Valor atualizado: ${tipo} -> ${pericia} = ${novoValor}`);
+
+            // Atualizar Esquiva se Reflexos, ou Bloqueio se Fortitude
+            const tipoKey = normalizarChave(tipo);
+            const labelKey = normalizarChave(pericia);
+            if (tipoKey === normalizarChave('Destreza') && labelKey === normalizarChave('Reflexos')) {
+                atualizarEsquiva();
+            }
+            if (tipoKey === normalizarChave('Constituição') && labelKey === normalizarChave('Fortitude')) {
+                atualizarBloqueio();
+            }
         });
 
         lista.appendChild(item);
@@ -718,12 +728,48 @@ function rolarD10(elemento) {
         elemento.style.transform = 'rotate(0deg)';
     }, 500);
 
-    // Atualiza Esquiva se Reflexos, ou Bloqueio se Fortitude (usando nomes normalizados)
-    if (tipoKey === normalizarChave('Destreza') && labelKey === normalizarChave('Reflexos')) {
-        atualizarEsquiva();
+    // LOG PARA DEPURAÇÃO
+    console.log('[rolarD10] tipo:', tipo, '| label:', label, '| valorPericia:', valorPericia, '| resultado dado:', resultado);
+
+    // Atualiza Esquiva se Reflexos, ou Bloqueio se Fortitude
+    if (tipo === 'Destreza' && label === 'Reflexos') {
+        // Buscar Defesa
+        let defesa = 10;
+        let esquivaInput = null;
+        document.querySelectorAll('.status-combate .status-item').forEach(item => {
+            const labelEl = item.querySelector('label');
+            if (labelEl && labelEl.textContent.trim() === 'Defesa') {
+                defesa = parseInt(item.querySelector('input').value) || 0;
+            }
+            if (labelEl && labelEl.textContent.trim() === 'Esquiva') {
+                esquivaInput = item.querySelector('input');
+            }
+        });
+        if (esquivaInput) {
+            esquivaInput.value = defesa + valorPericia + resultado;
+            console.log('[rolarD10] Atualizou Esquiva para:', esquivaInput.value, '| Defesa:', defesa, '| valorPericia:', valorPericia, '| resultado:', resultado);
+        }
     }
-    if (tipoKey === normalizarChave('Constituição') && labelKey === normalizarChave('Fortitude')) {
-        atualizarBloqueio();
+    if (tipo === 'Constituição' && label === 'Fortitude') {
+        // Buscar Constituição
+        let constituicao = 0;
+        let bloqueioInput = null;
+        document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+            const labelEl = item.querySelector('label');
+            if (labelEl && labelEl.textContent.trim() === 'Constituição') {
+                constituicao = parseInt(item.querySelector('input').value) || 0;
+            }
+        });
+        document.querySelectorAll('.status-combate .status-item').forEach(item => {
+            const labelEl = item.querySelector('label');
+            if (labelEl && labelEl.textContent.trim() === 'Bloqueio') {
+                bloqueioInput = item.querySelector('input');
+            }
+        });
+        if (bloqueioInput) {
+            bloqueioInput.value = constituicao + valorPericia + resultado;
+            console.log('[rolarD10] Atualizou Bloqueio para:', bloqueioInput.value, '| Constituição:', constituicao, '| valorPericia:', valorPericia, '| resultado:', resultado);
+        }
     }
 }
 
@@ -754,14 +800,8 @@ function atualizarEsquiva() {
     }
 
     // Valor do dado rolado para Reflexos (usando chaves normalizadas)
-    if (
-        window.dadosRoladosPericias &&
-        dadosRoladosPericias[tipoKey] &&
-        typeof dadosRoladosPericias[tipoKey][labelKey] !== 'undefined'
-    ) {
+    if (window.dadosRoladosPericias && dadosRoladosPericias[tipoKey] && typeof dadosRoladosPericias[tipoKey][labelKey] !== 'undefined') {
         dadoPericia = parseInt(dadosRoladosPericias[tipoKey][labelKey]) || 0;
-    } else {
-        dadoPericia = 0;
     }
 
     console.log("➡ Reflexos (perícia salva):", reflexos);
@@ -802,16 +842,18 @@ function atualizarBloqueio() {
     let fortitude = 0;
     let dadoPericia = 0;
 
+    // Use chaves normalizadas para garantir acesso correto ao dado rolado
+    const tipoKey = normalizarChave('Constituição');
+    const labelKey = normalizarChave('Fortitude');
+
     // Verifica valor salvo da perícia Fortitude
     if (window.valoresPericias && valoresPericias['Constituição'] && typeof valoresPericias['Constituição']['Fortitude'] !== 'undefined') {
         fortitude = parseInt(valoresPericias['Constituição']['Fortitude']) || 0;
     }
 
-    // Sempre usar o valor do dado rolado, se houver
-    if (window.dadosRoladosPericias && dadosRoladosPericias['Constituição'] && typeof dadosRoladosPericias['Constituição']['Fortitude'] !== 'undefined') {
-        dadoPericia = parseInt(dadosRoladosPericias['Constituição']['Fortitude']) || 0;
-    } else {
-        dadoPericia = 0;
+    // Valor do dado rolado para Fortitude (usando chaves normalizadas)
+    if (window.dadosRoladosPericias && dadosRoladosPericias[tipoKey] && typeof dadosRoladosPericias[tipoKey][labelKey] !== 'undefined') {
+        dadoPericia = parseInt(dadosRoladosPericias[tipoKey][labelKey]) || 0;
     }
 
     console.log("➡ Fortitude (perícia salva):", fortitude);
@@ -831,3 +873,26 @@ function atualizarBloqueio() {
         }
     });
 }
+
+// Adiciona eventos para atualizar Esquiva e Bloqueio quando os valores das perícias mudarem
+document.addEventListener('DOMContentLoaded', function() {
+    // Atualiza Esquiva quando Reflexos mudar
+    document.body.addEventListener('input', function(e) {
+        if (e.target && e.target.closest('.pericia-item')) {
+            const label = e.target.closest('.pericia-item').querySelector('label');
+            if (label && label.textContent.trim() === 'Reflexos') {
+                setTimeout(atualizarEsquiva, 0);
+            }
+        }
+    });
+
+    // Atualiza Bloqueio quando Fortitude mudar
+    document.body.addEventListener('input', function(e) {
+        if (e.target && e.target.closest('.pericia-item')) {
+            const label = e.target.closest('.pericia-item').querySelector('label');
+            if (label && label.textContent.trim() === 'Fortitude') {
+                setTimeout(atualizarBloqueio, 0);
+            }
+        }
+    });
+});

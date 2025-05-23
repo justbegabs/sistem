@@ -1388,69 +1388,7 @@
             atualizarContadorAtributos();
         });
 
-        // Função para rolar dados
-        function rolarDados(label) {
-            // Encontra o input associado ao label clicado
-            const input = label.nextElementSibling;
-            const valor = parseInt(input.value) || 0;
-            let quantidadeDados;
-            let resultados = [];
-
-            if (valor >= 1) {
-                // Se for positivo, rola a quantidade equivalente de dados e pega o maior
-                quantidadeDados = valor;
-                for (let i = 0; i < quantidadeDados; i++) {
-                    resultados.push(Math.floor(Math.random() * 20) + 1);
-                }
-                const maiorResultado = Math.max(...resultados);
-                mostrarResultadoDado(label, maiorResultado, resultados);
-            } else {
-                // Se for 0 ou negativo, calcula quantidade de dados e pega o pior resultado
-                if (valor === 0) {
-                    quantidadeDados = 2;
-                } else {
-                    // Para -1 são 3 dados, para -2 são 4 dados, etc
-                    quantidadeDados = Math.abs(valor) + 2;
-                }
-
-                // Rola a quantidade de dados calculada e pega o pior resultado
-                for (let i = 0; i < quantidadeDados; i++) {
-                    resultados.push(Math.floor(Math.random() * 20) + 1);
-                }
-                const piorResultado = Math.min(...resultados);
-                mostrarResultadoDado(label, piorResultado, resultados);
-            }
-        }
-
-        // Função para mostrar o resultado do dado
-        function mostrarResultadoDado(label, resultado, todosResultados) {
-            const popupResultado = document.createElement('div');
-            popupResultado.className = 'resultado-dado';
-
-            const resultadoClass = resultado === Math.max(...todosResultados) ? 'resultado-maior' : 'resultado-menor';
-            let mensagem = `<strong class="${resultadoClass}">${resultado}</strong>`;
-            mensagem += `<br><small>(${todosResultados.join(', ')})</small>`;
-
-            popupResultado.innerHTML = mensagem;
-
-            // Posiciona o popup próximo ao label
-            const rect = label.getBoundingClientRect();
-            popupResultado.style.position = 'fixed';
-            popupResultado.style.left = `${rect.left}px`;
-            popupResultado.style.top = `${rect.bottom + 5}px`;
-
-            document.body.appendChild(popupResultado);
-
-            // Remove o popup após 2 segundos
-            setTimeout(() => {
-                popupResultado.classList.add('fadeout');
-                setTimeout(() => {
-                    document.body.removeChild(popupResultado);
-                }, 300);
-            }, 2000);
-        }
-
-        // Adiciona o evento de clique para todos os labels de atributos
+        // Adiciona o evento de clique para rolagem de dados nos labels
         document.addEventListener('DOMContentLoaded', function () {
             // ... existing code ...
 
@@ -1549,23 +1487,6 @@
                 });
             });
         });
-
-        // Função para rolar o d10
-        function rolarD10(elemento) {
-            const resultado = Math.floor(Math.random() * 10) + 1;
-            const input = elemento.closest('.pericia-item').querySelector('input');
-            input.value = resultado;
-            // Salva o valor sorteado
-            const label = elemento.closest('.pericia-item').querySelector('label').childNodes[0].textContent.trim();
-            const tipo = document.getElementById('modal-pericia-titulo').textContent.replace('Perícias de ', '').trim();
-            if (valoresPericias[tipo]) valoresPericias[tipo][label] = resultado;
-
-            // Efeito visual de rotação
-            elemento.style.transform = 'rotate(360deg)';
-            setTimeout(() => {
-                elemento.style.transform = 'rotate(0deg)';
-            }, 500);
-        }
 
         // Função para atualizar o valor máximo de vida com base em Resiliência
         function atualizarVidaMaxima() {
