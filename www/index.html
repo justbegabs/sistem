@@ -1671,6 +1671,10 @@
             });
         }
 
+
+
+
+
         // Atualiza a mana máxima ao carregar a página e ao mudar Magia
         document.addEventListener('DOMContentLoaded', function () {
             atualizarManaMaxima();
@@ -1740,7 +1744,6 @@
             });
         });
 
-        // ... existing code ...
         // Função para atualizar a Defesa com base em Constituição
         function atualizarDefesa() {
             let constituicao = 0;
@@ -1772,9 +1775,8 @@
                 }
             });
         });
-        // ... existing code ...
+        // ...existing code...
 
-        // ... existing code ...
         // Função para atualizar a Esquiva com base em Defesa e Reflexos (Perícia)
         function atualizarEsquiva() {
             // Busca Defesa
@@ -1785,15 +1787,11 @@
                     defesa = parseInt(item.querySelector('input').value) || 0;
                 }
             });
-            // Busca Reflexos (Perícia de Destreza)
+            // Busca Reflexos (Perícia de Destreza) diretamente do objeto valoresPericias
             let reflexos = 0;
-            // Procura a perícia Reflexos no modal de Destreza, se estiver aberto
-            document.querySelectorAll('.pericia-item').forEach(item => {
-                const label = item.querySelector('label');
-                if (label && label.textContent.trim() === 'Reflexos') {
-                    reflexos = parseInt(item.querySelector('input').value) || 0;
-                }
-            });
+            if (window.valoresPericias && valoresPericias['Destreza'] && typeof valoresPericias['Destreza']['Reflexos'] !== 'undefined') {
+                reflexos = parseInt(valoresPericias['Destreza']['Reflexos']) || 0;
+            }
             // Atualiza o campo de Esquiva
             document.querySelectorAll('.status-combate .status-item').forEach(item => {
                 const label = item.querySelector('label');
@@ -1819,14 +1817,17 @@
                 if (e.target && e.target.closest('.pericia-item')) {
                     const label = e.target.closest('.pericia-item').querySelector('label');
                     if (label && label.textContent.trim() === 'Reflexos') {
+                        // Atualiza o valor salvo no objeto valoresPericias
+                        if (window.valoresPericias && valoresPericias['Destreza']) {
+                            valoresPericias['Destreza']['Reflexos'] = parseInt(e.target.value) || 0;
+                        }
                         atualizarEsquiva();
                     }
                 }
             });
         });
-        // ... existing code ...
+        // ...existing code...
 
-        // ... existing code ...
         // Função para atualizar o Bloqueio com base em Constituição e Fortitude (Perícia)
         function atualizarBloqueio() {
             // Busca Constituição
@@ -1837,14 +1838,11 @@
                     constituicao = parseInt(item.querySelector('input').value) || 0;
                 }
             });
-            // Busca Fortitude (Perícia de Constituição)
+            // Busca Fortitude (Perícia de Constituição) diretamente do objeto valoresPericias
             let fortitude = 0;
-            document.querySelectorAll('.pericia-item').forEach(item => {
-                const label = item.querySelector('label');
-                if (label && label.textContent.trim() === 'Fortitude') {
-                    fortitude = parseInt(item.querySelector('input').value) || 0;
-                }
-            });
+            if (window.valoresPericias && valoresPericias['Constituição'] && typeof valoresPericias['Constituição']['Fortitude'] !== 'undefined') {
+                fortitude = parseInt(valoresPericias['Constituição']['Fortitude']) || 0;
+            }
             // Calcula o bloqueio
             const bloqueio = Math.floor(constituicao * 2 + (fortitude / 2));
             // Atualiza o campo de Bloqueio
@@ -1872,12 +1870,16 @@
                 if (e.target && e.target.closest('.pericia-item')) {
                     const label = e.target.closest('.pericia-item').querySelector('label');
                     if (label && label.textContent.trim() === 'Fortitude') {
+                        // Atualiza o valor salvo no objeto valoresPericias
+                        if (window.valoresPericias && valoresPericias['Constituição']) {
+                            valoresPericias['Constituição']['Fortitude'] = parseInt(e.target.value) || 0;
+                        }
                         atualizarBloqueio();
                     }
                 }
             });
         });
-        // ... existing code ...
+        // ...existing code...
 
         // INVENTÁRIO
         function calcularCapacidadeInventario() {
@@ -1942,7 +1944,6 @@
             progress.style.width = this.value + '%';
         });
     </script>
-    <script src="script.js"></script>
 </body>
 
 </html>

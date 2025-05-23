@@ -677,3 +677,157 @@ document.addEventListener('DOMContentLoaded', () => {
         themeIcon.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
     }
 });
+
+// Função utilitária para normalizar nomes de chaves
+function normalizarChave(str) {
+    return str
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove acentos
+        .replace(/\s+/g, '') // remove espaços
+        .toLowerCase();
+}
+
+// Adicione um objeto para armazenar o valor do dado rolado para cada perícia
+if (!window.dadosRoladosPericias) window.dadosRoladosPericias = {};
+if (!window.valoresPericias) window.valoresPericias = {};
+
+// Função para rolar o d10
+function rolarD10(elemento) {
+    const resultado = Math.floor(Math.random() * 10) + 1;
+    const input = elemento.closest('.pericia-item').querySelector('input');
+    let tipo = document.getElementById('modal-pericia-titulo').textContent.replace('Perícias de ', '').trim();
+    let label = elemento.closest('.pericia-item').querySelector('label').childNodes[0].textContent.trim();
+
+    // Normaliza as chaves
+    const tipoKey = normalizarChave(tipo);
+    const labelKey = normalizarChave(label);
+
+    // Salve o valor do dado rolado separadamente
+    if (!window.dadosRoladosPericias[tipoKey]) window.dadosRoladosPericias[tipoKey] = {};
+    window.dadosRoladosPericias[tipoKey][labelKey] = resultado;
+
+    // Atualize o input para mostrar a soma da perícia + dado
+    let valorPericia = 0;
+    if (window.valoresPericias[tipo] && typeof window.valoresPericias[tipo][label] !== 'undefined') {
+        valorPericia = parseInt(window.valoresPericias[tipo][label]) || 0;
+    }
+    input.value = valorPericia + resultado;
+
+    // Efeito visual de rotação
+    elemento.style.transform = 'rotate(360deg)';
+    setTimeout(() => {
+        elemento.style.transform = 'rotate(0deg)';
+    }, 500);
+
+    // Atualiza Esquiva se Reflexos, ou Bloqueio se Fortitude (usando nomes normalizados)
+    if (tipoKey === normalizarChave('Destreza') && labelKey === normalizarChave('Reflexos')) {
+        atualizarEsquiva();
+    }
+    if (tipoKey === normalizarChave('Constituição') && labelKey === normalizarChave('Fortitude')) {
+        atualizarBloqueio();
+    }
+}
+
+// Função para atualizar a Esquiva com base em Defesa, Reflexos (Perícia) e dado rolado
+function atualizarEsquiva() {
+    console.log("⏱ Atualizando Esquiva");
+
+    let defesa = 10;
+    document.querySelectorAll('.status-combate .status-item').forEach(item => {
+        const label = item.querySelector('label');
+        if (label && label.textContent.trim() === 'Defesa') {
+            defesa = parseInt(item.querySelector('input').value) || 0;
+        }
+    });
+
+    console.log("➡ Defesa:", defesa);
+
+    let reflexos = 0;
+    let dadoPericia = 0;
+
+    // Use chaves normalizadas para garantir acesso correto
+    const tipoKey = normalizarChave('Destreza');
+    const labelKey = normalizarChave('Reflexos');
+
+    // Valor salvo da perícia Reflexos
+    if (window.valoresPericias && valoresPericias['Destreza'] && typeof valoresPericias['Destreza']['Reflexos'] !== 'undefined') {
+        reflexos = parseInt(valoresPericias['Destreza']['Reflexos']) || 0;
+    }
+
+    // Valor do dado rolado para Reflexos (usando chaves normalizadas)
+    if (
+        window.dadosRoladosPericias &&
+        dadosRoladosPericias[tipoKey] &&
+        typeof dadosRoladosPericias[tipoKey][labelKey] !== 'undefined'
+    ) {
+        dadoPericia = parseInt(dadosRoladosPericias[tipoKey][labelKey]) || 0;
+    } else {
+        dadoPericia = 0;
+    }
+
+    console.log("➡ Reflexos (perícia salva):", reflexos);
+    console.log("🎲 Dado rolado para Reflexos:", dadoPericia);
+
+    // Aplicar no input de Esquiva
+    document.querySelectorAll('.status-combate .status-item').forEach(item => {
+        const label = item.querySelector('label');
+        if (label && label.textContent.trim() === 'Esquiva') {
+            const esquivaInput = item.querySelector('input');
+            if (esquivaInput) {
+                const total = defesa + reflexos + dadoPericia;
+                console.log("✅ Total Esquiva calculado:", total);
+                esquivaInput.value = total;
+            }
+        }
+    });
+}
+
+function atualizarBloqueio() {
+    console.log("⏱ Atualizando Bloqueio");
+
+    let constituicao = 0;
+
+    // Busca o valor da Constituição no DOM
+    document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+        const label = item.querySelector('label');
+        if (label && label.textContent.trim() === 'Constituição') {
+            const input = item.querySelector('input');
+            if (input) {
+                constituicao = parseInt(input.value) || 0;
+            }
+        }
+    });
+
+    console.log("➡ Constituição:", constituicao);
+
+    let fortitude = 0;
+    let dadoPericia = 0;
+
+    // Verifica valor salvo da perícia Fortitude
+    if (window.valoresPericias && valoresPericias['Constituição'] && typeof valoresPericias['Constituição']['Fortitude'] !== 'undefined') {
+        fortitude = parseInt(valoresPericias['Constituição']['Fortitude']) || 0;
+    }
+
+    // Sempre usar o valor do dado rolado, se houver
+    if (window.dadosRoladosPericias && dadosRoladosPericias['Constituição'] && typeof dadosRoladosPericias['Constituição']['Fortitude'] !== 'undefined') {
+        dadoPericia = parseInt(dadosRoladosPericias['Constituição']['Fortitude']) || 0;
+    } else {
+        dadoPericia = 0;
+    }
+
+    console.log("➡ Fortitude (perícia salva):", fortitude);
+    console.log("🎲 Dado rolado para Fortitude:", dadoPericia);
+
+    const bloqueio = constituicao + fortitude + dadoPericia;
+
+    // Atualiza o input de Bloqueio no DOM
+    document.querySelectorAll('.status-combate .status-item').forEach(item => {
+        const label = item.querySelector('label');
+        if (label && label.textContent.trim() === 'Bloqueio') {
+            const input = item.querySelector('input');
+            if (input) {
+                input.value = bloqueio;
+                console.log("✅ Bloqueio atualizado para:", bloqueio);
+            }
+        }
+    });
+}
