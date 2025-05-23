@@ -895,4 +895,56 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+    // Função utilitária para rolar múltiplos d20 e pegar melhor/pior valor
+    function rolarMultiplosD20(qtd, modo) {
+        const resultados = [];
+        for (let i = 0; i < qtd; i++) {
+            resultados.push(Math.floor(Math.random() * 20) + 1);
+        }
+        return {
+            resultados,
+            final: modo === 'maior' ? Math.max(...resultados) : Math.min(...resultados)
+        };
+    }
+
+    // Adiciona evento para cada label de atributo
+    document.querySelectorAll('.atributos-teste .atributo-item label, .atributos-sorte .atributo-item label').forEach(label => {
+        label.style.cursor = 'pointer';
+        label.addEventListener('click', function () {
+            // Busca o input do atributo
+            const input = this.parentElement.querySelector('input');
+            if (!input) return;
+            let pontos = parseInt(input.value) || 0;
+            let qtdDados, modo;
+            if (pontos > 0) {
+                qtdDados = pontos;
+                modo = 'maior';
+            } else if (pontos === 0) {
+                qtdDados = 2;
+                modo = 'menor';
+            } else {
+                qtdDados = Math.abs(pontos) + 2;
+                modo = 'menor';
+            }
+            const { resultados, final } = rolarMultiplosD20(qtdDados, modo);
+
+            // Exibe resultado em um alert estilizado
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+                background: #222; color: #fff; padding: 24px 32px; border-radius: 12px;
+                z-index: 99999; font-size: 18px; font-family: Arial, sans-serif;
+                box-shadow: 0 0 24px #000a;
+                text-align: center;
+            `;
+            modal.innerHTML = `
+                <b>${this.textContent.trim()}</b><br>
+                Rolou ${qtdDados}d20: <span style="color:#F2780C">${resultados.join(', ')}</span><br>
+                <b>Resultado ${modo === 'maior' ? 'MAIOR' : 'MENOR'}: <span style="color:#F2780C">${final}</span></b>
+                <br><button style="margin-top:12px;padding:4px 16px;font-size:16px;border-radius:6px;border:none;cursor:pointer;background:#F2780C;color:#fff" onclick="this.parentElement.remove()">Fechar</button>
+            `;
+            document.body.appendChild(modal);
+        });
+    });
 });
