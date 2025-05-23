@@ -37,34 +37,32 @@ function getCorBarra(label) {
     return cores[label] || '#gray';
 }
 
-function atualizarNivel() {
-    const nivelInput = document.getElementById('nivel-input');
-    const nivelProgress = document.getElementById('nivel-progress');
+function atualizarNivel(input) {
+    // Garante que o valor está entre 0 e 100
+    let valor = Math.min(Math.max(parseInt(input.value) || 0, 0), 100);
 
-    if (nivelInput && nivelProgress) {
-        const nivel = parseInt(nivelInput.value) || 0;
-        // Calcula a porcentagem diretamente baseada no nível (0-100)
-        const porcentagem = Math.min(nivel, 100);
-        nivelProgress.style.width = `${porcentagem}%`;
+    // Atualiza o valor do input
+    input.value = valor;
 
-        // Atualizar pontos disponíveis
-        const pontosDisponiveis = nivel * 5;
-        const contadorDados = document.querySelector('.contador-dados');
-        if (contadorDados) {
-            contadorDados.textContent = pontosDisponiveis;
-        }
-
-        // Atualizar contador de atributos
-        atualizarContadorAtributos();
+    const progressBar = document.getElementById('nivel-progress');
+    if (progressBar) {
+        progressBar.style.width = valor + '%';
+        console.log('Nível atualizado:', valor + '%');
+    } else {
+        console.error('Elemento de barra de progresso não encontrado');
     }
+
+    // Atualiza o contador de atributos com base no nível
+    atualizarContadorAtributos(valor);
+    // Atualiza o contador de perícias
+    atualizarContadorPericias();
 }
 
-function atualizarContadorAtributos() {
+function atualizarContadorAtributos(nivel) {
     const nivelInput = document.getElementById('nivel-input');
     const contadorSpan = document.querySelector('.contador-atributos');
 
     if (nivelInput && contadorSpan) {
-        const nivel = parseInt(nivelInput.value) || 0;
         const pontosDisponiveis = nivel * 5;
         contadorSpan.textContent = pontosDisponiveis;
 
@@ -190,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         nivelInput.value = nivelValue;
                         nivelInput.dispatchEvent(new Event('input'));
                         console.log('Nível após carregamento:', nivelInput.value);
-                        atualizarNivel();
+                        atualizarNivel(nivelInput);
                     } else {
                         console.error('Elemento de nível não encontrado ou dados inválidos:', {
                             elementoEncontrado: !!nivelInput,
@@ -366,8 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     // Atualizar todos os contadores e cálculos
-                    atualizarNivel();
-                    atualizarContadorAtributos();
+                    atualizarNivel(nivelInput);
                     document.querySelectorAll('.status-item').forEach(item => atualizarBarra(item));
 
                     console.log('Carregamento concluído com sucesso!');
@@ -709,6 +706,42 @@ document.addEventListener('DOMContentLoaded', () => {
     if (themeIcon) {
         themeIcon.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
     }
+
+    // Adiciona eventos para atualizar o nível
+    const nivelInput = document.getElementById('nivel-input');
+    if (nivelInput) {
+        // Atualiza quando o valor é alterado manualmente
+        nivelInput.addEventListener('input', function() {
+            atualizarNivel(this);
+            atualizarContadorPericias();
+        });
+
+        // Atualiza quando os botões + e - são usados
+        const botaoIncrementar = nivelInput.nextElementSibling;
+        const botaoDecrementar = nivelInput.previousElementSibling;
+
+        if (botaoIncrementar) {
+            botaoIncrementar.addEventListener('click', function() {
+                const novoValor = Math.min(parseInt(nivelInput.value) + 1, 100);
+                nivelInput.value = novoValor;
+                atualizarNivel(nivelInput);
+                atualizarContadorPericias();
+            });
+        }
+
+        if (botaoDecrementar) {
+            botaoDecrementar.addEventListener('click', function() {
+                const novoValor = Math.max(parseInt(nivelInput.value) - 1, 0);
+                nivelInput.value = novoValor;
+                atualizarNivel(nivelInput);
+                atualizarContadorPericias();
+            });
+        }
+    }
+
+    // Inicializa os contadores
+    atualizarContadorAtributos();
+    atualizarContadorPericias();
 });
 
 // Função utilitária para normalizar nomes de chaves
@@ -751,48 +784,18 @@ function rolarD10(elemento) {
         elemento.style.transform = 'rotate(0deg)';
     }, 500);
 
+    // Atualiza o contador de perícias
+    atualizarContadorPericias();
+
     // LOG PARA DEPURAÇÃO
     console.log('[rolarD10] tipo:', tipo, '| label:', label, '| valorPericia:', valorPericia, '| resultado dado:', resultado);
 
     // Atualiza Esquiva se Reflexos, ou Bloqueio se Fortitude
-    if (tipo === 'Destreza' && label === 'Reflexos') {
-        // Buscar Defesa
-        let defesa = 10;
-        let esquivaInput = null;
-        document.querySelectorAll('.status-combate .status-item').forEach(item => {
-            const labelEl = item.querySelector('label');
-            if (labelEl && labelEl.textContent.trim() === 'Defesa') {
-                defesa = parseInt(item.querySelector('input').value) || 0;
-            }
-            if (labelEl && labelEl.textContent.trim() === 'Esquiva') {
-                esquivaInput = item.querySelector('input');
-            }
-        });
-        if (esquivaInput) {
-            esquivaInput.value = defesa + valorPericia + resultado;
-            console.log('[rolarD10] Atualizou Esquiva para:', esquivaInput.value, '| Defesa:', defesa, '| valorPericia:', valorPericia, '| resultado:', resultado);
-        }
+    if (tipoKey === normalizarChave('Destreza') && labelKey === normalizarChave('Reflexos')) {
+        atualizarEsquiva();
     }
-    if (tipo === 'Constituição' && label === 'Fortitude') {
-        // Buscar Constituição
-        let constituicao = 0;
-        let bloqueioInput = null;
-        document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
-            const labelEl = item.querySelector('label');
-            if (labelEl && labelEl.textContent.trim() === 'Constituição') {
-                constituicao = parseInt(item.querySelector('input').value) || 0;
-            }
-        });
-        document.querySelectorAll('.status-combate .status-item').forEach(item => {
-            const labelEl = item.querySelector('label');
-            if (labelEl && labelEl.textContent.trim() === 'Bloqueio') {
-                bloqueioInput = item.querySelector('input');
-            }
-        });
-        if (bloqueioInput) {
-            bloqueioInput.value = constituicao + valorPericia + resultado;
-            console.log('[rolarD10] Atualizou Bloqueio para:', bloqueioInput.value, '| Constituição:', constituicao, '| valorPericia:', valorPericia, '| resultado:', resultado);
-        }
+    if (tipoKey === normalizarChave('Constituição') && labelKey === normalizarChave('Fortitude')) {
+        atualizarBloqueio();
     }
 }
 
@@ -1106,4 +1109,61 @@ function salvarPericiasRender() {
                 // console.error('Erro ao salvar perícias no Render');
             });
         });
+}
+
+// Função para atualizar o contador de perícias
+function atualizarContadorPericias() {
+    const nivelInput = document.getElementById('nivel-input');
+    const contadorPericias = document.querySelector('.contador-pericias');
+    
+    if (!nivelInput || !contadorPericias) return;
+
+    const nivel = parseInt(nivelInput.value) || 0;
+    
+    // Define os limites de nível e seus respectivos valores de perícias
+    const limites = [
+        { nivel: 0, pericias: 10 },
+        { nivel: 5, pericias: 13 },
+        { nivel: 15, pericias: 15 },
+        { nivel: 35, pericias: 17 },
+        { nivel: 55, pericias: 19 },
+        { nivel: 75, pericias: 21 },
+        { nivel: 95, pericias: 23 },
+        { nivel: 100, pericias: 25 }
+    ];
+
+    // Encontra o valor máximo de perícias para o nível atual
+    let valorMaximo = 10; // Valor base para nível 0
+    for (const limite of limites) {
+        if (nivel >= limite.nivel) {
+            valorMaximo = limite.pericias;
+        }
+    }
+
+    // Conta quantas perícias têm pontos ou dados rolados
+    let periciasComPontos = 0;
+    const periciasContadas = new Set(); // Para evitar contar a mesma perícia duas vezes
+
+    // Verifica perícias com pontos
+    Object.entries(window.valoresPericias || {}).forEach(([categoria, periciasCategoria]) => {
+        Object.entries(periciasCategoria).forEach(([nome, valor]) => {
+            if (valor > 0) {
+                periciasContadas.add(`${categoria}-${nome}`);
+                periciasComPontos++;
+            }
+        });
+    });
+
+    // Verifica perícias com dados rolados
+    Object.entries(window.dadosRoladosPericias || {}).forEach(([categoria, periciasCategoria]) => {
+        Object.entries(periciasCategoria).forEach(([nome, valor]) => {
+            if (valor > 0 && !periciasContadas.has(`${categoria}-${nome}`)) {
+                periciasComPontos++;
+            }
+        });
+    });
+
+    // Atualiza o contador
+    contadorPericias.textContent = `${periciasComPontos}/${valorMaximo}`;
+    console.log(`[atualizarContadorPericias] Nível: ${nivel}, Máximo: ${valorMaximo}, Usadas: ${periciasComPontos}`);
 }

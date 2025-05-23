@@ -552,7 +552,10 @@
         </div>
 
         <section class="pericias">
-            <h2>Perícias</h2>
+            <h2>
+                Perícias
+                <span class="contador-pericias" style="float:right;font-size:0.8em;font-weight:normal;margin-left:8px;"></span>
+            </h2>
             <div class="pericias-grid">
                 <div class="pericia-principal" onclick="abrirModalPericia('Força')">
                     <h3>Força</h3>
@@ -1824,6 +1827,8 @@
             const progress = document.querySelector('.progress');
             progress.style.width = this.value + '%';
         });
+
+       
     </script>
 </body>
 
