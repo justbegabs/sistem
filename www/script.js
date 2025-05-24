@@ -110,7 +110,7 @@ window.abrirModalPericia = function abrirModalPericia(tipo) {
         item.innerHTML = `
             <label>
                 ${pericia}
-                <img src="./img/dado.png" class="dado-icon" onclick="rolarD10(this)" alt="Rolar dado">
+                <img src="./img/dado.png" class="dado-icon" onclick="rolarD10(event, this)" alt="Rolar dado">
             </label>
             <div class="valor-container">
                 <input type="number" value="${valorExibido}" min="-5">
@@ -757,7 +757,11 @@ if (!window.dadosRoladosPericias) window.dadosRoladosPericias = {};
 if (!window.valoresPericias) window.valoresPericias = {};
 
 // Função para rolar o d10
-function rolarD10(elemento) {
+function rolarD10(event, elemento) {
+    // Removemos o stopPropagation daqui e faremos a verificação no listener do body
+    // if (event && event.stopPropagation) {
+    //     event.stopPropagation();
+    // }
     const resultado = Math.floor(Math.random() * 10) + 1;
     const input = elemento.closest('.pericia-item').querySelector('input');
     let tipo = document.getElementById('modal-pericia-titulo').textContent.replace('Perícias de ', '').trim();
@@ -787,8 +791,8 @@ function rolarD10(elemento) {
     // Atualiza o contador de perícias
     atualizarContadorPericias();
 
-    // LOG PARA DEPURAÇÃO
-    console.log('[rolarD10] tipo:', tipo, '| label:', label, '| valorPericia:', valorPericia, '| resultado dado:', resultado);
+    // LOG PARA DEPURAÇÃO (Removido para não mostrar mensagem)
+    // console.log('[rolarD10] tipo:', tipo, '| label:', label, '| valorPericia:', valorPericia, '| resultado dado:', resultado);
 
     // Atualiza Esquiva se Reflexos, ou Bloqueio se Fortitude
     if (tipoKey === normalizarChave('Destreza') && labelKey === normalizarChave('Reflexos')) {
@@ -922,33 +926,83 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Mapeamento de perícia para atributo relacionado (exemplo, adicione todas as suas perícias)
+    // Mapeamento de perícia para atributo relacionado (escopo global)
     const periciaParaAtributo = {
+        // Força
+        'Acrobacia': 'Força',
+        'Escudos': 'Força',
         'Espadas': 'Força',
-        'Religião': 'Magia',
-        'Acrobacia': 'Destreza',
-        'Fortitude': 'Constituição',
-        'Furtividade': 'Destreza',
-        'Intimidação': 'Carisma',
-        'Persuasão': 'Carisma',
-        'Investigação': 'Intelecto',
-        'Sobrevivência': 'Sabedoria',
-        'Arcanismo': 'Magia',
-        'Atletismo': 'Força',
-        'Percepção': 'Sabedoria',
+        'Luta': 'Força',
+        // Destreza
+        'Arcos': 'Destreza',
+        'Explosivos': 'Destreza',
+        'Pontaria': 'Destreza',
+        'Armas de Fogo ( grandes )': 'Destreza',
+        'Armas de Fogo ( pequenas )': 'Destreza',
+        'Armadilhas': 'Destreza',
+        'Dardos': 'Destreza',
+        'Pilotagem': 'Destreza',
         'Reflexos': 'Destreza',
-        // ...adicione todas as perícias do seu sistema...
+        'Furtividade': 'Destreza',
+        'Iniciativa': 'Destreza',
+        // Intelecto
+        'Investigação': 'Intelecto',
+        'Percepção': 'Intelecto',
+        'Raciocínio': 'Intelecto',
+        'Tecnologia': 'Intelecto',
+        'Herbologia': 'Intelecto',
+        'Forense': 'Intelecto',
+        'Genealogia': 'Intelecto',
+        'Antropologia': 'Intelecto',
+        'Atualidades': 'Intelecto',
+        'História': 'Intelecto',
+        'Ciências': 'Intelecto',
+        'Enganação': 'Intelecto',
+        'Trapaça': 'Intelecto',
+        'Diplomacia': 'Intelecto',
+        'Vontade': 'Intelecto',
+        'Alquimia': 'Intelecto',
+        'Crime': 'Intelecto',
+        'Cozinhar': 'Intelecto',
+        'Artes': 'Intelecto',
+        'Medicina': 'Intelecto',
+        'Psicologia': 'Intelecto',
+        // Carisma
+        'Intimidação': 'Carisma',
+        'Empatia': 'Carisma',
+        'Sedução': 'Carisma',
+        'Lábia': 'Carisma',
+        // Magia
+        'Religião': 'Magia',
+        'Conhecimento Arcano': 'Magia',
+        'Conjuração': 'Magia',
+        'Encantamento': 'Magia',
+        'Ilusão': 'Magia',
+        'Necromancia': 'Magia',
+        'Exorcismo': 'Magia',
+        'Runas': 'Magia',
+        'Demonologia': 'Magia',
+        'Astrologia': 'Magia',
+        // Constituição
+        'Sobrevivência': 'Constituição',
+        'Atletismo': 'Constituição',
+        'Fortitude': 'Constituição'
     };
 
-    // Evento para cada label de perícia (funciona para todas as perícias)
+    // Evento de clique no nome da perícia: rola múltiplos d20 conforme o atributo, soma o bônus do d10 já rolado (não rola d10 aqui)
     document.body.addEventListener('click', function(e) {
+        // Verifica se o clique foi no ícone do dado (img dentro do label). Se sim, ignora o resto desta função.
+        if (e.target.tagName === 'IMG' && e.target.classList.contains('dado-icon')) {
+            return;
+        }
+
         const label = e.target.closest('.pericia-item label');
         if (!label) return;
 
         // Nome da perícia
         const periciaNome = label.childNodes[0].textContent.trim();
         // Descobre o atributo relacionado
-        const atributoRelacionado = periciaParaAtributo[periciaNome];
+        const atributoRelacionado = periciaParaAtributo[periciaNome]; // Acessando a variável global
         if (!atributoRelacionado) {
             // Opcional: alertar se não houver mapeamento
             return;
@@ -985,16 +1039,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Soma o valor do d10 já rolado (se houver)
         let d10 = 0;
-        const periciaItem = label.closest('.pericia-item');
-        const inputD10 = periciaItem ? periciaItem.querySelector('input') : null;
-        if (inputD10) {
-            // O valor do input é perícia + d10, então subtrai o valor salvo da perícia para obter só o d10
-            const tipo = document.getElementById('modal-pericia-titulo').textContent.replace('Perícias de ', '').trim();
-            let valorPericia = 0;
-            if (window.valoresPericias[tipo] && typeof window.valoresPericias[tipo][periciaNome] !== 'undefined') {
-                valorPericia = parseInt(window.valoresPericias[tipo][periciaNome]) || 0;
-            }
-            d10 = (parseInt(inputD10.value) || 0) - valorPericia;
+        const tipo = document.getElementById('modal-pericia-titulo').textContent.replace('Perícias de ', '').trim();
+        const tipoKey = normalizarChave(tipo);
+        const labelKey = normalizarChave(periciaNome);
+         // Acessando o valor salvo do dado d10 rolado
+        if (window.dadosRoladosPericias[tipoKey] && window.dadosRoladosPericias[tipoKey][labelKey] !== undefined) {
+            d10 = parseInt(window.dadosRoladosPericias[tipoKey][labelKey]) || 0;
         }
 
         // Exibe resultado em um alert estilizado
