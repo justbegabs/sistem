@@ -1415,16 +1415,6 @@
             });
         });
 
-        // Dados das perícias
-        const periciasData = {
-            'Força': ['Acrobacia', 'Escudos', 'Espadas', 'Luta'],
-            'Destreza': ['Arcos', 'Armadilhas', 'Armas de Fogo ( grandes )', 'Armas de Fogo ( pequenas )', 'Dardos', 'Explosivos', 'Furtividade', 'Iniciativa', 'Pilotagem', 'Pontaria', 'Reflexos'],
-            'Intelecto': ['Alquimia', 'Antropologia', 'Artes', 'Atualidades', 'Ciências', 'Cozinhar', 'Crime', 'Diplomacia', 'Enganação', 'Forense', 'Genealogia', 'Herbologia', 'História', 'Investigação', 'Medicina', 'Percepção', 'Psicologia', 'Raciocínio', 'Tecnologia', 'Trapaça', 'Vontade'],
-            'Carisma': ['Empatia', 'Intimidação', 'Lábia', 'Sedução'],
-            'Magia': ['Astrologia', 'Conhecimento Arcano', 'Conjuração', 'Demonologia', 'Encantamento', 'Exorcismo', 'Ilusão', 'Necromancia', 'Religião', 'Runas'],
-            'Constituição': ['Atletismo', 'Fortitude', 'Sobrevivência']
-        };
-
         
 
     // Evento para cada label de perícia (funciona para todas as perícias)
@@ -1742,13 +1732,23 @@
         // INVENTÁRIO
         function calcularCapacidadeInventario() {
             let forca = 0;
-            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+            const forcaInput = Array.from(document.querySelectorAll('.atributos-teste .atributo-item')).find(item => {
                 const label = item.querySelector('label');
-                if (label && label.textContent.trim() === 'Força') {
-                    forca = parseInt(item.querySelector('input').value) || 0;
+                return label && label.textContent.trim() === 'Força';
+            })?.querySelector('input');
+            if (forcaInput) {
+                if (forcaInput.value === '' || isNaN(parseInt(forcaInput.value))) {
+                    forcaInput.value = 0;
                 }
+                forca = parseInt(forcaInput.value) || 0;
+            }
+            // Soma todos os bônus de carga dos itens
+            let bonusCarga = 0;
+            document.querySelectorAll('.item-inventario input[placeholder="Bônus de Carga"]').forEach(input => {
+                bonusCarga += parseInt(input.value) || 0;
             });
-            return 3 + (forca * 2);
+            // Garante que a capacidade nunca será menor que 3
+            return Math.max(3, 3 + (forca * 2) + bonusCarga);
         }
 
         function atualizarInventarioUI() {
@@ -1766,11 +1766,16 @@
             if (lista.querySelectorAll('.item-inventario').length >= capacidade) return;
             const div = document.createElement('div');
             div.className = 'item-inventario';
-            div.innerHTML = `<input type="text" placeholder="Nome do item" value="${valor}"><button type="button" title="Remover">✖</button>`;
+            div.innerHTML = `<input type="text" placeholder="Nome do item" value="${valor}"><input type="number" placeholder="Bônus de Carga" value="0" style="width:80px"><button type="button" title="Remover">✖</button>`;
             div.querySelector('button').onclick = function () {
                 div.remove();
                 atualizarInventarioUI();
             };
+            // Adiciona o event listener para o campo Bônus de Carga
+            const bonusInput = div.querySelector('input[placeholder="Bônus de Carga"]');
+            if (bonusInput) {
+                bonusInput.addEventListener('input', atualizarInventarioUI);
+            }
             lista.appendChild(div);
             atualizarInventarioUI();
         }
@@ -1802,7 +1807,9 @@
             progress.style.width = this.value + '%';
         });
 
-       
+        window.addEventListener('load', function() {
+    atualizarInventarioUI();
+});
     </script>
 </body>
 
