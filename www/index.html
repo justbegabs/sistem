@@ -1425,6 +1425,86 @@
             'Constituição': ['Atletismo', 'Fortitude', 'Sobrevivência']
         };
 
+        
+
+    // Evento para cada label de perícia (funciona para todas as perícias)
+    document.body.addEventListener('click', function(e) {
+        const label = e.target.closest('.pericia-item label');
+        if (!label) return;
+
+        // Nome da perícia
+        const periciaNome = label.childNodes[0].textContent.trim();
+        // Descobre o atributo relacionado
+        const atributoRelacionado = periciaParaAtributo[periciaNome];
+        if (!atributoRelacionado) {
+            // Opcional: alertar se não houver mapeamento
+            return;
+        }
+
+        // Busca o valor do atributo relacionado
+        let pontos = 0;
+        document.querySelectorAll('.atributos-teste .atributo-item, .atributos-sorte .atributo-item').forEach(item => {
+            const labelA = item.querySelector('label');
+            if (labelA && labelA.textContent.trim() === atributoRelacionado) {
+                const inputA = item.querySelector('input');
+                if (inputA) pontos = parseInt(inputA.value) || 0;
+            }
+        });
+
+        let qtdDados, modo;
+        if (pontos > 0) {
+            qtdDados = pontos;
+            modo = 'maior';
+        } else if (pontos === 0) {
+            qtdDados = 2;
+            modo = 'menor';
+        } else {
+            qtdDados = Math.abs(pontos) + 2;
+            modo = 'menor';
+        }
+
+        // Rola os dados de atributo (d20)
+        const resultadosD20 = [];
+        for (let i = 0; i < qtdDados; i++) {
+            resultadosD20.push(Math.floor(Math.random() * 20) + 1);
+        }
+        const finalD20 = modo === 'maior' ? Math.max(...resultadosD20) : Math.min(...resultadosD20);
+
+        // Soma o valor do d10 já rolado (se houver)
+        let d6 = 0;
+        const periciaItem = label.closest('.pericia-item');
+        const inputD10 = periciaItem ? periciaItem.querySelector('input') : null;
+        if (inputD10) {
+            // O valor do input é perícia + d10, então subtrai o valor salvo da perícia para obter só o d10
+            const tipo = document.getElementById('modal-pericia-titulo').textContent.replace('Perícias de ', '').trim();
+            let valorPericia = 0;
+            if (window.valoresPericias[tipo] && typeof window.valoresPericias[tipo][periciaNome] !== 'undefined') {
+                valorPericia = parseInt(window.valoresPericias[tipo][periciaNome]) || 0;
+            }
+            d6 = (parseInt(inputD10.value) || 0) - valorPericia;
+        }
+
+        // Exibe resultado em um alert estilizado
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            background: #222; color: #fff; padding: 24px 32px; border-radius: 12px;
+            z-index: 99999; font-size: 18px; font-family: Arial, sans-serif;
+            box-shadow: 0 0 24px #000a;
+            text-align: center;
+        `;
+        modal.innerHTML = `
+            <b>${periciaNome}</b><br>
+            (${atributoRelacionado}: ${pontos})<br>
+            Rolou ${qtdDados}d20: <span style="color:#F2780C">${resultadosD20.join(', ')}</span><br>
+            <b>Resultado ${modo === 'maior' ? 'MAIOR' : 'MENOR'}: <span style="color:#F2780C">${finalD20}</span></b><br>
+            Dado d6 da perícia: <span style="color:#F2780C">${d6}</span><br>
+            <b>Total: <span style="color:#F2780C">${finalD20 + d6}</span></b>
+            <br><button style="margin-top:12px;padding:4px 16px;font-size:16px;border-radius:6px;border:none;cursor:pointer;background:#F2780C;color:#fff" onclick="this.parentElement.remove()">Fechar</button>
+        `;
+        document.body.appendChild(modal);
+    });
+
         // Objeto para armazenar os valores das subperícias
         const valoresPericias = {};
 
@@ -1650,7 +1730,6 @@
 
         // Atualiza a Defesa ao carregar a página e ao mudar Constituição
         document.addEventListener('DOMContentLoaded', function () {
-            atualizarDefesa();
             // Adiciona evento para atualizar ao mudar Constituição
             document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
                 const label = item.querySelector('label');
@@ -1659,9 +1738,6 @@
                 }
             });
         });
-        // ...existing code...
-
-       
 
         // INVENTÁRIO
         function calcularCapacidadeInventario() {
@@ -1726,127 +1802,7 @@
             progress.style.width = this.value + '%';
         });
 
-
-        // --- Função utilitária para normalizar nomes de chaves ---
-        function normalizarChave(str) {
-            return str
-                .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove acentos
-                .replace(/\s+/g, '') // remove espaços
-                .toLowerCase();
-        }
-
-        // --- Função para armazenar o valor do dado rolado para cada perícia ---
-        if (!window.dadosRoladosPericias) window.dadosRoladosPericias = {};
-        if (!window.valoresPericias) window.valoresPericias = {};
-
-        // --- Função para rolar o d10 (deve ser chamada pelo dado das perícias) ---
-        function rolarD10(elemento) {
-            // ...existing code to get tipo, label, etc...
-            const input = elemento.closest('.pericia-item').querySelector('input');
-            let tipo = document.getElementById('modal-pericia-titulo').textContent.replace('Perícias de ', '').trim();
-            let label = elemento.closest('.pericia-item').querySelector('label').childNodes[0].textContent.trim();
-
-            // Normaliza as chaves
-            const tipoKey = normalizarChave(tipo);
-            const labelKey = normalizarChave(label);
-
-            // Salve o valor do dado rolado separadamente
-            if (!window.dadosRoladosPericias[tipoKey]) window.dadosRoladosPericias[tipoKey] = {};
-            const resultado = Math.floor(Math.random() * 10) + 1;
-            window.dadosRoladosPericias[tipoKey][labelKey] = resultado;
-
-            // Atualize o input para mostrar a soma da perícia + dado
-            let valorPericia = 0;
-            if (window.valoresPericias[tipo] && typeof window.valoresPericias[tipo][label] !== 'undefined') {
-                valorPericia = parseInt(window.valoresPericias[tipo][label]) || 0;
-            }
-            input.value = valorPericia + resultado;
-
-            // Atualize o objeto valoresPericias ao rolar o dado, para garantir que o valor está atualizado
-            if (window.valoresPericias && window.valoresPericias[tipo]) {
-                window.valoresPericias[tipo][label] = parseInt(input.value) || 0;
-            }
-
-            // Atualiza Esquiva se Reflexos, ou Bloqueio se Fortitude
-            if (tipo === 'Destreza' && label === 'Reflexos') {
-                atualizarEsquiva();
-            }
-            if (tipo === 'Constituição' && label === 'Fortitude') {
-                atualizarBloqueio();
-            }
-
-            // Atualizar contador de perícias
-            atualizarContadorPericias();
-        }
-
-        // --- Corrija atualizarEsquiva para somar Reflexos (perícia) + d10 ---
-        function atualizarEsquiva() {
-            // Busca Defesa
-            let defesa = 10;
-            document.querySelectorAll('.status-combate .status-item').forEach(item => {
-                const label = item.querySelector('label');
-                if (label && label.textContent.trim() === 'Defesa') {
-                    defesa = parseInt(item.querySelector('input').value) || 0;
-                }
-            });
-
-            // Busca Reflexos (perícia salva)
-            let reflexos = 0;
-            if (window.valoresPericias && window.valoresPericias['Destreza'] && typeof window.valoresPericias['Destreza']['Reflexos'] !== 'undefined') {
-                reflexos = parseInt(window.valoresPericias['Destreza']['Reflexos']) || 0;
-            }
-
-            // Busca d10 rolado para Reflexos
-            let dadoPericia = 0;
-            const tipoKey = normalizarChave('Destreza');
-            const labelKey = normalizarChave('Reflexos');
-            if (window.dadosRoladosPericias && window.dadosRoladosPericias[tipoKey] && typeof window.dadosRoladosPericias[tipoKey][labelKey] !== 'undefined') {
-                dadoPericia = parseInt(window.dadosRoladosPericias[tipoKey][labelKey]) || 0;
-            }
-
-            // Atualiza o campo de Esquiva
-            document.querySelectorAll('.status-combate .status-item').forEach(item => {
-                const label = item.querySelector('label');
-                if (label && label.textContent.trim() === 'Esquiva') {
-                    const esquivaInput = item.querySelector('input');
-                    if (esquivaInput) esquivaInput.value = defesa + reflexos + dadoPericia;
-                }
-            });
-        }
-
-        // --- Corrija atualizarBloqueio para somar Fortitude (perícia) + d10 ---
-        function atualizarBloqueio() {
-            // Busca Constituição
-            let constituicao = 0;
-            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
-                const label = item.querySelector('label');
-                if (label && label.textContent.trim() === 'Constituição') {
-                    constituicao = parseInt(item.querySelector('input').value) || 0;
-                }
-            });
-            // Busca Fortitude (perícia salva)
-            let fortitude = 0;
-            if (window.valoresPericias && window.valoresPericias['Constituição'] && typeof window.valoresPericias['Constituição']['Fortitude'] !== 'undefined') {
-                fortitude = parseInt(window.valoresPericias['Constituição']['Fortitude']) || 0;
-            }
-
-            // Busca d10 rolado para Fortitude
-            let dadoPericia = 0;
-            const tipoKey = normalizarChave('Constituição');
-            const labelKey = normalizarChave('Fortitude');
-            if (window.dadosRoladosPericias && window.dadosRoladosPericias[tipoKey] && typeof window.dadosRoladosPericias[tipoKey][labelKey] !== 'undefined') {
-                dadoPericia = parseInt(window.dadosRoladosPericias[tipoKey][labelKey]) || 0;
-            }
-
-            // Atualiza o campo de Bloqueio
-            document.querySelectorAll('.status-combate .status-item').forEach(item => {
-                const label = item.querySelector('label');
-                if (label && label.textContent.trim() === 'Bloqueio') {
-                    const bloqueioInput = item.querySelector('input');
-                    if (bloqueioInput) bloqueioInput.value = constituicao + fortitude + dadoPericia;
-                }
-            });
-        }
+       
     </script>
 </body>
 
