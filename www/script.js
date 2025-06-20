@@ -82,6 +82,21 @@ function fecharModalPericia() {
     document.getElementById('modal-pericias').style.display = 'none';
 }
 
+// Adicionar controle global para bônus de classe de Bruxa
+if (!window.bonusClasseBruxa) window.bonusClasseBruxa = false;
+
+// Interceptar seleção de classe para ativar bônus de Bruxa
+const classeInput = document.querySelector('input[placeholder="Classe"]');
+if (classeInput) {
+    classeInput.addEventListener('input', function() {
+        if (this.value.trim() === 'Bruxa') {
+            window.bonusClasseBruxa = true;
+        } else {
+            window.bonusClasseBruxa = false;
+        }
+    });
+}
+
 // Função para abrir o modal de perícias
 window.abrirModalPericia = function abrirModalPericia(tipo) {
     console.log('[GLOBAL abrirModalPericia] chamada para tipo:', tipo);
@@ -118,13 +133,25 @@ window.abrirModalPericia = function abrirModalPericia(tipo) {
         const valorBase = window.valoresPericias[tipo][pericia] ?? 0;
         const tipoKey = normalizarChave(tipo);
         const labelKey = normalizarChave(pericia);
+        // d6
         let d6 = 0;
         if (window.dadosRoladosPericias && window.dadosRoladosPericias[tipoKey] && typeof window.dadosRoladosPericias[tipoKey][labelKey] !== 'undefined') {
             d6 = parseInt(window.dadosRoladosPericias[tipoKey][labelKey]) || 0;
         }
-        const valorExibido = valorBase + d6;
-        console.log(`[abrirModalPericia] ${tipo} - ${pericia}: valorBase=${valorBase}, d6=${d6}, valorExibido=${valorExibido}`);
-
+        // Bônus de raça (futuro)
+        let bonusRaca = 0;
+        // if (window.bonusRaca && ...) { bonusRaca = X; }
+        // Bônus de origem (futuro)
+        let bonusOrigem = 0;
+        // if (window.bonusOrigem && ...) { bonusOrigem = X; }
+        // Bônus de classe (exemplo: Bruxa)
+        let bonusClasse = 0;
+        if (window.bonusClasseBruxa && tipo === 'Magia' && (pericia === 'Conhecimento Arcano' || pericia === 'Encantamento')) {
+            bonusClasse = 3;
+        }
+        // Valor total exibido
+        const valorExibido = valorBase + d6 + bonusRaca + bonusOrigem + bonusClasse;
+        const totalBonus = bonusRaca + bonusOrigem + bonusClasse + d6;
         const item = document.createElement('div');
         item.className = 'pericia-item';
         item.innerHTML = `
@@ -134,9 +161,12 @@ window.abrirModalPericia = function abrirModalPericia(tipo) {
             </label>
             <div class="valor-container">
                 <input type="number" value="${valorExibido}" min="-5">
+                <span title="Bônus de Raça" style="display:inline-block;background:#fffbe6;color:#C24914;border:2px solid #C24914;border-radius:8px;padding:2px 10px;font-size:1em;margin-left:6px;font-weight:bold;vertical-align:middle;min-width:48px;text-align:center;">+${bonusRaca}<br><span style='font-size:0.85em;font-weight:normal;'>Raça</span></span>
+                <span title="Bônus de Origem" style="display:inline-block;background:#e6f7fa;color:#14808C;border:2px solid #14808C;border-radius:8px;padding:2px 10px;font-size:1em;margin-left:6px;font-weight:bold;vertical-align:middle;min-width:48px;text-align:center;">+${bonusOrigem}<br><span style='font-size:0.85em;font-weight:normal;'>Origem</span></span>
+                <span title="Bônus de Classe" style="display:inline-block;background:#f3e6fa;color:#6c3483;border:2px solid #8e44ad;border-radius:8px;padding:2px 10px;font-size:1em;margin-left:6px;font-weight:bold;vertical-align:middle;min-width:48px;text-align:center;">+${bonusClasse}<br><span style='font-size:0.85em;font-weight:normal;'>Classe</span></span>
+                <span title="Total de Bônus" style="display:inline-block;background:#eaf6fb;color:#0a3d62;border:2px solid #0a3d62;border-radius:8px;padding:2px 10px;font-size:1em;margin-left:10px;font-weight:bold;vertical-align:middle;min-width:60px;text-align:center;">${totalBonus >= 0 ? '+' : ''}${totalBonus}<br><span style='font-size:0.85em;font-weight:normal;'>Total</span></span>
             </div>
         `;
-
         // Evento para salvar o valor ao alterar
         const input = item.querySelector('input');
         input.addEventListener('input', function () {
@@ -144,17 +174,18 @@ window.abrirModalPericia = function abrirModalPericia(tipo) {
             const valorManual = parseInt(this.value) || 0;
             const tipoKey = normalizarChave(tipo);
             const labelKey = normalizarChave(pericia);
-            
+            let d6Rolado = 0;
             if (window.dadosRoladosPericias && window.dadosRoladosPericias[tipoKey] && typeof window.dadosRoladosPericias[tipoKey][labelKey] !== 'undefined') {
-                const d6Rolado = window.dadosRoladosPericias[tipoKey][labelKey];
-                // Subtrai o dado para salvar apenas o valor base
-                window.valoresPericias[tipo][pericia] = valorManual - d6Rolado;
-            } else {
-                window.valoresPericias[tipo][pericia] = valorManual;
+                d6Rolado = window.dadosRoladosPericias[tipoKey][labelKey];
             }
-            
-            console.log(`[input listener modal] Valor base da pericia ${pericia} (${tipo}) salvo:`, window.valoresPericias[tipo][pericia]);
-
+            let bonusRaca = 0;
+            let bonusOrigem = 0;
+            let bonusClasse = 0;
+            if (window.bonusClasseBruxa && tipo === 'Magia' && (pericia === 'Conhecimento Arcano' || pericia === 'Encantamento')) {
+                bonusClasse = 3;
+            }
+            // Salva apenas o valor base (descontando bônus e d6)
+            window.valoresPericias[tipo][pericia] = valorManual - d6Rolado - bonusRaca - bonusOrigem - bonusClasse;
             // Atualizar Esquiva se Reflexos, ou Bloqueio se Fortitude
             if (labelKey === normalizarChave('Reflexos')) {
                 atualizarEsquiva();
@@ -162,10 +193,8 @@ window.abrirModalPericia = function abrirModalPericia(tipo) {
             if (labelKey === normalizarChave('Fortitude')) {
                 atualizarBloqueio();
             }
-             // Atualiza o contador de perícias sempre que um input de perícia for alterado
             atualizarContadorPericias();
         });
-
         lista.appendChild(item);
     });
 
