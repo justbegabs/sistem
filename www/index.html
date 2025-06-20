@@ -419,7 +419,7 @@
                 <div class="status-item">
                     <label>❤️ Vida</label>
                     <div class="status-bar">
-                        <input type="number" value="0" min="0" max="20" onchange="atualizarStatus(this, 20, 'vida')"> /
+                        <input type="number" value="0" min="0" max="20" onchange="atualizarStatus(this)"> /
                         <span>20</span>
                     </div>
                     <div class="barra-progresso vida"></div>
@@ -427,15 +427,14 @@
                 <div class="status-item">
                     <label>🧠 Sanidade</label>
                     <div class="status-bar">
-                        <input type="number" value="0" min="0" max="10"
-                            onchange="atualizarStatus(this, 10, 'sanidade')"> / <span>10</span>
+                        <input type="number" value="0" min="0" max="10" onchange="atualizarStatus(this)"> / <span>10</span>
                     </div>
                     <div class="barra-progresso sanidade"></div>
                 </div>
                 <div class="status-item">
                     <label>⚡ Mana</label>
                     <div class="status-bar">
-                        <input type="number" value="0" min="0" max="15" onchange="atualizarStatus(this, 15, 'mana')"> /
+                        <input type="number" value="0" min="0" max="15" onchange="atualizarStatus(this)"> /
                         <span>15</span>
                     </div>
                     <div class="barra-progresso mana"></div>
@@ -443,7 +442,7 @@
                 <div class="status-item">
                     <label>⭐ Alma</label>
                     <div class="status-bar">
-                        <input type="number" value="0" min="0" max="15" onchange="atualizarStatus(this, 15, 'alma')"> /
+                        <input type="number" value="0" min="0" max="15" onchange="atualizarStatus(this)"> /
                         <span>15</span>
                     </div>
                     <div class="barra-progresso alma"></div>
@@ -1312,7 +1311,10 @@
             }
         });
 
-        function atualizarStatus(input, max, tipo) {
+        function atualizarStatus(input) {
+            // O valor máximo agora é lido diretamente do atributo 'max' do input
+            const max = parseInt(input.max);
+
             // Garante que o valor está entre 0 e o máximo
             let valor = Math.min(Math.max(parseInt(input.value) || 0, 0), max);
 
@@ -1323,7 +1325,7 @@
             const barra = input.closest('.status-item').querySelector('.barra-progresso');
 
             // Calcula a porcentagem
-            const porcentagem = (valor / max) * 100;
+            const porcentagem = max > 0 ? (valor / max) * 100 : 0;
 
             // Atualiza a barra de progresso
             barra.style.setProperty('--progress-width', `${porcentagem}%`);
@@ -1402,6 +1404,14 @@
 
             // Atualiza o contador de atributos com base no nível
             atualizarContadorAtributos(valor);
+
+            // Se o nível for definido como 0, preenche os status com seus valores máximos
+            if (valor === 0) {
+                atualizarVidaMaxima();
+                atualizarSanidadeMaxima();
+                atualizarManaMaxima();
+                atualizarAlmaMaxima();
+            }
         }
 
         // Função para atualizar o contador de atributos
@@ -1633,7 +1643,14 @@
                     if (vidaSpan) vidaSpan.textContent = vidaMaxima;
                     // Atualiza o atributo max do input de vida
                     const vidaInput = item.querySelector('input');
-                    if (vidaInput) vidaInput.max = vidaMaxima;
+                    if (vidaInput) {
+                        vidaInput.max = vidaMaxima;
+                        const nivel = parseInt(document.getElementById('nivel-input').value) || 0;
+                        if (nivel === 0) {
+                            vidaInput.value = vidaMaxima;
+                            atualizarStatus(vidaInput);
+                        }
+                    }
                 }
             });
         }
@@ -1674,7 +1691,14 @@
                     if (sanidadeSpan) sanidadeSpan.textContent = sanidadeMaxima;
                     // Atualiza o atributo max do input de sanidade
                     const sanidadeInput = item.querySelector('input');
-                    if (sanidadeInput) sanidadeInput.max = sanidadeMaxima;
+                    if (sanidadeInput) {
+                        sanidadeInput.max = sanidadeMaxima;
+                        const nivel = parseInt(document.getElementById('nivel-input').value) || 0;
+                        if (nivel === 0) {
+                            sanidadeInput.value = sanidadeMaxima;
+                            atualizarStatus(sanidadeInput);
+                        }
+                    }
                 }
             });
         }
@@ -1711,7 +1735,14 @@
                     if (manaSpan) manaSpan.textContent = manaMaxima;
                     // Atualiza o atributo max do input de mana
                     const manaInput = item.querySelector('input');
-                    if (manaInput) manaInput.max = manaMaxima;
+                    if (manaInput) {
+                        manaInput.max = manaMaxima;
+                        const nivel = parseInt(document.getElementById('nivel-input').value) || 0;
+                        if (nivel === 0) {
+                            manaInput.value = manaMaxima;
+                            atualizarStatus(manaInput);
+                        }
+                    }
                 }
             });
         }
@@ -1765,7 +1796,14 @@
                     if (almaSpan) almaSpan.textContent = almaMaxima;
                     // Atualiza o atributo max do input de alma
                     const almaInput = item.querySelector('input');
-                    if (almaInput) almaInput.max = almaMaxima;
+                    if (almaInput) {
+                        almaInput.max = almaMaxima;
+                        const nivel = parseInt(document.getElementById('nivel-input').value) || 0;
+                        if (nivel === 0) {
+                            almaInput.value = almaMaxima;
+                            atualizarStatus(almaInput);
+                        }
+                    }
                 }
             });
         }
