@@ -1122,7 +1122,10 @@
             button.closest('.raca-card').classList.add('selected');
             document.querySelector('input[placeholder="Raça"]').value = raca;
             closeRacaModal();
-            if (raca === 'Bruxa') abrirEscolhaHabilidadesMagiasBruxa();
+
+            if (raca === 'Bruxa') {
+                abrirEscolhaHabilidadesMagiasBruxa();
+            }
         }
 
         function abrirEscolhaHabilidadesMagiasBruxa() {
@@ -1166,7 +1169,7 @@
                             const cards = Array.from(habilidades.querySelectorAll('.magia > h3')).map(h3 => {
                                 const nome = h3.textContent;
                                 const desc = h3.nextElementSibling ? h3.nextElementSibling.outerHTML : '';
-                                return `<div class=\"card-escolha-bruxa\" data-tipo=\"habilidade\" data-nome=\"${nome}\" style=\"display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:#f3e6fa;border:2px solid #8e44ad;border-radius:12px;padding:18px 20px;margin:12px 0;cursor:pointer;transition:box-shadow .2s;box-shadow:0 2px 8px #0001;max-width:420px;\"><span style='font-weight:bold;font-size:1.1em;color:#6c3483;'>${nome}</span>${desc}</div>`;
+                                return `<div class='card-escolha-bruxa' data-tipo='habilidade' data-nome='${nome}' style='display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:#f3e6fa;border:2px solid #8e44ad;border-radius:12px;padding:18px 20px;margin:12px 0;cursor:pointer;transition:box-shadow .2s;box-shadow:0 2px 8px #0001;max-width:420px;'><span style='font-weight:bold;font-size:1.1em;color:#6c3483;'>${nome}</span>${desc}</div>`;
                             }).join('');
                             conteudo = `<h2>Habilidades de Bruxa</h2><div id='cards-habilidades-bruxa' style='display:flex;flex-direction:column;align-items:center;'>${cards}</div>`;
                         } else {
@@ -1179,7 +1182,7 @@
                             const cards = Array.from(magiasBloco.querySelectorAll('.magia > h3')).map(h3 => {
                                 const nome = h3.textContent;
                                 const desc = h3.nextElementSibling ? h3.nextElementSibling.outerHTML : '';
-                                return `<div class=\"card-escolha-bruxa\" data-tipo=\"magia\" data-nome=\"${nome}\" style=\"display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:#eaf6fb;border:2px solid #2980b9;border-radius:12px;padding:18px 20px;margin:12px 0;cursor:pointer;transition:box-shadow .2s;box-shadow:0 2px 8px #0001;max-width:420px;\"><span style='font-weight:bold;font-size:1.1em;color:#2980b9;'>${nome}</span>${desc}</div>`;
+                                return `<div class='card-escolha-bruxa' data-tipo='magia' data-nome='${nome}' style='display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:#eaf6fb;border:2px solid #2980b9;border-radius:12px;padding:18px 20px;margin:12px 0;cursor:pointer;transition:box-shadow .2s;box-shadow:0 2px 8px #0001;max-width:420px;'><span style='font-weight:bold;font-size:1.1em;color:#2980b9;'>${nome}</span>${desc}</div>`;
                             }).join('');
                             conteudo = `<h2>Magias de Bruxa</h2><div id='cards-magias-bruxa' style='display:flex;flex-direction:column;align-items:center;'>${cards}</div>`;
                         } else {
@@ -1187,42 +1190,28 @@
                         }
                     }
                     document.getElementById('conteudo-bruxa').innerHTML = conteudo;
-                    applyEventosCardsBruxa();
+                    setTimeout(applyEventosCardsBruxa, 0);
                 });
         }
 
         function applyEventosCardsBruxa() {
-            document.querySelectorAll('.card-escolha-bruxa[data-tipo="habilidade"]').forEach(card => {
+            const cardsHab = document.querySelectorAll('.card-escolha-bruxa[data-tipo="habilidade"]');
+            const cardsMag = document.querySelectorAll('.card-escolha-bruxa[data-tipo="magia"]');
+            cardsHab.forEach(card => {
                 card.onclick = function() {
-                    const nome = card.getAttribute('data-nome');
-                    if (window.habilidadeBruxaEscolhida && window.habilidadeBruxaEscolhida !== nome) {
-                        alert('Você só pode escolher 1 habilidade no nível 0!');
-                        return;
-                    }
-                    window.habilidadeBruxaEscolhida = nome;
-                    document.getElementById('escolha-habilidade-bruxa').textContent = nome;
-                    document.querySelectorAll('.card-escolha-bruxa[data-tipo="habilidade"]').forEach(x => x.style.boxShadow = '0 2px 8px #0001');
+                    window.habilidadeBruxaEscolhida = card.getAttribute('data-nome');
+                    document.getElementById('escolha-habilidade-bruxa').innerHTML = card.innerHTML;
+                    cardsHab.forEach(x => x.style.boxShadow = '0 2px 8px #0001');
                     card.style.boxShadow = '0 0 0 3px #8e44ad';
                 };
-                if (window.habilidadeBruxaEscolhida === card.getAttribute('data-nome')) {
-                    card.style.boxShadow = '0 0 0 3px #8e44ad';
-                }
             });
-            document.querySelectorAll('.card-escolha-bruxa[data-tipo="magia"]').forEach(card => {
+            cardsMag.forEach(card => {
                 card.onclick = function() {
-                    const nome = card.getAttribute('data-nome');
-                    if (window.magiaBruxaEscolhida && window.magiaBruxaEscolhida !== nome) {
-                        alert('Você só pode escolher 1 magia no nível 0!');
-                        return;
-                    }
-                    window.magiaBruxaEscolhida = nome;
-                    document.getElementById('escolha-magia-bruxa').textContent = nome;
-                    document.querySelectorAll('.card-escolha-bruxa[data-tipo="magia"]').forEach(x => x.style.boxShadow = '0 2px 8px #0001');
+                    window.magiaBruxaEscolhida = card.getAttribute('data-nome');
+                    document.getElementById('escolha-magia-bruxa').innerHTML = card.innerHTML;
+                    cardsMag.forEach(x => x.style.boxShadow = '0 2px 8px #0001');
                     card.style.boxShadow = '0 0 0 3px #2980b9';
                 };
-                if (window.magiaBruxaEscolhida === card.getAttribute('data-nome')) {
-                    card.style.boxShadow = '0 0 0 3px #2980b9';
-                }
             });
         }
 
@@ -1912,6 +1901,74 @@
         window.addEventListener('load', function() {
     atualizarInventarioUI();
 });
+
+        window.criarBarraBruxa = function() {
+            if (document.getElementById('escolhas-bruxa-bar')) return;
+
+            const bar = document.createElement('div');
+            bar.id = 'escolhas-bruxa-bar';
+            bar.style = `
+                position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); 
+                width: 95%; max-width: 800px; 
+                background: #fffbe6; 
+                padding: 10px 16px; 
+                display: flex; justify-content: space-between; align-items: center; 
+                box-shadow: 0 -2px 8px #0002; 
+                font-size: 1em; color: #222; 
+                border-radius: 12px 12px 0 0; 
+                z-index: 10000;
+                transition: all 0.2s ease-in-out;
+            `;
+            
+            bar.innerHTML = `
+                <div id="barra-bruxa-content" style="display: flex; align-items: center; gap: 20px; flex-grow: 1;">
+                    <b>Escolhas da Bruxa:</b>
+                    <div id="escolha-habilidade-bruxa" style="flex:1;">Nenhuma habilidade.</div>
+                    <div id="escolha-magia-bruxa" style="flex:1;">Nenhuma magia.</div>
+                </div>
+                <button id="toggle-barra-bruxa-btn" onclick="toggleBarraBruxa()" style="background:none; border:none; cursor:pointer; font-size: 1.5em; padding: 0 10px; line-height: 1;">▼</button>
+            `;
+            
+            document.body.appendChild(bar);
+
+            // Define o padding inicial corretamente
+            requestAnimationFrame(() => {
+                const barHeight = bar.offsetHeight;
+                document.body.style.paddingBottom = `${barHeight + 20}px`;
+                console.log('Barra criada e padding inferior adicionado ao body.');
+            });
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Criar a barra automaticamente quando a página carregar
+            window.criarBarraBruxa();
+        });
+
+        function toggleBarraBruxa() {
+            const bar = document.getElementById('escolhas-bruxa-bar');
+            if (!bar) return;
+
+            const content = bar.querySelector('#barra-bruxa-content');
+            const button = bar.querySelector('#toggle-barra-bruxa-btn');
+            
+            bar.classList.toggle('minimized');
+
+            if (bar.classList.contains('minimized')) {
+                // Minimiza
+                content.style.display = 'none';
+                button.innerHTML = '▲';
+            } else {
+                // Maximiza
+                content.style.display = 'flex';
+                button.innerHTML = '▼';
+            }
+
+            // Usa requestAnimationFrame para garantir que a altura seja calculada após a renderização
+            requestAnimationFrame(() => {
+                const barHeight = bar.offsetHeight;
+                document.body.style.paddingBottom = `${barHeight + 20}px`;
+            });
+        }
     </script>
 </body>
 
