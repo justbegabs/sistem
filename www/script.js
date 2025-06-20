@@ -157,11 +157,9 @@ window.abrirModalPericia = function abrirModalPericia(tipo) {
 
             // Atualizar Esquiva se Reflexos, ou Bloqueio se Fortitude
             if (labelKey === normalizarChave('Reflexos')) {
-                console.log('[input] Atualizando Esquiva após mudança em Reflexos');
                 atualizarEsquiva();
             }
             if (labelKey === normalizarChave('Fortitude')) {
-                console.log('[input] Atualizando Bloqueio após mudança em Fortitude');
                 atualizarBloqueio();
             }
              // Atualiza o contador de perícias sempre que um input de perícia for alterado
@@ -193,22 +191,28 @@ document.addEventListener('DOMContentLoaded', () => {
     atualizarContadorAtributos();
     atualizarContadorPericias();
 
-    // Adiciona listener para Destreza -> Esquiva
-    document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
-        const label = item.querySelector('label');
-        if (label && label.textContent.trim() === 'Destreza') {
-            item.querySelector('input').addEventListener('input', atualizarEsquiva);
-        }
-    });
-
-    // Adiciona listener para Constituição -> Defesa e Bloqueio
+    // Adiciona listener para Constituição -> Defesa, Esquiva e Bloqueio (na ordem correta, com atraso para garantir DOM)
     document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
         const label = item.querySelector('label');
         if (label && label.textContent.trim() === 'Constituição') {
             item.querySelector('input').addEventListener('input', () => {
                 atualizarDefesa();
+                setTimeout(() => {
+                    atualizarEsquiva();
+                }, 0);
                 atualizarBloqueio();
             });
+        }
+    });
+
+    // Adiciona listener para o input de Defesa (caso o usuário edite manualmente)
+    document.querySelectorAll('.status-combate .status-item').forEach(item => {
+        const label = item.querySelector('label');
+        if (label && label.textContent.trim() === 'Defesa') {
+            const defesaInput = item.querySelector('input');
+            if (defesaInput) {
+                defesaInput.addEventListener('input', atualizarEsquiva);
+            }
         }
     });
 
@@ -1142,38 +1146,31 @@ for (const atributo in periciasData) {
 
 // Função para atualizar a Esquiva com base em Defesa e Reflexos (Perícia)
 function atualizarEsquiva() {
-    console.log('Atualizando Esquiva...');
-    let destreza = 0;
-    // Pega o valor do atributo Destreza
-    document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
+    // Esquiva = Defesa + Reflexos (perícia base + d6)
+    let defesa = 10;
+    document.querySelectorAll('.status-combate .status-item').forEach(item => {
         const label = item.querySelector('label');
-        if (label && label.textContent.trim() === 'Destreza') {
-            destreza = parseInt(item.querySelector('input').value) || 0;
+        if (label && label.textContent.trim() === 'Defesa') {
+            const defesaInput = item.querySelector('input');
+            if (defesaInput) {
+                defesa = parseInt(defesaInput.value) || 0;
+            }
         }
     });
-
-    // Pega o valor da perícia Reflexos (base + d6)
     let reflexos = 0;
     if (window.valoresPericias && window.valoresPericias['Destreza'] && typeof window.valoresPericias['Destreza']['Reflexos'] !== 'undefined') {
         reflexos = parseInt(window.valoresPericias['Destreza']['Reflexos']) || 0;
     }
-    // Soma o d6 se houver
     if (window.dadosRoladosPericias && window.dadosRoladosPericias['destreza'] && typeof window.dadosRoladosPericias['destreza']['reflexos'] !== 'undefined') {
         reflexos += parseInt(window.dadosRoladosPericias['destreza']['reflexos']) || 0;
     }
-    console.log(`Cálculo Esquiva: Destreza=${destreza}, Reflexos=${reflexos}`);
-
-    // Calcula a esquiva final
-    const esquiva = 10 + destreza + reflexos;
-
-    // Atualiza o campo de Esquiva
+    const esquiva = defesa + reflexos;
     document.querySelectorAll('.status-combate .status-item').forEach(item => {
         const label = item.querySelector('label');
         if (label && label.textContent.trim() === 'Esquiva') {
             const esquivaInput = item.querySelector('input');
             if (esquivaInput) {
                 esquivaInput.value = esquiva;
-                console.log('Esquiva atualizada para:', esquiva);
             }
         }
     });
@@ -1198,14 +1195,13 @@ function atualizarBloqueio() {
     if (window.valoresPericias && window.valoresPericias['Constituição'] && typeof window.valoresPericias['Constituição']['Fortitude'] !== 'undefined') {
         fortitude = parseInt(window.valoresPericias['Constituição']['Fortitude']) || 0;
     }
-    // Soma o d6 se houver
     if (window.dadosRoladosPericias && window.dadosRoladosPericias['constituicao'] && typeof window.dadosRoladosPericias['constituicao']['fortitude'] !== 'undefined') {
         fortitude += parseInt(window.dadosRoladosPericias['constituicao']['fortitude']) || 0;
     }
     console.log(`Cálculo Bloqueio: Constituição=${constituicao}, Fortitude=${fortitude}`);
 
-    // Calcula o bloqueio final (base 0)
-    const bloqueio = constituicao + fortitude;
+    // Calcula o bloqueio final: Constituição + metade da Fortitude (arredondado para baixo)
+    const bloqueio = constituicao + Math.floor(fortitude / 2);
 
     // Atualiza o campo de Bloqueio
     document.querySelectorAll('.status-combate .status-item').forEach(item => {
@@ -1224,6 +1220,7 @@ function atualizarBloqueio() {
  * Atualiza o valor da Defesa com base no atributo Constituição.
  */
 function atualizarDefesa() {
+    console.log('Função atualizarDefesa chamada!');
     let constituicao = 0;
     document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
         const label = item.querySelector('label');
@@ -1237,7 +1234,11 @@ function atualizarDefesa() {
         const label = item.querySelector('label');
         if (label && label.textContent.replace(/\s/g, '').toLowerCase() === 'defesa') {
             const defesaInput = item.querySelector('input');
-            if (defesaInput) defesaInput.value = defesa;
+            if (defesaInput) {
+                defesaInput.value = defesa;
+                defesaInput.dispatchEvent(new Event('input', { bubbles: true }));
+            }
         }
     });
+    atualizarEsquiva();
 }

@@ -1486,6 +1486,13 @@
                 input.addEventListener('change', function () {
                     mudarAtributo(this);
                 });
+                // Se for Constituição, também atualiza Esquiva
+                const label = input.parentElement.querySelector('label');
+                if (label && label.textContent.trim() === 'Constituição') {
+                    input.addEventListener('input', function () {
+                        if (typeof atualizarEsquiva === 'function') atualizarEsquiva();
+                    });
+                }
             });
 
             // Inicializa os contadores
@@ -1827,37 +1834,6 @@
             });
         });
 
-        // Função para atualizar a Defesa com base em Constituição
-        function atualizarDefesa() {
-            let constituicao = 0;
-            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
-                const label = item.querySelector('label');
-                if (label && label.textContent.trim() === 'Constituição') {
-                    constituicao = parseInt(item.querySelector('input').value) || 0;
-                }
-            });
-            const defesa = constituicao + 10;
-            // Busca o campo de Defesa de forma robusta
-            document.querySelectorAll('.status-combate .status-item').forEach(item => {
-                const label = item.querySelector('label');
-                if (label && label.textContent.replace(/\s/g, '').toLowerCase() === 'defesa') {
-                    const defesaInput = item.querySelector('input');
-                    if (defesaInput) defesaInput.value = defesa;
-                }
-            });
-        }
-
-        // Atualiza a Defesa ao carregar a página e ao mudar Constituição
-        document.addEventListener('DOMContentLoaded', function () {
-            // Adiciona evento para atualizar ao mudar Constituição
-            document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
-                const label = item.querySelector('label');
-                if (label && label.textContent.trim() === 'Constituição') {
-                    item.querySelector('input').addEventListener('input', atualizarDefesa);
-                }
-            });
-        });
-
         // INVENTÁRIO
         function calcularCapacidadeInventario() {
             let forca = 0;
@@ -2007,6 +1983,7 @@
                 document.body.style.paddingBottom = `${barHeight + 20}px`;
             });
         }
+
     </script>
 </body>
 
