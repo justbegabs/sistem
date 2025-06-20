@@ -140,15 +140,20 @@ window.abrirModalPericia = function abrirModalPericia(tipo) {
         // Evento para salvar o valor ao alterar
         const input = item.querySelector('input');
         input.addEventListener('input', function () {
-            const novoValor = parseInt(this.value) || 0;
-            // Ao editar manualmente, zera o d6 salvo
-            window.valoresPericias[tipo][pericia] = novoValor;
-            console.log(`[input listener modal] Valor da pericia ${pericia} (${tipo}) salvo em window.valoresPericias:`, window.valoresPericias[tipo][pericia]);
-            if (window.dadosRoladosPericias && window.dadosRoladosPericias[tipoKey]) {
-                window.dadosRoladosPericias[tipoKey][labelKey] = 0;
+            // Ao editar manualmente, zera o d6 salvo e salva o valor base
+            const valorManual = parseInt(this.value) || 0;
+            const tipoKey = normalizarChave(tipo);
+            const labelKey = normalizarChave(pericia);
+            
+            if (window.dadosRoladosPericias && window.dadosRoladosPericias[tipoKey] && typeof window.dadosRoladosPericias[tipoKey][labelKey] !== 'undefined') {
+                const d6Rolado = window.dadosRoladosPericias[tipoKey][labelKey];
+                // Subtrai o dado para salvar apenas o valor base
+                window.valoresPericias[tipo][pericia] = valorManual - d6Rolado;
+            } else {
+                window.valoresPericias[tipo][pericia] = valorManual;
             }
-            console.log(`[input] ${tipo} - ${pericia}: novoValor=${novoValor}, d6 zerado`);
-            console.log('[input] valoresPericias atualizado para tipo ', tipo, ':', window.valoresPericias[tipo]);
+            
+            console.log(`[input listener modal] Valor base da pericia ${pericia} (${tipo}) salvo:`, window.valoresPericias[tipo][pericia]);
 
             // Atualizar Esquiva se Reflexos, ou Bloqueio se Fortitude
             if (labelKey === normalizarChave('Reflexos')) {
@@ -179,7 +184,7 @@ window.abrirModalPericia = function abrirModalPericia(tipo) {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM carregado, iniciando...');
 
-    // Atualiza os valores iniciais
+    // Inicializa os status de combate
     atualizarDefesa();
     atualizarEsquiva();
     atualizarBloqueio();
@@ -188,50 +193,22 @@ document.addEventListener('DOMContentLoaded', () => {
     atualizarContadorAtributos();
     atualizarContadorPericias();
 
-    // Atualiza a defesa ao carregar a página e ao mudar Constituição
-    atualizarDefesa();
+    // Adiciona listener para Destreza -> Esquiva
     document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
         const label = item.querySelector('label');
-        if (label && label.textContent.trim() === 'Constituição') {
-            item.querySelector('input').addEventListener('input', atualizarDefesa);
-        }
-    });
-
-    // Adiciona eventos para atualizar Esquiva
-    document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
-        const label = item.querySelector('label');
-        if (label && label.textContent.trim() === 'Constituição') {
+        if (label && label.textContent.trim() === 'Destreza') {
             item.querySelector('input').addEventListener('input', atualizarEsquiva);
         }
     });
 
-    // Adiciona eventos para atualizar Bloqueio
+    // Adiciona listener para Constituição -> Defesa e Bloqueio
     document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
         const label = item.querySelector('label');
         if (label && label.textContent.trim() === 'Constituição') {
-            item.querySelector('input').addEventListener('input', atualizarBloqueio);
-        }
-    });
-
-    // Adiciona eventos para atualizar quando as perícias são alteradas
-    document.body.addEventListener('input', function (e) {
-        if (e.target && e.target.closest('.pericia-item')) {
-            const label = e.target.closest('.pericia-item').querySelector('label');
-            if (label) {
-                const periciaNome = label.childNodes[0].textContent.trim();
-                const tipo = document.getElementById('modal-pericia-titulo')?.textContent.replace('Perícias de ', '').trim();
-
-                console.log('[input] Perícia alterada no body listener:', periciaNome, 'Tipo:', tipo);
-
-                if (periciaNome === 'Reflexos') {
-                    console.log('[input body] Atualizando Esquiva devido a mudança em Reflexos');
-                    atualizarEsquiva();
-                }
-                if (periciaNome === 'Fortitude') {
-                    console.log('[input body] Atualizando Bloqueio devido a mudança em Fortitude');
-                    atualizarBloqueio();
-                }
-            }
+            item.querySelector('input').addEventListener('input', () => {
+                atualizarDefesa();
+                atualizarBloqueio();
+            });
         }
     });
 
@@ -1165,58 +1142,71 @@ for (const atributo in periciasData) {
 
 // Função para atualizar a Esquiva com base em Defesa e Reflexos (Perícia)
 function atualizarEsquiva() {
-    console.log('[atualizarEsquiva] Iniciando atualização...');
-    // Busca Defesa
-    let defesa = 10;
-    document.querySelectorAll('.status-combate .status-item').forEach(item => {
+    console.log('Atualizando Esquiva...');
+    let destreza = 0;
+    // Pega o valor do atributo Destreza
+    document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
         const label = item.querySelector('label');
-        if (label && label.textContent.trim() === 'Defesa') {
-            defesa = parseInt(item.querySelector('input').value) || 0;
-            console.log('[atualizarEsquiva] Defesa encontrada:', defesa);
+        if (label && label.textContent.trim() === 'Destreza') {
+            destreza = parseInt(item.querySelector('input').value) || 0;
         }
     });
-    // Busca Reflexos (Perícia de Destreza)
+
+    // Pega o valor da perícia Reflexos (base + d6)
     let reflexos = 0;
-    console.log('[atualizarEsquiva] Buscando Reflexos em:', window.valoresPericias?.['Destreza']?.['Reflexos']);
-    if (window.valoresPericias && window.valoresPericias['Destreza']) {
+    if (window.valoresPericias && window.valoresPericias['Destreza'] && typeof window.valoresPericias['Destreza']['Reflexos'] !== 'undefined') {
         reflexos = parseInt(window.valoresPericias['Destreza']['Reflexos']) || 0;
-        console.log('[atualizarEsquiva] Reflexos encontrado:', reflexos);
     }
+    // Soma o d6 se houver
+    if (window.dadosRoladosPericias && window.dadosRoladosPericias['destreza'] && typeof window.dadosRoladosPericias['destreza']['reflexos'] !== 'undefined') {
+        reflexos += parseInt(window.dadosRoladosPericias['destreza']['reflexos']) || 0;
+    }
+    console.log(`Cálculo Esquiva: Destreza=${destreza}, Reflexos=${reflexos}`);
+
+    // Calcula a esquiva final
+    const esquiva = 10 + destreza + reflexos;
+
     // Atualiza o campo de Esquiva
     document.querySelectorAll('.status-combate .status-item').forEach(item => {
         const label = item.querySelector('label');
         if (label && label.textContent.trim() === 'Esquiva') {
             const esquivaInput = item.querySelector('input');
             if (esquivaInput) {
-                esquivaInput.value = defesa + reflexos;
-                console.log('[atualizarEsquiva] Esquiva atualizada para:', defesa + reflexos);
+                esquivaInput.value = esquiva;
+                console.log('Esquiva atualizada para:', esquiva);
             }
         }
     });
 }
 
-// Função para atualizar o Bloqueio com base em Constituição e Fortitude (Perícia)
+/**
+ * Atualiza o valor do Bloqueio com base no atributo Constituição e na perícia Fortitude.
+ */
 function atualizarBloqueio() {
-    console.log('[atualizarBloqueio] Iniciando atualização...');
-    // Busca Constituição
+    console.log('Atualizando Bloqueio...');
     let constituicao = 0;
+    // Pega o valor do atributo Constituição
     document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
         const label = item.querySelector('label');
         if (label && label.textContent.trim() === 'Constituição') {
             constituicao = parseInt(item.querySelector('input').value) || 0;
-            console.log('[atualizarBloqueio] Constituição encontrada:', constituicao);
         }
     });
-    // Busca Fortitude (Perícia de Constituição)
+
+    // Pega o valor da perícia Fortitude (base + d6)
     let fortitude = 0;
-    console.log('[atualizarBloqueio] Buscando Fortitude em:', window.valoresPericias?.['Constituição']?.['Fortitude']);
-    if (window.valoresPericias && window.valoresPericias['Constituição']) {
+    if (window.valoresPericias && window.valoresPericias['Constituição'] && typeof window.valoresPericias['Constituição']['Fortitude'] !== 'undefined') {
         fortitude = parseInt(window.valoresPericias['Constituição']['Fortitude']) || 0;
-        console.log('[atualizarBloqueio] Fortitude encontrada:', fortitude);
     }
-    // Calcula o bloqueio
-    const bloqueio = Math.floor(constituicao * 2 + (fortitude / 2));
-    console.log('[atualizarBloqueio] Bloqueio calculado:', bloqueio);
+    // Soma o d6 se houver
+    if (window.dadosRoladosPericias && window.dadosRoladosPericias['constituicao'] && typeof window.dadosRoladosPericias['constituicao']['fortitude'] !== 'undefined') {
+        fortitude += parseInt(window.dadosRoladosPericias['constituicao']['fortitude']) || 0;
+    }
+    console.log(`Cálculo Bloqueio: Constituição=${constituicao}, Fortitude=${fortitude}`);
+
+    // Calcula o bloqueio final (base 0)
+    const bloqueio = constituicao + fortitude;
+
     // Atualiza o campo de Bloqueio
     document.querySelectorAll('.status-combate .status-item').forEach(item => {
         const label = item.querySelector('label');
@@ -1224,13 +1214,15 @@ function atualizarBloqueio() {
             const bloqueioInput = item.querySelector('input');
             if (bloqueioInput) {
                 bloqueioInput.value = bloqueio;
-                console.log('[atualizarBloqueio] Bloqueio atualizado para:', bloqueio);
+                console.log('Bloqueio atualizado para:', bloqueio);
             }
         }
     });
 }
 
-// Função para atualizar a Defesa com base em Constituição
+/**
+ * Atualiza o valor da Defesa com base no atributo Constituição.
+ */
 function atualizarDefesa() {
     let constituicao = 0;
     document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
