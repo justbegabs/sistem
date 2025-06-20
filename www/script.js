@@ -97,6 +97,89 @@ if (classeInput) {
     });
 }
 
+// Controle global para bônus de raça
+if (!window.bonusRacaPericias) window.bonusRacaPericias = {};
+
+// Função utilitária para normalizar nomes de arquivo de raça
+function normalizarNomeArquivoRaca(nome) {
+    return nome
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove acentos
+        .replace(/[^a-zA-Z0-9]/g, '') // remove caracteres especiais e espaços
+        .toLowerCase() + '.html';
+}
+
+// Interceptar seleção de raça para ativar bônus de raça dinâmico via HTML
+const racaInput = document.querySelector('input[placeholder="Raça"]');
+if (racaInput) {
+    racaInput.addEventListener('input', function() {
+        window.bonusRacaPericias = {};
+        const raca = this.value.trim();
+        console.log('[Raça] Valor do campo:', raca);
+        if (!raca) {
+            console.log('[Raça] Campo de raça vazio, não buscar arquivo.');
+            return;
+        }
+        const arquivo = normalizarNomeArquivoRaca(raca);
+        console.log('[Raça] Buscando arquivo:', arquivo);
+        fetch(arquivo)
+            .then(resp => resp.text())
+            .then(html => {
+                // Regex para encontrar padrões tipo '+3 em Conhecimento Arcano' ou '+2 em Reflexos'
+                const regex = /([+\-]?\d+)\s*em\s*([A-Za-zÀ-ÿ\s]+)/gi;
+                // Busca apenas no aviso de bônus (primeiro <div> do body)
+                const temp = document.createElement('div');
+                temp.innerHTML = html;
+                const aviso = temp.querySelector('div');
+                if (!aviso) { console.log('[Raça] Nenhum <div> encontrado no HTML'); return; }
+                let texto = aviso.textContent;
+                console.log('[Raça] Texto analisado:', texto);
+                let match;
+                while ((match = regex.exec(texto)) !== null) {
+                    const valor = parseInt(match[1]);
+                    let pericia = match[2].trim();
+                    // Remove ' e' do final, se houver
+                    if (pericia.endsWith(' e')) pericia = pericia.slice(0, -2).trim();
+                    console.log(`[Raça] Match encontrado: valor=${valor}, pericia=${pericia}`);
+                    // Descobre a categoria da perícia
+                    let categoria = null;
+                    for (const cat in periciasData) {
+                        if (periciasData[cat].includes(pericia)) {
+                            categoria = cat;
+                            break;
+                        }
+                    }
+                    if (categoria) {
+                        if (!window.bonusRacaPericias[categoria]) window.bonusRacaPericias[categoria] = {};
+                        window.bonusRacaPericias[categoria][pericia] = valor;
+                    }
+                }
+                console.log('[Raça] Objeto final de bônus:', window.bonusRacaPericias);
+                // Força atualização dos modais de perícia se algum estiver aberto
+                setTimeout(() => {
+                    // Atualiza explicitamente os valores das perícias afetadas pelo bônus de raça
+                    for (const tipo in window.bonusRacaPericias) {
+                        for (const pericia in window.bonusRacaPericias[tipo]) {
+                            if (!window.valoresPericias[tipo]) window.valoresPericias[tipo] = {};
+                            // Se o valor base não existe, inicializa com 0
+                            if (typeof window.valoresPericias[tipo][pericia] === 'undefined') {
+                                window.valoresPericias[tipo][pericia] = 0;
+                            }
+                            // Não altera o valor base, apenas garante que o bônus será considerado ao abrir o modal
+                        }
+                    }
+                    const modal = document.getElementById('modal-pericias');
+                    if (modal && modal.style.display === 'block') {
+                        const titulo = document.getElementById('modal-pericia-titulo');
+                        if (titulo) {
+                            const tipoAtual = titulo.textContent.replace('Perícias de ', '').trim();
+                            window.abrirModalPericia(tipoAtual);
+                        }
+                    }
+                }, 100);
+            });
+    });
+}
+
 // Função para abrir o modal de perícias
 window.abrirModalPericia = function abrirModalPericia(tipo) {
     console.log('[GLOBAL abrirModalPericia] chamada para tipo:', tipo);
@@ -138,9 +221,11 @@ window.abrirModalPericia = function abrirModalPericia(tipo) {
         if (window.dadosRoladosPericias && window.dadosRoladosPericias[tipoKey] && typeof window.dadosRoladosPericias[tipoKey][labelKey] !== 'undefined') {
             d6 = parseInt(window.dadosRoladosPericias[tipoKey][labelKey]) || 0;
         }
-        // Bônus de raça (futuro)
+        // Bônus de raça
         let bonusRaca = 0;
-        // if (window.bonusRaca && ...) { bonusRaca = X; }
+        if (window.bonusRacaPericias && window.bonusRacaPericias[tipo] && typeof window.bonusRacaPericias[tipo][pericia] !== 'undefined') {
+            bonusRaca = parseInt(window.bonusRacaPericias[tipo][pericia]) || 0;
+        }
         // Bônus de origem (futuro)
         let bonusOrigem = 0;
         // if (window.bonusOrigem && ...) { bonusOrigem = X; }
@@ -149,9 +234,10 @@ window.abrirModalPericia = function abrirModalPericia(tipo) {
         if (window.bonusClasseBruxa && tipo === 'Magia' && (pericia === 'Conhecimento Arcano' || pericia === 'Encantamento')) {
             bonusClasse = 3;
         }
-        // Valor total exibido
-        const valorExibido = valorBase + d6 + bonusRaca + bonusOrigem + bonusClasse;
-        const totalBonus = bonusRaca + bonusOrigem + bonusClasse + d6;
+        // O input mostra apenas o valor base
+        const valorExibido = valorBase;
+        // O total mostra o valor final da perícia
+        const totalFinal = valorBase + bonusRaca + bonusOrigem + bonusClasse + d6;
         const item = document.createElement('div');
         item.className = 'pericia-item';
         item.innerHTML = `
@@ -164,7 +250,7 @@ window.abrirModalPericia = function abrirModalPericia(tipo) {
                 <span title="Bônus de Raça" style="display:inline-block;background:#fffbe6;color:#C24914;border:2px solid #C24914;border-radius:8px;padding:2px 10px;font-size:1em;margin-left:6px;font-weight:bold;vertical-align:middle;min-width:48px;text-align:center;">+${bonusRaca}<br><span style='font-size:0.85em;font-weight:normal;'>Raça</span></span>
                 <span title="Bônus de Origem" style="display:inline-block;background:#e6f7fa;color:#14808C;border:2px solid #14808C;border-radius:8px;padding:2px 10px;font-size:1em;margin-left:6px;font-weight:bold;vertical-align:middle;min-width:48px;text-align:center;">+${bonusOrigem}<br><span style='font-size:0.85em;font-weight:normal;'>Origem</span></span>
                 <span title="Bônus de Classe" style="display:inline-block;background:#f3e6fa;color:#6c3483;border:2px solid #8e44ad;border-radius:8px;padding:2px 10px;font-size:1em;margin-left:6px;font-weight:bold;vertical-align:middle;min-width:48px;text-align:center;">+${bonusClasse}<br><span style='font-size:0.85em;font-weight:normal;'>Classe</span></span>
-                <span title="Total de Bônus" style="display:inline-block;background:#eaf6fb;color:#0a3d62;border:2px solid #0a3d62;border-radius:8px;padding:2px 10px;font-size:1em;margin-left:10px;font-weight:bold;vertical-align:middle;min-width:60px;text-align:center;">${totalBonus >= 0 ? '+' : ''}${totalBonus}<br><span style='font-size:0.85em;font-weight:normal;'>Total</span></span>
+                <span title="Total de Bônus" style="display:inline-block;background:#eaf6fb;color:#0a3d62;border:2px solid #0a3d62;border-radius:8px;padding:2px 10px;font-size:1em;margin-left:10px;font-weight:bold;vertical-align:middle;min-width:60px;text-align:center;">${totalFinal}<br><span style='font-size:0.85em;font-weight:normal;'>Total</span></span>
             </div>
         `;
         // Evento para salvar o valor ao alterar
@@ -179,13 +265,16 @@ window.abrirModalPericia = function abrirModalPericia(tipo) {
                 d6Rolado = window.dadosRoladosPericias[tipoKey][labelKey];
             }
             let bonusRaca = 0;
+            if (window.bonusRacaPericias && window.bonusRacaPericias[tipo] && typeof window.bonusRacaPericias[tipo][pericia] !== 'undefined') {
+                bonusRaca = parseInt(window.bonusRacaPericias[tipo][pericia]) || 0;
+            }
             let bonusOrigem = 0;
             let bonusClasse = 0;
             if (window.bonusClasseBruxa && tipo === 'Magia' && (pericia === 'Conhecimento Arcano' || pericia === 'Encantamento')) {
                 bonusClasse = 3;
             }
             // Salva apenas o valor base (descontando bônus e d6)
-            window.valoresPericias[tipo][pericia] = valorManual - d6Rolado - bonusRaca - bonusOrigem - bonusClasse;
+            window.valoresPericias[tipo][pericia] = valorManual;
             // Atualizar Esquiva se Reflexos, ou Bloqueio se Fortitude
             if (labelKey === normalizarChave('Reflexos')) {
                 atualizarEsquiva();
@@ -871,35 +960,45 @@ function rolarD6(event, elemento) {
 
     // Pega o valor base da perícia diretamente de window.valoresPericias
     const valorBase = window.valoresPericias[tipo][label] ?? 0;
-    console.log(`[rolarD6] Pericia: ${label} (${tipo}), Valor Base lido de window.valoresPericias: ${valorBase}`);
-
     // Salva o novo resultado do d6
     window.dadosRoladosPericias[tipoKey][labelKey] = resultadoD6;
-    console.log(`[rolarD6] Novo D6 ${resultadoD6} salvo em window.dadosRoladosPericias['${tipoKey}']['${labelKey}']`);
-
     // Calcula o novo valor a ser exibido no input (valor base + novo d6)
     const novoValorExibido = valorBase + resultadoD6;
     input.value = novoValorExibido;
-
-    console.log(`[rolarD6] Novo valor exibido no input: ${novoValorExibido} (Valor Base: ${valorBase} + Novo D6: ${resultadoD6})`);
-
     elemento.style.transform = 'rotate(360deg)';
     setTimeout(() => {
         elemento.style.transform = 'rotate(0deg)';
     }, 500);
-
     atualizarContadorPericias();
-
+    // Atualizar a caixa Total de bônus
+    const item = elemento.closest('.pericia-item');
+    if (item) {
+        // Busca os bônus
+        let bonusRaca = 0;
+        if (window.bonusRacaPericias && window.bonusRacaPericias[tipo] && typeof window.bonusRacaPericias[tipo][label] !== 'undefined') {
+            bonusRaca = parseInt(window.bonusRacaPericias[tipo][label]) || 0;
+        }
+        let bonusOrigem = 0;
+        let bonusClasse = 0;
+        if (window.bonusClasseBruxa && tipo === 'Magia' && (label === 'Conhecimento Arcano' || label === 'Encantamento')) {
+            bonusClasse = 3;
+        }
+        // Agora o total mostra o valor final da perícia
+        const totalFinal = valorBase + bonusRaca + bonusOrigem + bonusClasse + resultadoD6;
+        // Atualiza a caixa Total
+        const totalBox = item.querySelector('span[title="Total de Bônus"]');
+        if (totalBox) {
+            totalBox.innerHTML = `${totalFinal}<br><span style='font-size:0.85em;font-weight:normal;'>Total</span>`;
+        }
+    }
     // Chamar funções de atualização após salvar os valores
     if (labelKey === normalizarChave('Reflexos')) {
-        console.log('[rolarD6] Atualizando Esquiva após rolagem de Reflexos');
         atualizarEsquiva();
     }
     if (labelKey === normalizarChave('Fortitude')) {
-        console.log('[rolarD6] Atualizando Bloqueio após rolagem de Fortitude');
         atualizarBloqueio();
     }
-    salvarPericiasRender(); // Salva as perícias e dados rolados no backend
+    salvarPericiasRender();
 }
 
 // Evento de clique no nome da perícia
