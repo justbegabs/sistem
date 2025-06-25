@@ -1052,38 +1052,32 @@
                 <div class="origem-card">
                     <h3>Beaumont</h3>
                     <p>Toque primaveril</p>
-                    <button class="selecionar-origem"
-                        onclick="selecionarFamiliaBase('Beaumont', this)">Selecionar</button>
+                    <button class="selecionar-origem" onclick="selecionarFamiliaBase('Beaumont', this)">Selecionar</button>
                 </div>
                 <div class="origem-card">
                     <h3>De Lune</h3>
                     <p>Sussurro prismático</p>
-                    <button class="selecionar-origem"
-                        onclick="selecionarFamiliaBase('De Lune', this)">Selecionar</button>
+                    <button class="selecionar-origem" onclick="selecionarFamiliaBase('De Lune', this)">Selecionar</button>
                 </div>
                 <div class="origem-card">
                     <h3>Brightmoon</h3>
                     <p>Fragmentos de estrelas</p>
-                    <button class="selecionar-origem"
-                        onclick="selecionarFamiliaBase('Brightmoon', this)">Selecionar</button>
+                    <button class="selecionar-origem" onclick="selecionarFamiliaBase('Brightmoon', this)">Selecionar</button>
                 </div>
                 <div class="origem-card">
                     <h3>Emberfell</h3>
                     <p>Colapso do vazio</p>
-                    <button class="selecionar-origem"
-                        onclick="selecionarFamiliaBase('Emberfell', this)">Selecionar</button>
+                    <button class="selecionar-origem" onclick="selecionarFamiliaBase('Emberfell', this)">Selecionar</button>
                 </div>
                 <div class="origem-card">
                     <h3>MontClair</h3>
                     <p>Sanguessuga de mana</p>
-                    <button class="selecionar-origem"
-                        onclick="selecionarFamiliaBase('MontClair', this)">Selecionar</button>
+                    <button class="selecionar-origem" onclick="selecionarFamiliaBase('MontClair', this)">Selecionar</button>
                 </div>
                 <div class="origem-card">
                     <h3>Fireheart</h3>
                     <p>Aurora ígnea</p>
-                    <button class="selecionar-origem"
-                        onclick="selecionarFamiliaBase('Fireheart', this)">Selecionar</button>
+                    <button class="selecionar-origem" onclick="selecionarFamiliaBase('Fireheart', this)">Selecionar</button>
                 </div>
                 <div class="origem-card">
                     <h3>Kaito</h3>
@@ -1114,499 +1108,181 @@
             document.getElementById('modal-racas').style.display = 'none';
         }
 
+        // Substitui a lógica de escolha de habilidades/magias para TODAS as raças
         function selecionarRaca(raca, button) {
             document.querySelectorAll('.raca-card').forEach(card => {
                 card.classList.remove('selected');
             });
             button.closest('.raca-card').classList.add('selected');
             document.querySelector('input[placeholder="Raça"]').value = raca;
-            // Dispara o evento input para atualizar bônus de raça
             document.querySelector('input[placeholder="Raça"]').dispatchEvent(new Event('input', { bubbles: true }));
             closeRacaModal();
 
-            if (raca === 'Bruxa') {
-                abrirEscolhaHabilidadesMagiasBruxa();
-            }
+            abrirEscolhaHabilidadesMagiasRaca(raca);
         }
 
-        function abrirEscolhaHabilidadesMagiasBruxa() {
-            let modal = document.getElementById('modal-bruxa-escolha');
+        function abrirEscolhaHabilidadesMagiasRaca(raca) {
+            let modal = document.getElementById('modal-raca-escolha');
             if (!modal) {
                 modal = document.createElement('div');
-                modal.id = 'modal-bruxa-escolha';
+                modal.id = 'modal-raca-escolha';
                 modal.style = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;';
-                modal.innerHTML = `<div id="modal-bruxa-conteudo" style="background:#fff;padding:30px 40px;border-radius:12px;min-width:320px;max-width:90vw;max-height:90vh;overflow:auto;text-align:center;position:relative;">
-            <button onclick="document.getElementById('modal-bruxa-escolha').style.display='none'" style="position:absolute;top:10px;right:10px;font-size:20px;background:none;border:none;cursor:pointer;">&times;</button>
-            <h2>Escolher Habilidades e Magias</h2>
-            <div style="margin:30px 0;display:flex;gap:30px;justify-content:center;">
-                <button id="btn-habilidades-bruxa" style="padding:12px 24px;font-size:1.1em;border-radius:8px;border:1px solid #8e44ad;background:#f3e6fa;color:#6c3483;cursor:pointer;">Habilidades</button>
-                <button id="btn-magias-bruxa" style="padding:12px 24px;font-size:1.1em;border-radius:8px;border:1px solid #2980b9;background:#eaf6fb;color:#2980b9;cursor:pointer;">Magias</button>
-            </div>
-            <div id="conteudo-bruxa"></div>
-        </div>`;
+                modal.innerHTML = `<div id="modal-raca-conteudo" style="background:#fff;padding:30px 40px;border-radius:12px;min-width:320px;max-width:90vw;max-height:90vh;overflow:auto;text-align:center;position:relative;">
+                <button onclick="document.getElementById('modal-raca-escolha').style.display='none'" style="position:absolute;top:10px;right:10px;font-size:20px;background:none;border:none;cursor:pointer;">&times;</button>
+                <h2>Escolher Habilidades e Magias de <span id="nome-raca-escolha"></span></h2>
+                <div style="margin:30px 0;display:flex;gap:30px;justify-content:center;">
+                    <button id="btn-habilidades-raca" style="padding:12px 24px;font-size:1.1em;border-radius:8px;border:1px solid #8e44ad;background:#f3e6fa;color:#6c3483;cursor:pointer;">Habilidades</button>
+                    <button id="btn-magias-raca" style="padding:12px 24px;font-size:1.1em;border-radius:8px;border:1px solid #2980b9;background:#eaf6fb;color:#2980b9;cursor:pointer;">Magias</button>
+                </div>
+                <div id="conteudo-raca"></div>
+            </div>`;
                 document.body.appendChild(modal);
             }
+            document.getElementById('nome-raca-escolha').textContent = raca;
             modal.style.display = 'flex';
+
             setTimeout(() => {
-                document.getElementById('btn-habilidades-bruxa').onclick = function() {
-                    carregarConteudoBruxa('habilidades');
+                document.getElementById('btn-habilidades-raca').onclick = function() {
+                    carregarConteudoRaca(raca, 'habilidades');
                 };
-                document.getElementById('btn-magias-bruxa').onclick = function() {
-                    carregarConteudoBruxa('magias');
+                document.getElementById('btn-magias-raca').onclick = function() {
+                    carregarConteudoRaca(raca, 'magias');
                 };
             }, 100);
         }
 
-        function carregarConteudoBruxa(tipo) {
-            fetch('bruxa.html')
-                .then(resp => resp.text())
+        function carregarConteudoRaca(raca, tipo) {
+            // Espera-se um arquivo por raça: racas/<nome>.html (ex: racas/Bruxa.html, racas/Elfo.html)
+            // Se não existir, mostra mensagem padrão
+            const url = `racas/${raca.replace(/[^\w]/g, '').toLowerCase()}.html`;
+            fetch(url)
+                .then(resp => resp.ok ? resp.text() : '')
                 .then(html => {
-                    const temp = document.createElement('div');
-                    temp.innerHTML = html;
                     let conteudo = '';
-                    if (tipo === 'habilidades') {
-                        const habilidades = temp.querySelector('h2') && temp.querySelector('h2').textContent.includes('Habilidades') ? temp.querySelector('h2').parentElement : null;
-                        if (habilidades) {
-                            const cards = Array.from(habilidades.querySelectorAll('.magia > h3')).map(h3 => {
-                                const nome = h3.textContent;
-                                const desc = h3.nextElementSibling ? h3.nextElementSibling.outerHTML : '';
-                                return `<div class='card-escolha-bruxa' data-tipo='habilidade' data-nome='${nome}' style='display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:#f3e6fa;border:2px solid #8e44ad;border-radius:12px;padding:18px 20px;margin:12px 0;cursor:pointer;transition:box-shadow .2s;box-shadow:0 2px 8px #0001;max-width:420px;'><span style='font-weight:bold;font-size:1.1em;color:#6c3483;'>${nome}</span>${desc}</div>`;
-                            }).join('');
-                            conteudo = `<h2>Habilidades de Bruxa</h2><div id='cards-habilidades-bruxa' style='display:flex;flex-direction:column;align-items:center;'>${cards}</div>`;
-                        } else {
-                            conteudo = '<p>Habilidades não encontradas.</p>';
+                    if (html) {
+                        const temp = document.createElement('div');
+                        temp.innerHTML = html;
+                        if (tipo === 'habilidades') {
+                            const habilidades = Array.from(temp.querySelectorAll('.habilidade, .magia')).filter(el => el.classList.contains('habilidade'));
+                            if (habilidades.length) {
+                                conteudo = `<h2>Habilidades de ${raca}</h2><div id='cards-habilidades-raca' style='display:flex;flex-direction:column;align-items:center;'>` +
+                                    habilidades.map(hab => {
+                                        const nome = hab.querySelector('h3') ? hab.querySelector('h3').textContent : '';
+                                        const desc = hab.querySelector('p') ? hab.querySelector('p').outerHTML : '';
+                                        return `<div class='card-escolha-raca' data-tipo='habilidade' data-nome='${nome}' style='display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:#f3e6fa;border:2px solid #8e44ad;border-radius:12px;padding:18px 20px;margin:12px 0;cursor:pointer;transition:box-shadow .2s;box-shadow:0 2px 8px #0001;max-width:420px;'><span style='font-weight:bold;font-size:1.1em;color:#6c3483;'>${nome}</span>${desc}</div>`;
+                                    }).join('') +
+                                    `</div>`;
+                            } else {
+                                conteudo = '<p>Habilidades não encontradas para esta raça.</p>';
+                            }
+                        } else if (tipo === 'magias') {
+                            const magias = Array.from(temp.querySelectorAll('.habilidade, .magia')).filter(el => el.classList.contains('magia'));
+                            if (magias.length) {
+                                conteudo = `<h2>Magias de ${raca}</h2><div id='cards-magias-raca' style='display:flex;flex-direction:column;align-items:center;'>` +
+                                    magias.map(mag => {
+                                        const nome = mag.querySelector('h3') ? mag.querySelector('h3').textContent : '';
+                                        const desc = mag.querySelector('p') ? mag.querySelector('p').outerHTML : '';
+                                        return `<div class='card-escolha-raca' data-tipo='magia' data-nome='${nome}' style='display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:#eaf6fb;border:2px solid #2980b9;border-radius:12px;padding:18px 20px;margin:12px 0;cursor:pointer;transition:box-shadow .2s;box-shadow:0 2px 8px #0001;max-width:420px;'><span style='font-weight:bold;font-size:1.1em;color:#2980b9;'>${nome}</span>${desc}</div>`;
+                                    }).join('') +
+                                    `</div>`;
+                            } else {
+                                conteudo = '<p>Magias não encontradas para esta raça.</p>';
+                            }
                         }
-                    } else if (tipo === 'magias') {
-                        const magias = Array.from(temp.querySelectorAll('h2')).find(h2 => h2.textContent.includes('Magias'));
-                        if (magias) {
-                            const magiasBloco = magias.parentElement;
-                            const cards = Array.from(magiasBloco.querySelectorAll('.magia > h3')).map(h3 => {
-                                const nome = h3.textContent;
-                                const desc = h3.nextElementSibling ? h3.nextElementSibling.outerHTML : '';
-                                return `<div class='card-escolha-bruxa' data-tipo='magia' data-nome='${nome}' style='display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:#eaf6fb;border:2px solid #2980b9;border-radius:12px;padding:18px 20px;margin:12px 0;cursor:pointer;transition:box-shadow .2s;box-shadow:0 2px 8px #0001;max-width:420px;'><span style='font-weight:bold;font-size:1.1em;color:#2980b9;'>${nome}</span>${desc}</div>`;
-                            }).join('');
-                            conteudo = `<h2>Magias de Bruxa</h2><div id='cards-magias-bruxa' style='display:flex;flex-direction:column;align-items:center;'>${cards}</div>`;
-                        } else {
-                            conteudo = '<p>Magias não encontradas.</p>';
-                        }
+                    } else {
+                        conteudo = `<p>Nenhum conteúdo de ${tipo} cadastrado para esta raça.</p>`;
                     }
-                    document.getElementById('conteudo-bruxa').innerHTML = conteudo;
-                    setTimeout(applyEventosCardsBruxa, 0);
+                    document.getElementById('conteudo-raca').innerHTML = conteudo;
+                    setTimeout(applyEventosCardsRaca, 0);
                 });
         }
 
-        function applyEventosCardsBruxa() {
-            const cardsHab = document.querySelectorAll('.card-escolha-bruxa[data-tipo="habilidade"]');
-            const cardsMag = document.querySelectorAll('.card-escolha-bruxa[data-tipo="magia"]');
+        function applyEventosCardsRaca() {
+            const cardsHab = document.querySelectorAll('.card-escolha-raca[data-tipo="habilidade"]');
+            const cardsMag = document.querySelectorAll('.card-escolha-raca[data-tipo="magia"]');
             cardsHab.forEach(card => {
                 card.onclick = function() {
-                    window.habilidadeBruxaEscolhida = card.getAttribute('data-nome');
-                    document.getElementById('escolha-habilidade-bruxa').innerHTML = card.innerHTML;
+                    window.habilidadeRacaEscolhida = card.getAttribute('data-nome');
+                    if (!document.getElementById('escolha-habilidade-raca')) criarBarraRaca(document.querySelector('input[placeholder="Raça"]').value);
+                    document.getElementById('escolha-habilidade-raca').innerHTML = card.innerHTML;
                     cardsHab.forEach(x => x.style.boxShadow = '0 2px 8px #0001');
                     card.style.boxShadow = '0 0 0 3px #8e44ad';
                 };
             });
             cardsMag.forEach(card => {
                 card.onclick = function() {
-                    window.magiaBruxaEscolhida = card.getAttribute('data-nome');
-                    document.getElementById('escolha-magia-bruxa').innerHTML = card.innerHTML;
+                    window.magiaRacaEscolhida = card.getAttribute('data-nome');
+                    if (!document.getElementById('escolha-magia-raca')) criarBarraRaca(document.querySelector('input[placeholder="Raça"]').value);
+                    document.getElementById('escolha-magia-raca').innerHTML = card.innerHTML;
                     cardsMag.forEach(x => x.style.boxShadow = '0 2px 8px #0001');
                     card.style.boxShadow = '0 0 0 3px #2980b9';
                 };
             });
         }
 
-        function openClasseModal() {
-            document.getElementById('modal-classes').style.display = 'block';
+        // Remove barra antiga de bruxa se existir
+        function removerBarraBruxa() {
+            const bar = document.getElementById('escolhas-bruxa-bar');
+            if (bar) bar.remove();
         }
 
-        function closeClasseModal() {
-            document.getElementById('modal-classes').style.display = 'none';
+        // Barra fixa para mostrar escolhas da raça
+        function criarBarraRaca(nomeRaca = null) {
+            // Remove barra antiga se existir
+            const oldBar = document.getElementById('escolhas-raca-bar');
+            if (oldBar) oldBar.remove();
+            removerBarraBruxa(); // Garante que a barra de bruxa não aparece nunca
+
+            const bar = document.createElement('div');
+            bar.id = 'escolhas-raca-bar';
+            bar.style = `
+                position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+                width: 95%; max-width: 800px;
+                background: #fffbe6;
+                padding: 10px 16px;
+                display: flex; justify-content: space-between; align-items: center;
+                box-shadow: 0 -2px 8px #0002;
+                font-size: 1em; color: #222;
+                border-radius: 12px 12px 0 0;
+                z-index: 10000;
+                transition: all 0.2s ease-in-out;
+            `;
+            const titulo = nomeRaca ? `Escolhas de ${nomeRaca}` : 'Escolhas de Raça';
+            bar.innerHTML = `
+                <div id="barra-raca-content" style="display: flex; align-items: center; gap: 20px; flex-grow: 1;">
+                    <b>${titulo}:</b>
+                    <div id="escolha-habilidade-raca" style="flex:1;">Nenhuma habilidade.</div>
+                    <div id="escolha-magia-raca" style="flex:1;">Nenhuma magia.</div>
+                </div>
+                <button id="toggle-barra-raca-btn" onclick="toggleBarraRaca()" style="background:none; border:none; cursor:pointer; font-size: 1.5em; padding: 0 10px; line-height: 1;">▼</button>
+            `;
+            document.body.appendChild(bar);
+            requestAnimationFrame(() => {
+                const barHeight = bar.offsetHeight;
+                document.body.style.paddingBottom = `${barHeight + 20}px`;
+            });
         }
 
-        function selecionarClasse(classe, button) {
-            document.querySelectorAll('.classe-card').forEach(card => {
+        // Inicializa barra sem raça escolhida e remove barra de bruxa
+        document.addEventListener('DOMContentLoaded', function() {
+            criarBarraRaca();
+            removerBarraBruxa();
+        });
+
+        // Ao escolher uma raça, atualiza barra com nome da raça e remove barra de bruxa
+        function selecionarRaca(raca, button) {
+            document.querySelectorAll('.raca-card').forEach(card => {
                 card.classList.remove('selected');
             });
-            button.closest('.classe-card').classList.add('selected');
-            document.querySelector('input[placeholder="Classe"]').value = classe;
-            closeClasseModal();
+            button.closest('.raca-card').classList.add('selected');
+            document.querySelector('input[placeholder="Raça"]').value = raca;
+            document.querySelector('input[placeholder="Raça"]').dispatchEvent(new Event('input', { bubbles: true }));
+            closeRacaModal();
+
+            criarBarraRaca(raca);
+            removerBarraBruxa();
+            abrirEscolhaHabilidadesMagiasRaca(raca);
         }
-
-        function openOrigemModal() {
-            document.getElementById('modal-origens').style.display = 'block';
-        }
-
-        function closeOrigemModal() {
-            document.getElementById('modal-origens').style.display = 'none';
-        }
-
-        function selecionarOrigem(origem, button) {
-            document.querySelectorAll('.origem-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            button.closest('.origem-card').classList.add('selected');
-            document.querySelector('input[placeholder="Origem"]').value = origem;
-            closeOrigemModal();
-        }
-
-        function openFamiliaBaseModal() {
-            document.getElementById('modal-familias').style.display = 'block';
-        }
-
-        function closeFamiliaBaseModal() {
-            document.getElementById('modal-familias').style.display = 'none';
-        }
-
-        function selecionarFamiliaBase(familiaBase, button) {
-            document.querySelectorAll('#modal-familias .origem-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            button.closest('.origem-card').classList.add('selected');
-            document.querySelector('input[placeholder="Família-Base"]').value = familiaBase;
-            closeFamiliaBaseModal();
-        }
-
-        window.onclick = function (event) {
-            if (event.target == document.getElementById('modal-racas')) {
-                closeRacaModal();
-            }
-            if (event.target == document.getElementById('modal-classes')) {
-                closeClasseModal();
-            }
-            if (event.target == document.getElementById('modal-origens')) {
-                closeOrigemModal();
-            }
-            if (event.target == document.getElementById('modal-familias')) {
-                closeFamiliaBaseModal();
-            }
-        }
-
-        let clickCount = 0;
-        const tituloInfo = document.getElementById('titulo-info-personagem');
-        const familiaBaseItem = document.getElementById('familia-base-item');
-        const secretoPopup = document.getElementById('secretoPopup');
-
-        tituloInfo.addEventListener('click', () => {
-            clickCount++;
-            console.log('Clicks:', clickCount);
-
-            if (clickCount === 5) {
-                familiaBaseItem.style.display = 'block';
-                familiaBaseItem.style.opacity = '0';
-                setTimeout(() => {
-                    familiaBaseItem.style.opacity = '1';
-                }, 10);
-
-                secretoPopup.style.display = 'block';
-                setTimeout(() => {
-                    secretoPopup.classList.add('show');
-                }, 10);
-
-                setTimeout(() => {
-                    secretoPopup.classList.remove('show');
-                    setTimeout(() => {
-                        secretoPopup.style.display = 'none';
-                        clickCount = 0;
-                    }, 300);
-                }, 2000);
-            }
-        });
-
-        function atualizarStatus(input) {
-            // O valor máximo agora é lido diretamente do atributo 'max' do input
-            const max = parseInt(input.max);
-
-            // Garante que o valor está entre 0 e o máximo
-            let valor = Math.min(Math.max(parseInt(input.value) || 0, 0), max);
-
-            // Atualiza o valor do input
-            input.value = valor;
-
-            // Encontra a barra de progresso correspondente
-            const barra = input.closest('.status-item').querySelector('.barra-progresso');
-
-            // Calcula a porcentagem
-            const porcentagem = max > 0 ? (valor / max) * 100 : 0;
-
-            // Atualiza a barra de progresso
-            barra.style.setProperty('--progress-width', `${porcentagem}%`);
-        }
-
-        let nivelInterval = null;
-
-        function startIncrementNivel() {
-            // Limpa qualquer intervalo existente
-            if (nivelInterval) clearInterval(nivelInterval);
-
-            // Incrementa imediatamente
-            incrementarNivel();
-
-            // Configura o intervalo para incrementar a cada 100ms
-            nivelInterval = setInterval(incrementarNivel, 100);
-        }
-
-        function startDecrementNivel() {
-            // Limpa qualquer intervalo existente
-            if (nivelInterval) clearInterval(nivelInterval);
-
-            // Decrementa imediatamente
-            decrementarNivel();
-
-            // Configura o intervalo para decrementar a cada 100ms
-            nivelInterval = setInterval(decrementarNivel, 100);
-        }
-
-        function stopNivelInterval() {
-            // Limpa o intervalo quando o botão é solto
-            if (nivelInterval) {
-                clearInterval(nivelInterval);
-                nivelInterval = null;
-            }
-        }
-
-        function incrementarNivel() {
-            const input = document.getElementById('nivel-input');
-            const valor = parseInt(input.value) + 1;
-            if (valor <= 100) {
-                input.value = valor;
-                atualizarNivel(input);
-            } else {
-                // Para o intervalo se atingir o máximo
-                stopNivelInterval();
-            }
-        }
-
-        function decrementarNivel() {
-            const input = document.getElementById('nivel-input');
-            const valor = parseInt(input.value) - 1;
-            if (valor >= 0) {
-                input.value = valor;
-                atualizarNivel(input);
-            } else {
-                // Para o intervalo se atingir o mínimo
-                stopNivelInterval();
-            }
-        }
-
-        function atualizarNivel(input) {
-            // Garante que o valor está entre 0 e 100
-            let valor = Math.min(Math.max(parseInt(input.value) || 0, 0), 100);
-
-            // Atualiza o valor do input
-            input.value = valor;
-
-            const progressBar = document.getElementById('nivel-progress');
-            if (progressBar) {
-                progressBar.style.width = valor + '%';
-                console.log('Nível atualizado:', valor + '%');
-            } else {
-                console.error('Elemento de barra de progresso não encontrado');
-            }
-
-            // Atualiza o contador de atributos com base no nível
-            atualizarContadorAtributos(valor);
-
-            // Se o nível for definido como 0, preenche os status com seus valores máximos
-            if (valor === 0) {
-                atualizarVidaMaxima();
-                atualizarSanidadeMaxima();
-                atualizarManaMaxima();
-                atualizarAlmaMaxima();
-            }
-        }
-
-        // Função para atualizar o contador de atributos
-        function atualizarContadorAtributos(nivel) {
-            // Obtém o nível atual
-            const nivelAtual = parseInt(document.getElementById('nivel-input').value) || 0;
-
-            // Define os limites de nível e seus respectivos valores de atributos
-            const limites = [
-                { nivel: 5, atributos: 15 },
-                { nivel: 20, atributos: 17 },
-                { nivel: 35, atributos: 19 },
-                { nivel: 50, atributos: 21 },
-                { nivel: 65, atributos: 23 },
-                { nivel: 80, atributos: 25 },
-                { nivel: 95, atributos: 27 },
-                { nivel: 100, atributos: 30 }
-            ];
-
-            // Encontra o valor máximo de atributos para o nível atual
-            let valorMaximo = 12;
-            for (const limite of limites) {
-                if (nivelAtual >= limite.nivel) {
-                    valorMaximo = limite.atributos;
-                }
-            }
-
-            // Calcula a soma total de todos os atributos (Teste + Sorte)
-            const todosInputs = document.querySelectorAll('.atributos-teste input, .atributos-sorte input');
-            let somaTotal = 0;
-            todosInputs.forEach(input => {
-                somaTotal += parseInt(input.value) || 0;
-            });
-
-            // Atualiza ambos os contadores com a soma total
-            const spanTeste = document.querySelector('.atributos-teste h2 span');
-            const spanSorte = document.querySelector('.atributos-sorte h2 span');
-
-            if (spanTeste && spanSorte) {
-                spanTeste.textContent = `${somaTotal}/${valorMaximo}`;
-                spanSorte.textContent = `${somaTotal}/${valorMaximo}`;
-            }
-        }
-
-        // Função para lidar com a mudança de atributos
-        function mudarAtributo(input) {
-            // Garante que o valor está entre -5 e não tem limite superior
-            let valor = parseInt(input.value) || 0;
-            if (valor < -5) valor = -5;
-
-            // Atualiza o valor do input
-            input.value = valor;
-
-            // Atualiza os contadores
-            atualizarContadorAtributos();
-        }
-
-        // Inicializar os atributos e contadores
-        document.addEventListener('DOMContentLoaded', function () {
-            // Inicializa o nível
-            const nivelInput = document.getElementById('nivel-input');
-            if (nivelInput) {
-                atualizarNivel(nivelInput);
-                console.log('Nível inicializado');
-            } else {
-                console.error('Input de nível não encontrado');
-            }
-
-            // Adiciona eventos de mudança para todos os inputs de atributos
-            const atributosInputs = document.querySelectorAll('.atributos-teste input, .atributos-sorte input');
-            atributosInputs.forEach(input => {
-                input.addEventListener('change', function () {
-                    mudarAtributo(this);
-                });
-                // Se for Constituição, também atualiza Esquiva
-                const label = input.parentElement.querySelector('label');
-                if (label && label.textContent.trim() === 'Constituição') {
-                    input.addEventListener('input', function () {
-                        if (typeof atualizarEsquiva === 'function') atualizarEsquiva();
-                    });
-                }
-            });
-
-            // Inicializa os contadores
-            atualizarContadorAtributos();
-        });
-
-        // Adiciona o evento de clique para rolagem de dados nos labels
-        document.addEventListener('DOMContentLoaded', function () {
-            // ... existing code ...
-
-            // Adiciona o evento de clique para rolagem de dados nos labels
-            const atributosLabels = document.querySelectorAll('.atributos-teste label, .atributos-sorte label');
-            atributosLabels.forEach(label => {
-                label.style.cursor = 'pointer'; // Adiciona cursor pointer para indicar que é clicável
-                label.addEventListener('click', function () {
-                    rolarDados(this);
-                });
-            });
-        });
-
-        // Adiciona o evento de clique para rolagem de dados nas perícias
-        document.addEventListener('DOMContentLoaded', function () {
-            const periciasLabels = document.querySelectorAll('.pericia-item label');
-            periciasLabels.forEach(label => {
-                label.addEventListener('click', function () {
-                    rolarDados(this);
-                });
-            });
-        });
-
-        
-
-    // Evento para cada label de perícia (funciona para todas as perícias)
-    document.body.addEventListener('click', function(e) {
-        const label = e.target.closest('.pericia-item label');
-        if (!label) return;
-
-        // Nome da perícia
-        const periciaNome = label.childNodes[0].textContent.trim();
-        // Descobre o atributo relacionado
-        const atributoRelacionado = periciaParaAtributo[periciaNome];
-        if (!atributoRelacionado) {
-            // Opcional: alertar se não houver mapeamento
-            return;
-        }
-
-        // Busca o valor do atributo relacionado
-        let pontos = 0;
-        document.querySelectorAll('.atributos-teste .atributo-item, .atributos-sorte .atributo-item').forEach(item => {
-            const labelA = item.querySelector('label');
-            if (labelA && labelA.textContent.trim() === atributoRelacionado) {
-                const inputA = item.querySelector('input');
-                if (inputA) pontos = parseInt(inputA.value) || 0;
-            }
-        });
-
-        let qtdDados, modo;
-        if (pontos > 0) {
-            qtdDados = pontos;
-            modo = 'maior';
-        } else if (pontos === 0) {
-            qtdDados = 2;
-            modo = 'menor';
-        } else {
-            qtdDados = Math.abs(pontos) + 2;
-            modo = 'menor';
-        }
-
-        // Rola os dados de atributo (d20)
-        const resultadosD20 = [];
-        for (let i = 0; i < qtdDados; i++) {
-            resultadosD20.push(Math.floor(Math.random() * 20) + 1);
-        }
-        const finalD20 = modo === 'maior' ? Math.max(...resultadosD20) : Math.min(...resultadosD20);
-
-        // Soma o valor do d10 já rolado (se houver)
-        let d6 = 0;
-        const periciaItem = label.closest('.pericia-item');
-        const inputD10 = periciaItem ? periciaItem.querySelector('input') : null;
-        if (inputD10) {
-            // O valor do input é perícia + d10, então subtrai o valor salvo da perícia para obter só o d10
-            const tipo = document.getElementById('modal-pericia-titulo').textContent.replace('Perícias de ', '').trim();
-            let valorPericia = 0;
-            if (window.valoresPericias[tipo] && typeof window.valoresPericias[tipo][periciaNome] !== 'undefined') {
-                valorPericia = parseInt(window.valoresPericias[tipo][periciaNome]) || 0;
-            }
-            d6 = (parseInt(inputD10.value) || 0) - valorPericia;
-        }
-
-        // Exibe resultado em um alert estilizado
-        const modal = document.createElement('div');
-        modal.style.cssText = `
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
-            background: #222; color: #fff; padding: 24px 32px; border-radius: 12px;
-            z-index: 99999; font-size: 18px; font-family: Arial, sans-serif;
-            box-shadow: 0 0 24px #000a;
-            text-align: center;
-        `;
-        modal.innerHTML = `
-            <b>${periciaNome}</b><br>
-            (${atributoRelacionado}: ${pontos})<br>
-            Rolou ${qtdDados}d20: <span style="color:#F2780C">${resultadosD20.join(', ')}</span><br>
-            <b>Resultado ${modo === 'maior' ? 'MAIOR' : 'MENOR'}: <span style="color:#F2780C">${finalD20}</span></b><br>
-            Dado d6 da perícia: <span style="color:#F2780C">${d6}</span><br>
-            <b>Total: <span style="color:#F2780C">${finalD20 + d6}</span></b>
-            <br><button style="margin-top:12px;padding:4px 16px;font-size:16px;border-radius:6px;border:none;cursor:pointer;background:#F2780C;color:#fff" onclick="this.parentElement.remove()">Fechar</button>
-        `;
-        document.body.appendChild(modal);
-    });
-
-        // Objeto para armazenar os valores das subperícias
-        const valoresPericias = {};
 
         // Função para fechar o modal
         function fecharModalPericia() {
@@ -1756,10 +1432,6 @@
             });
         }
 
-
-
-
-
         // Atualiza a mana máxima ao carregar a página e ao mudar Magia
         document.addEventListener('DOMContentLoaded', function () {
             atualizarManaMaxima();
@@ -1855,7 +1527,7 @@
                 bonusCarga += parseInt(input.value) || 0;
             });
             // Garante que a capacidade nunca será menor que 3
-            return Math.max(3, 3 + (forca * 2) + bonusCarga);
+            return Math.max(3,  3 + (forca * 2) + bonusCarga);
         }
 
         function atualizarInventarioUI() {
@@ -1917,75 +1589,6 @@
         window.addEventListener('load', function() {
     atualizarInventarioUI();
 });
-
-        window.criarBarraBruxa = function() {
-            if (document.getElementById('escolhas-bruxa-bar')) return;
-
-            const bar = document.createElement('div');
-            bar.id = 'escolhas-bruxa-bar';
-            bar.style = `
-                position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); 
-                width: 95%; max-width: 800px; 
-                background: #fffbe6; 
-                padding: 10px 16px; 
-                display: flex; justify-content: space-between; align-items: center; 
-                box-shadow: 0 -2px 8px #0002; 
-                font-size: 1em; color: #222; 
-                border-radius: 12px 12px 0 0; 
-                z-index: 10000;
-                transition: all 0.2s ease-in-out;
-            `;
-            
-            bar.innerHTML = `
-                <div id="barra-bruxa-content" style="display: flex; align-items: center; gap: 20px; flex-grow: 1;">
-                    <b>Escolhas da Bruxa:</b>
-                    <div id="escolha-habilidade-bruxa" style="flex:1;">Nenhuma habilidade.</div>
-                    <div id="escolha-magia-bruxa" style="flex:1;">Nenhuma magia.</div>
-                </div>
-                <button id="toggle-barra-bruxa-btn" onclick="toggleBarraBruxa()" style="background:none; border:none; cursor:pointer; font-size: 1.5em; padding: 0 10px; line-height: 1;">▼</button>
-            `;
-            
-            document.body.appendChild(bar);
-
-            // Define o padding inicial corretamente
-            requestAnimationFrame(() => {
-                const barHeight = bar.offsetHeight;
-                document.body.style.paddingBottom = `${barHeight + 20}px`;
-                console.log('Barra criada e padding inferior adicionado ao body.');
-            });
-        };
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Criar a barra automaticamente quando a página carregar
-            window.criarBarraBruxa();
-        });
-
-        function toggleBarraBruxa() {
-            const bar = document.getElementById('escolhas-bruxa-bar');
-            if (!bar) return;
-
-            const content = bar.querySelector('#barra-bruxa-content');
-            const button = bar.querySelector('#toggle-barra-bruxa-btn');
-            
-            bar.classList.toggle('minimized');
-
-            if (bar.classList.contains('minimized')) {
-                // Minimiza
-                content.style.display = 'none';
-                button.innerHTML = '▲';
-            } else {
-                // Maximiza
-                content.style.display = 'flex';
-                button.innerHTML = '▼';
-            }
-
-            // Usa requestAnimationFrame para garantir que a altura seja calculada após a renderização
-            requestAnimationFrame(() => {
-                const barHeight = bar.offsetHeight;
-                document.body.style.paddingBottom = `${barHeight + 20}px`;
-            });
-        }
-
     </script>
 </body>
 
