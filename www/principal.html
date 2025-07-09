@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Principal</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            min-height: 100vh;
+            /* Fundo degradê azul escuro esverdeado, mais escuro */
+            background: linear-gradient(180deg, #07151a 0%, #0b2328 60%, #10242a 100%) !important;
+            display: flex;
+            flex-direction: column;
+        }
+        .principal-container {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 90px; /* espaço para a barra de botões */
+        }
+        .footer-bar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            background: linear-gradient(90deg, #14505c 0%, #0f2027 100%);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 10px 15px 10px;
+            z-index: 100;
+        }
+        .footer-bar .btn {
+            background: linear-gradient(135deg, #1e6073 0%, #2c5364 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 18px;
+            font-size: 1em;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            transition: background 0.2s, transform 0.2s;
+        }
+        .footer-bar .btn:hover {
+            background: linear-gradient(135deg, #14505c 0%, #1e6073 100%);
+            transform: translateY(-2px) scale(1.05);
+        }
+        @media (max-width: 900px) {
+            .footer-bar {
+                flex-wrap: wrap;
+                gap: 8px;
+                padding: 10px 2px 10px 2px;
+            }
+            .footer-bar .btn {
+                font-size: 0.95em;
+                padding: 10px 10px;
+            }
+        }
+        @media (max-width: 600px) {
+            .footer-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+            .footer-bar .btn {
+                width: 100%;
+                font-size: 1em;
+            }
+        }
+        .caixa-brilhante {
+            margin: 40px auto 0 auto;
+            max-width: 370px;
+            background: rgba(20, 40, 50, 0.85);
+            border-radius: 18px;
+            border: 2.5px solid #00eaff;
+            box-shadow: 0 0 18px 2px #00eaff, 0 0 40px 0px #00eaff33;
+            padding: 28px 18px 22px 18px;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+        .caixa-brilhante p {
+            color: #b3eaff;
+            font-size: 1.08em;
+            line-height: 1.5;
+        }
+        @media (max-width: 600px) {
+            .caixa-brilhante {
+                max-width: 98vw;
+                padding: 18px 6vw 14px 6vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="principal-container">
+        <h1 style="color: #fff; text-shadow: 1px 2px 8px #000a; margin-bottom: 30px;">Bem-vindo ao Sistema dos Deuses</h1>
+        <p style="color: #cce6ff; font-size: 1.2em; max-width: 600px; text-align: center;">Escolha uma das opções abaixo para navegar pelo sistema.</p>
+        <div class="caixa-brilhante">
+            <p style="margin:0; color:#b3eaff; font-size:1.1em; text-align:center;">
+                A ficha é completamente automatizada, então ela se auto-completará. Para procurar e ver mais informações sobre alguma coisa, entre na página desejada, já que a ficha apresenta apenas um pequeno resumo.
+            </p>
+        </div>
+    </div>
+    <nav class="footer-bar">
+        <a href="index.html" class="btn" style="text-decoration:none;display:inline-block;">Ficha</a>
+        <a href="racas.html" class="btn" style="text-decoration:none;display:inline-block;">Raças</a>
+        <a href="origens.html" class="btn" style="text-decoration:none;display:inline-block;">Origens</a>
+        <a href="classes.html" class="btn" style="text-decoration:none;display:inline-block;">Classes</a>
+        <button class="btn">Itens</button>
+        <button class="btn">Armas</button>
+        <button class="btn">Criação de Personagem</button>
+        <button class="btn">Criação de Mapas</button>
+        <button class="btn">Músicas e Sons</button>
+        <button class="btn">Jogos</button>
+        <button class="btn">Mecânicas</button>
+        <button class="btn">Efeitos</button>
+        <button class="btn">Perícias</button>
+        <button class="btn">Bestiário</button>
+        <button class="btn">Materiais</button>
+    </nav>
+</body>
+</html>
