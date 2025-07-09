@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criação de Personagem</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #07151a 0%, #0b2328 60%, #10242a 100%) !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .criador-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+        .personagem-preview {
+            width: 260px;
+            height: 260px;
+            background: #183d47;
+            border-radius: 50%;
+            box-shadow: 0 0 24px 2px #00eaff55;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .customizacao-opcoes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            justify-content: center;
+            background: rgba(20,40,50,0.7);
+            border-radius: 16px;
+            padding: 18px 12px;
+            box-shadow: 0 0 10px #00eaff22;
+        }
+        .customizacao-opcao {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .customizacao-opcao label {
+            color: #b3eaff;
+            font-size: 1em;
+            margin-bottom: 2px;
+        }
+        .customizacao-opcao select, .customizacao-opcao input[type="color"] {
+            border-radius: 6px;
+            border: none;
+            padding: 4px 8px;
+            font-size: 1em;
+            background: #10242a;
+            color: #b3eaff;
+        }
+        .botoes {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            margin-top: 18px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #1e6073 0%, #2c5364 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 18px;
+            font-size: 1em;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            transition: background 0.2s, transform 0.2s;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, #14505c 0%, #1e6073 100%);
+            transform: translateY(-2px) scale(1.05);
+        }
+        @media (max-width: 600px) {
+            .criador-container {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+            .personagem-preview {
+                width: 180px;
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="criador-container">
+        <h1 style="color:#fff; text-shadow:1px 2px 8px #000a;">Criação de Personagem</h1>        <div style="margin-bottom: 18px;">
+            <input id="promptIA" type="text" placeholder="Descreva o estilo do personagem (em inglês)" style="padding:8px 12px; border-radius:6px; border:none; width:260px;">
+            <button class="btn" onclick="gerarIA()">Gerar</button>
+        </div>
+        <div class="personagem-preview" id="personagemPreview">
+            <img id="imgIA" 
+                 src="https://i.postimg.cc/8CGV7sW-6/replicate-prediction-axnfr3m825rm80cqy12bc38wg4.jpg" 
+                 alt="Imagem IA"
+                 style="display:block; width:100%; height:100%; border-radius:50%; object-fit:cover; position:absolute; top:0; left:0; z-index:2;">
+        </div>
+        <form class="customizacao-opcoes" onsubmit="return false;">
+            <div class="customizacao-opcao">
+                <label for="corPele">Cor da Pele</label>
+                <input type="color" id="corPele" value="#f2d6c2">
+            </div>
+            <div class="customizacao-opcao">
+                <label for="corCabelo">Cor do Cabelo</label>
+                <input type="color" id="corCabelo" value="#2d1b00">
+            </div>
+            <div class="customizacao-opcao">
+                <label for="tipoCabelo">Tipo de Cabelo</label>
+                <select id="tipoCabelo">
+                    <option value="normal">Normal</option>
+                    <option value="longo">Longo</option>
+                    <option value="curto">Curto</option>
+                    <option value="topete">Topete</option>
+                </select>
+            </div>
+            <div class="customizacao-opcao">
+                <label for="corOlhos">Cor dos Olhos</label>
+                <input type="color" id="corOlhos" value="#222222">
+            </div>
+            <div class="customizacao-opcao">
+                <label for="boca">Boca</label>
+                <select id="tipoBoca">
+                    <option value="normal">Normal</option>
+                    <option value="sorriso">Sorriso</option>
+                    <option value="triste">Triste</option>
+                </select>
+            </div>
+            <div class="customizacao-opcao">
+                <label for="acessorio">Acessório</label>
+                <select id="tipoAcessorio">
+                    <option value="nenhum">Nenhum</option>
+                    <option value="oculos">Óculos</option>
+                    <option value="chapeu">Chapéu</option>
+                </select>
+            </div>
+        </form>
+        <div class="botoes">
+            <button class="btn" onclick="baixarPersonagem()">Baixar PNG</button>
+            <button class="btn" onclick="salvarPersonagem()">Salvar</button>
+        </div>
+    </div>
+    <script>
+        // Remover todas as referências a SVG e funções de customização de partes do personagem
+        // Manter apenas a função gerarIA e funções relacionadas à imagem
+        // Baixar personagem como PNG
+        function baixarPersonagem() {
+            const img = document.getElementById('imgIA');
+            const a = document.createElement('a');
+            a.download = 'personagem.png';
+            a.href = img.src;
+            a.click();
+        }
+        // Salvar personagem (exemplo: localStorage)
+        function salvarPersonagem() {
+            const img = document.getElementById('imgIA');
+            localStorage.setItem('personagemImg', img.src);
+            alert('Personagem salvo!');
+        }
+
+        async function gerarIA() {
+            const prompt = document.getElementById('promptIA').value;
+            const imgIA = document.getElementById('imgIA');
+            imgIA.style.display = 'none';
+            imgIA.src = '';
+            if (!prompt) {
+                alert('Digite um prompt em inglês!');
+                return;
+            }
+            // Troque pelo seu token da API Replicate
+            const REPLICATE_TOKEN = 'SEU_TOKEN_AQUI';
+            const version = 'b8b5c60c8b1c4c7e8c1e8e1e8e1e8e1e8e1e8e1e8e1e8e1e8e1e8e1e8e1e8e1'; // Exemplo, troque pelo correto
+            const input_image = 'https://i.imgur.com/tcwSBbt.jpeg';
+            // 1. Cria a predição
+            const res = await fetch('https://api.replicate.com/v1/predictions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Token ' + REPLICATE_TOKEN,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    version: version,
+                    input: {
+                        prompt: prompt,
+                        input_image: input_image,
+                        output_format: 'jpg'
+                    }
+                })
+            });
+            const data = await res.json();
+            if (!data.id) {
+                alert('Erro ao criar predição.');
+                return;
+            }
+            // 2. Polling até a imagem ficar pronta
+            let status = data.status;
+            let outputUrl = null;
+            while (status !== 'succeeded' && status !== 'failed') {
+                await new Promise(r => setTimeout(r, 2000));
+                const poll = await fetch(`https://api.replicate.com/v1/predictions/${data.id}`, {
+                    headers: { 'Authorization': 'Token ' + REPLICATE_TOKEN }
+                });
+                const pollData = await poll.json();
+                status = pollData.status;
+                if (status === 'succeeded') {
+                    outputUrl = pollData.output[0];
+                }
+            }
+            if (outputUrl) {
+                imgIA.src = outputUrl;
+                imgIA.style.display = 'block';
+            } else {
+                alert('Falha ao gerar imagem.');
+            }
+        }
+    </script>
+</body>
+</html>
