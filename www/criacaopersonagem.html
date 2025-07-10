@@ -25,7 +25,6 @@
         .personagem-preview {
             width: 260px;
             height: 260px;
-            background: #183d47;
             border-radius: 50%;
             box-shadow: 0 0 24px 2px #00eaff55;
             display: flex;
@@ -98,134 +97,79 @@
     </style>
 </head>
 <body>
-    <div class="criador-container">
-        <h1 style="color:#fff; text-shadow:1px 2px 8px #000a;">Criação de Personagem</h1>        <div style="margin-bottom: 18px;">
-            <input id="promptIA" type="text" placeholder="Descreva o estilo do personagem (em inglês)" style="padding:8px 12px; border-radius:6px; border:none; width:260px;">
-            <button class="btn" onclick="gerarIA()">Gerar</button>
-        </div>
-        <div class="personagem-preview" id="personagemPreview">
-            <img id="imgIA" 
-                 src="https://i.postimg.cc/8CGV7sW-6/replicate-prediction-axnfr3m825rm80cqy12bc38wg4.jpg" 
-                 alt="Imagem IA"
-                 style="display:block; width:100%; height:100%; border-radius:50%; object-fit:cover; position:absolute; top:0; left:0; z-index:2;">
-        </div>
-        <form class="customizacao-opcoes" onsubmit="return false;">
-            <div class="customizacao-opcao">
-                <label for="corPele">Cor da Pele</label>
-                <input type="color" id="corPele" value="#f2d6c2">
-            </div>
-            <div class="customizacao-opcao">
-                <label for="corCabelo">Cor do Cabelo</label>
-                <input type="color" id="corCabelo" value="#2d1b00">
-            </div>
-            <div class="customizacao-opcao">
-                <label for="tipoCabelo">Tipo de Cabelo</label>
-                <select id="tipoCabelo">
-                    <option value="normal">Normal</option>
-                    <option value="longo">Longo</option>
-                    <option value="curto">Curto</option>
-                    <option value="topete">Topete</option>
-                </select>
-            </div>
-            <div class="customizacao-opcao">
-                <label for="corOlhos">Cor dos Olhos</label>
-                <input type="color" id="corOlhos" value="#222222">
-            </div>
-            <div class="customizacao-opcao">
-                <label for="boca">Boca</label>
-                <select id="tipoBoca">
-                    <option value="normal">Normal</option>
-                    <option value="sorriso">Sorriso</option>
-                    <option value="triste">Triste</option>
-                </select>
-            </div>
-            <div class="customizacao-opcao">
-                <label for="acessorio">Acessório</label>
-                <select id="tipoAcessorio">
-                    <option value="nenhum">Nenhum</option>
-                    <option value="oculos">Óculos</option>
-                    <option value="chapeu">Chapéu</option>
-                </select>
-            </div>
-        </form>
-        <div class="botoes">
-            <button class="btn" onclick="baixarPersonagem()">Baixar PNG</button>
-            <button class="btn" onclick="salvarPersonagem()">Salvar</button>
-        </div>
-    </div>
-    <script>
-        // Remover todas as referências a SVG e funções de customização de partes do personagem
-        // Manter apenas a função gerarIA e funções relacionadas à imagem
-        // Baixar personagem como PNG
-        function baixarPersonagem() {
-            const img = document.getElementById('imgIA');
-            const a = document.createElement('a');
-            a.download = 'personagem.png';
-            a.href = img.src;
-            a.click();
-        }
-        // Salvar personagem (exemplo: localStorage)
-        function salvarPersonagem() {
-            const img = document.getElementById('imgIA');
-            localStorage.setItem('personagemImg', img.src);
-            alert('Personagem salvo!');
+  <p>Lembrar de colocar transparent background para poder remover o fundo da imagem e colocar o estilo de arte desejado</p>
+</div>
+<div style="background:rgba(20,40,50,0.7);border-radius:16px;padding:18px 24px;margin-bottom:24px;box-shadow:0 0 10px #00eaff22;max-width:340px;width:100%;display:flex;flex-direction:column;gap:12px;align-items:center;">
+    <label for="promptIA" style="color:#b3eaff;font-weight:bold;">Prompt para IA (em inglês):</label>
+    <input type="text" id="promptIA" placeholder="Ex: a fantasy elf with green eyes" style="width:100%;padding:8px 10px;border-radius:6px;border:none;background:#10242a;color:#b3eaff;" />
+    <label for="modeloHF" style="color:#b3eaff;font-weight:bold;margin-top:8px;">Modelo Hugging Face:</label>
+    <select id="modeloHF" style="width:100%;padding:8px 10px;border-radius:6px;border:none;background:#10242a;color:#b3eaff;">
+      <option value="stabilityai/stable-diffusion-3-medium">Stable Diffusion 3</option>
+      <option value="black-forest-labs/FLUX.1-dev">Flux</option>
+      <option value="Jonjew/RPGv6">RPG v6 (Estilo RPG)</option>
+      <option value="stabilityai/stable-diffusion-2">Stable Diffusion 2 (Hyperbolic)</option>
+      <option value="ntc-ai/SDXL-LoRA-slider.extremely-detailed">SDXL LoRA Slider (Extremely Detailed)</option>
+    </select>
+    <button class="btn" onclick="gerarIA()" style="margin-top:8px;">Gerar Imagem</button>
+    <img id="imgIA" style="display:none;max-width:220px;margin-top:16px;border-radius:12px;box-shadow:0 0 10px #00eaff55;" />
+    <a id="downloadIA" href="#" download="imagem_ia.png" style="display:none;margin-top:10px;" class="btn">Baixar Imagem</a>
+    <label for="tradutor" style="color:#b3eaff;font-weight:bold;margin-top:12px;">Traduza seu prompt para inglês:</label>
+    <textarea id="tradutor" placeholder="Digite aqui em qualquer idioma..." style="width:100%;padding:8px 10px;border-radius:6px;border:none;background:#10242a;color:#b3eaff;resize:vertical;min-height:40px;"></textarea>
+    <button class="btn" onclick="traduzirPrompt()" style="margin-top:6px;margin-bottom:8px;">Traduzir para Inglês</button>
+</div>
+<!-- Botão fixo no canto superior direito -->
+<a href="token.html" target="_blank" class="btn" style="position:fixed;top:18px;right:24px;z-index:1000;background:#2c5364;padding:10px 18px;font-size:0.98em;box-shadow:0 2px 8px #0002;">Criar Token</a>
+<script>
+    async function gerarIA() {
+        const prompt = document.getElementById('promptIA').value;
+        const model = document.getElementById('modeloHF').value;
+        const imgIA = document.getElementById('imgIA');
+        const downloadIA = document.getElementById('downloadIA');
+        imgIA.style.display = 'none';
+        imgIA.src = '';
+        downloadIA.style.display = 'none';
+        downloadIA.href = '#';
+        if (!prompt || !model) {
+            alert('Digite um prompt e escolha um modelo!');
+            return;
         }
 
-        async function gerarIA() {
-            const prompt = document.getElementById('promptIA').value;
-            const imgIA = document.getElementById('imgIA');
+        const res = await fetch('http://127.0.0.1:5001/api/huggingface', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt, model })
+        });
+        const data = await res.json();
+        if (data.image) {
+            imgIA.src = data.image;
+            imgIA.style.display = 'block';
+            downloadIA.href = data.image;
+            downloadIA.style.display = 'inline-block';
+        } else {
+            alert('Falha ao gerar imagem: ' + (data.error || 'Erro desconhecido'));
             imgIA.style.display = 'none';
-            imgIA.src = '';
-            if (!prompt) {
-                alert('Digite um prompt em inglês!');
-                return;
-            }
-            // Troque pelo seu token da API Replicate
-            const REPLICATE_TOKEN = 'SEU_TOKEN_AQUI';
-            const version = 'b8b5c60c8b1c4c7e8c1e8e1e8e1e8e1e8e1e8e1e8e1e8e1e8e1e8e1e8e1e8e1'; // Exemplo, troque pelo correto
-            const input_image = 'https://i.imgur.com/tcwSBbt.jpeg';
-            // 1. Cria a predição
-            const res = await fetch('https://api.replicate.com/v1/predictions', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Token ' + REPLICATE_TOKEN,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    version: version,
-                    input: {
-                        prompt: prompt,
-                        input_image: input_image,
-                        output_format: 'jpg'
-                    }
-                })
-            });
-            const data = await res.json();
-            if (!data.id) {
-                alert('Erro ao criar predição.');
-                return;
-            }
-            // 2. Polling até a imagem ficar pronta
-            let status = data.status;
-            let outputUrl = null;
-            while (status !== 'succeeded' && status !== 'failed') {
-                await new Promise(r => setTimeout(r, 2000));
-                const poll = await fetch(`https://api.replicate.com/v1/predictions/${data.id}`, {
-                    headers: { 'Authorization': 'Token ' + REPLICATE_TOKEN }
-                });
-                const pollData = await poll.json();
-                status = pollData.status;
-                if (status === 'succeeded') {
-                    outputUrl = pollData.output[0];
-                }
-            }
-            if (outputUrl) {
-                imgIA.src = outputUrl;
-                imgIA.style.display = 'block';
-            } else {
-                alert('Falha ao gerar imagem.');
-            }
+            downloadIA.style.display = 'none';
         }
-    </script>
+    }
+
+    async function traduzirPrompt() {
+        const texto = document.getElementById('tradutor').value;
+        if (!texto) {
+            alert('Digite um texto para traduzir!');
+            return;
+        }
+        const res = await fetch('http://127.0.0.1:5001/api/translate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ texto })
+        });
+        const data = await res.json();
+        if (data.translation) {
+            document.getElementById('promptIA').value = data.translation;
+        } else {
+            alert('Falha ao traduzir: ' + (data.error || 'Erro desconhecido'));
+        }
+    }
+</script>
 </body>
 </html>

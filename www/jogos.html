@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogos</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f3d2e 0%, #1e6b4c 60%, #2ecc71 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .jogos-container {
+            margin-top: 60px;
+            background: rgba(34, 139, 84, 0.15);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px #0003;
+            padding: 40px 24px 32px 24px;
+            max-width: 480px;
+            width: 95vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #eaffea;
+            text-shadow: 1px 2px 8px #000a;
+            margin-bottom: 10px;
+        }
+        .subtitulo {
+            color: #b6f2c2;
+            font-size: 1.1em;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        .botoes-jogos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            justify-content: center;
+            width: 100%;
+        }
+        .btn-jogo {
+            background: linear-gradient(135deg, #1e6b4c 0%, #2ecc71 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 18px 32px;
+            font-size: 1.1em;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            transition: background 0.2s, transform 0.2s;
+            cursor: pointer;
+            margin: 0 0 0 0;
+        }
+        .btn-jogo:hover {
+            background: linear-gradient(135deg, #145c3a 0%, #27ae60 100%);
+            transform: translateY(-2px) scale(1.04);
+        }
+        @media (max-width: 600px) {
+            .jogos-container {
+                padding: 18px 4vw 14px 4vw;
+            }
+            .btn-jogo {
+                width: 100%;
+                padding: 14px 0;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="jogos-container">
+        <h1>Jogos de Mesa e Cartas</h1>
+        <div class="subtitulo">Escolha um dos jogos abaixo para ver regras, dicas ou iniciar uma partida com seus amigos!</div>
+        <div class="botoes-jogos">
+            <button class="btn-jogo">Werewolf</button>
+            <a href="coup.html" class="btn-jogo" style="text-decoration:none;display:inline-block;text-align:center;">Coup</a>
+            <button class="btn-jogo">Poker</button>
+            <button class="btn-jogo">21</button>
+            <button class="btn-jogo">Spyfall</button>
+            <button class="btn-jogo">Deceit</button>
+            <button class="btn-jogo">UNO</button>
+            <button class="btn-jogo">Mafia</button>
+            <button class="btn-jogo">Truco</button>
+            <button class="btn-jogo">Dobble</button>
+            <button class="btn-jogo">For Sale</button>
+            <button class="btn-jogo">Outros...</button>
+        </div>
+    </div>
+</body>
+</html>

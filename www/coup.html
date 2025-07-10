@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coup</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(120deg, #0f3d2e 0%, #1e6b4c 60%, #2ecc71 100%);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .coup-container {
+            margin-top: 60px;
+            background: rgba(34, 139, 84, 0.18);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px #0003;
+            padding: 40px 24px 32px 24px;
+            max-width: 600px;
+            width: 95vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #eaffea;
+            text-shadow: 1px 2px 8px #000a;
+            margin-bottom: 10px;
+        }
+        .subtitulo {
+            color: #b6f2c2;
+            font-size: 1.1em;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .coup-container {
+                padding: 18px 4vw 14px 4vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="coup-container">
+        <h1>Coup</h1>
+        <div class="subtitulo">Bem-vindo à página do jogo Coup! Aqui você pode ver as regras, dicas e iniciar uma partida.</div>
+        <div style="width:100%;max-width:520px;">
+            <label for="regrasCoup" style="color:#b6f2c2;font-weight:bold;">Regras do Jogo:</label>
+            <textarea id="regrasCoup" placeholder="             Você pode desafiar uma carta alegada por qualquer jogador a qualquer momento, se você estiver envolvido na ação ou não. Se uma carta foi desafiada ela deve ser mostrada na mesa. Se o jogador não quiser mostrar a carta ele perde ela, se ele mostrar e realmente tiver a carta, ele troca a carta com o deque, e o outro jogador perde uma carta e vira ela para cima.
+
+            Perigos de se desafiar o assassinato - você pode perder 2 cartas desafiando um assassinato se você desafiar um assassino e ele for um de fato: você perde uma pelo assassinato e uma pelo desafio perdido. Ou se você alegar ser Condessa sem ser para bloquear um assassinato e você for desafiado como Condessa você perde uma carta pelo assassinato e uma pela falsa carta.
+
+            Se ninguém contestar sua carta, você automaticamente tem um sucesso na ação.
+
+            Você pode mentir sua carta, contestar uma carta de outro jogador, usar o papel da sua carta, pegar 1 moeda, pegar duas moedas - ajuda externa - ( bloqueado pelo duque ), dar o coup por 7 moedas ou dar o coup por 10 moedas obrigatoriamente. Se a carta não for contestada, você não precisa mostrar qual ela é." style="width:100%;min-height:200px;margin:10px 0 24px 0;padding:12px;border-radius:8px;border:none;resize:vertical;font-size:1em;background:#eaffea;color:#145c3a;"></textarea>
+        </div>
+        <div style="width:100%;max-width:520px;">
+            <label style="color:#b6f2c2;font-weight:bold;">Cartas do Coup:</label>
+            <div class="cartas-coup" style="display:flex;flex-wrap:wrap;gap:16px;margin-top:10px;justify-content:center;">
+                <!-- Espaço para adicionar cartas manualmente ou via código -->
+                <div class="carta-coup" style="width:105px;height:130px;background:linear-gradient(135deg,#eaffea 60%,#b6f2c2 100%);border-radius:10px;box-shadow:0 2px 8px #0002;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#145c3a;font-size:1.1em;">Duque</div>
+                <div class="carta-coup" style="width:105px;height:130px;background:linear-gradient(135deg,#eaffea 60%,#b6f2c2 100%);border-radius:10px;box-shadow:0 2px 8px #0002;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#145c3a;font-size:1.1em;">Assassina</div>
+                <div class="carta-coup" style="width:105px;height:130px;background:linear-gradient(135deg,#eaffea 60%,#b6f2c2 100%);border-radius:10px;box-shadow:0 2px 8px #0002;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#145c3a;font-size:1.1em;">Capitão</div>
+                <div class="carta-coup" style="width:105px;height:130px;background:linear-gradient(135deg,#eaffea 60%,#b6f2c2 100%);border-radius:10px;box-shadow:0 2px 8px #0002;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#145c3a;font-size:1.1em;">Condessa</div>
+                <div class="carta-coup" style="width:105px;height:130px;background:linear-gradient(135deg,#eaffea 60%,#b6f2c2 100%);border-radius:10px;box-shadow:0 2px 8px #0002;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#145c3a;font-size:1.1em;">Embaixador</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
