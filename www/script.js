@@ -876,8 +876,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Botões do cabeçalho
     document.querySelector('.voltar').addEventListener('click', () => {
-        // Implementar função de voltar
-        console.log('Voltar');
+        window.location.href = 'principal.html';
     });
 
     document.querySelector('.obs').addEventListener('click', () => {
