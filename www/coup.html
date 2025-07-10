@@ -121,6 +121,24 @@
     <div class="coup-container">
         <h1>Coup</h1>
         <div class="subtitulo">Bem-vindo à página do jogo Coup! Aqui você pode ver as regras, dicas e iniciar uma partida.</div>
+        <div id="multiplayer-box" style="width:100%;max-width:520px;margin-bottom:24px;background:rgba(255,255,255,0.08);padding:16px 10px 10px 10px;border-radius:10px;">
+            <div style="margin-bottom:10px;font-weight:bold;color:#b6f2c2;">Multijogador Online</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                <input id="roomInput" type="text" placeholder="Nome da sala" style="flex:1;min-width:120px;padding:6px;border-radius:6px;border:1px solid #b6f2c2;">
+                <input id="nickInput" type="text" placeholder="Seu nome" style="flex:1;min-width:100px;padding:6px;border-radius:6px;border:1px solid #b6f2c2;">
+                <input id="passInput" type="password" placeholder="Senha da sala (opcional)" style="flex:1;min-width:100px;padding:6px;border-radius:6px;border:1px solid #b6f2c2;">
+                <label style="color:#b6f2c2;font-size:0.98em;display:flex;align-items:center;gap:4px;margin-left:8px;">
+                    <input type="checkbox" id="obsInput" style="margin:0;"> Observador
+                </label>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;">
+                <button id="createBtn" style="padding:7px 16px;border-radius:6px;background:#2ecc71;color:#fff;font-weight:bold;border:none;">Criar Sala</button>
+                <button id="joinBtn" style="padding:7px 16px;border-radius:6px;background:#145c3a;color:#fff;font-weight:bold;border:none;">Entrar na Sala</button>
+            </div>
+            <div id="roomStatus" style="margin-top:10px;color:#eaffea;font-size:0.98em;"></div>
+            <div id="playersList" style="margin-top:8px;color:#b6f2c2;font-size:0.98em;"></div>
+            <button id="startGameBtn" style="margin-top:10px;display:none;padding:7px 16px;border-radius:6px;background:#145c3a;color:#fff;font-weight:bold;border:none;">Iniciar Partida</button>
+        </div>
         <div style="width:100%;max-width:520px;">
             <label for="regrasCoup" style="color:#b6f2c2;font-weight:bold;">Regras do Jogo:</label>
             <textarea id="regrasCoup" placeholder="             Você pode desafiar uma carta alegada por qualquer jogador a qualquer momento, se você estiver envolvido na ação ou não. Se uma carta foi desafiada ela deve ser mostrada na mesa. Se o jogador não quiser mostrar a carta ele perde ela, se ele mostrar e realmente tiver a carta, ele troca a carta com o deque, e o outro jogador perde uma carta e vira ela para cima.
@@ -137,7 +155,7 @@
                 <div class="carta-coup" onclick="this.classList.toggle('flipped')">
                     <div class="carta-inner">
                         <div class="carta-frente">Duque</div>
-                        <div class="carta-verso"> Imposto: pegue 3 moedas.</div>
+                        <div class="carta-verso"> Imposto: pegue 3 moedas. Pode bloquear Ajuda Externa.</div>
                     </div>
                 </div>
                 <div class="carta-coup" onclick="this.classList.toggle('flipped')">
@@ -167,5 +185,83 @@
             </div>
         </div>
     </div>
+    <script>
+// --- WebSocket Multiplayer Coup ---
+const WS_URL = 'wss://coup-multiplayer-server.onrender.com'; // Exemplo: wss://coup-multiplayer-server.onrender.com
+let ws = null;
+let room = '';
+let nick = '';
+let players = [];
+let isHost = false;
+
+const createBtn = document.getElementById('createBtn');
+const joinBtn = document.getElementById('joinBtn');
+const startGameBtn = document.getElementById('startGameBtn');
+const roomInput = document.getElementById('roomInput');
+const nickInput = document.getElementById('nickInput');
+const passInput = document.getElementById('passInput');
+const roomStatus = document.getElementById('roomStatus');
+const playersList = document.getElementById('playersList');
+const obsInput = document.getElementById('obsInput');
+
+function connectToRoom(type) {
+    room = roomInput.value.trim();
+    nick = nickInput.value.trim();
+    const senha = passInput.value;
+    const isObs = obsInput.checked;
+    if (!room || !nick) {
+        roomStatus.textContent = 'Preencha o nome da sala e seu nome.';
+        return;
+    }
+    // Salva no localStorage para uso em salacoup.html
+    localStorage.setItem('coup_room', room);
+    localStorage.setItem('coup_nick', nick);
+    localStorage.setItem('coup_observador', isObs ? '1' : '0');
+    ws = new WebSocket(WS_URL);
+    ws.onopen = () => {
+        ws.send(JSON.stringify({type, room, nick, senha}));
+        roomStatus.textContent = (type === 'create' ? 'Criando sala...' : 'Conectando à sala...');
+    };
+    ws.onmessage = (msg) => {
+        const data = JSON.parse(msg.data);
+        if (data.type === 'joined') {
+            players = data.players;
+            isHost = data.host === nick;
+            updatePlayersList();
+            roomStatus.textContent = `Sala: ${room} (${players.length}/6)`;
+            startGameBtn.style.display = isHost ? 'inline-block' : 'none';
+            window.location.href = 'salacoup.html';
+        } else if (data.type === 'update') {
+            players = data.players;
+            updatePlayersList();
+            roomStatus.textContent = `Sala: ${room} (${players.length}/6)`;
+        } else if (data.type === 'start') {
+            roomStatus.textContent = 'Partida iniciada!';
+            // Aqui você pode iniciar a lógica do jogo
+        } else if (data.type === 'error') {
+            roomStatus.textContent = data.message;
+            ws.close();
+        }
+    };
+    ws.onclose = () => {
+        roomStatus.textContent = 'Desconectado.';
+        playersList.textContent = '';
+        startGameBtn.style.display = 'none';
+    };
+}
+
+createBtn.onclick = () => connectToRoom('create');
+joinBtn.onclick = () => connectToRoom('join');
+
+startGameBtn.onclick = () => {
+    if (ws && ws.readyState === 1) {
+        ws.send(JSON.stringify({type: 'start', room}));
+    }
+};
+
+function updatePlayersList() {
+    playersList.innerHTML = 'Jogadores: ' + players.map(p => `<b>${p}</b>`).join(', ');
+}
+</script>
 </body>
 </html>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesa Coup</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: linear-gradient(120deg, #0f3d2e 0%, #1e6b4c 60%, #2ecc71 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .mesa-coup {
+            background: rgba(255,255,255,0.08);
+            border-radius: 30px;
+            box-shadow: 0 4px 24px #0003;
+            padding: 40px 24px 32px 24px;
+            max-width: 900px;
+            width: 98vw;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .banco-moedas {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .moedas {
+            display: flex;
+            gap: 6px;
+            margin: 8px 0;
+        }
+        .moeda {
+            width: 32px;
+            height: 32px;
+            background: radial-gradient(circle at 30% 30%, #e0e0e0 70%, #b0b0b0 100%);
+            border-radius: 50%;
+            border: 2px solid #aaa;
+            box-shadow: 0 2px 6px #0002;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #888;
+            font-size: 1.1em;
+        }
+        .baralho {
+            margin: 0 0 18px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .cartas-baralho {
+            width: 60px;
+            height: 90px;
+            background: linear-gradient(135deg, #b6f2c2 60%, #eaffea 100%);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #0002;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #145c3a;
+            font-size: 1.1em;
+            position: relative;
+            margin-top: 20px;
+        }
+        .cartas-baralho::after {
+            content: attr(data-count) ' cartas';
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9em;
+            color: #b6f2c2;
+        }
+        .jogadores-mesa {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 32px 24px;
+            margin-top: 30px;
+            width: 100%;
+        }
+        .jogador {
+            background: rgba(255,255,255,0.13);
+            border-radius: 16px;
+            box-shadow: 0 2px 8px #0002;
+            padding: 18px 14px 12px 14px;
+            min-width: 120px;
+            max-width: 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .jogador-nome {
+            color: #145c3a;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .jogador-moedas {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        .jogador-cartas {
+            display: flex;
+            gap: 6px;
+        }
+        .carta-jogador {
+            width: 38px;
+            height: 56px;
+            background: linear-gradient(135deg, #eaffea 60%, #b6f2c2 100%);
+            border-radius: 6px;
+            box-shadow: 0 2px 6px #0002;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #145c3a;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+        .carta-jogador.virada {
+            background: repeating-linear-gradient(135deg, #b6f2c2 0 10px, #eaffea 10px 20px);
+            color: transparent;
+        }
+        .btn-pegar-moeda {
+            margin-top: 8px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            background: #2ecc71;
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+        @media (max-width: 900px) {
+            .mesa-coup { padding: 10px 2vw; }
+            .jogadores-mesa { gap: 18px 8px; }
+        }
+        .jogador-destaque {
+            background: #fffbe6 !important;
+            border: 2.5px solid #27ae60 !important;
+            box-shadow: 0 4px 18px #27ae6040, 0 2px 8px #0002;
+            transform: scale(1.18);
+            z-index: 2;
+            margin-bottom: 30px;
+            margin-top: 40px;
+        }
+        .jogador-menor {
+            opacity: 0.85;
+            transform: scale(0.92);
+            margin-bottom: 10px;
+        }
+        .carta-morta { position: relative; opacity: 0.7; }
+        .x-morta { position: absolute; color: red; font-weight: bold; font-size: 1.6em; left: 50%; top: 50%; transform: translate(-50%,-50%); pointer-events: none; z-index: 2; }
+        @keyframes piscarCoup {
+          0%, 100% { background: #e74c3c; }
+          50% { background: #fff; color: #e74c3c; }
+        }
+        .btn-coup {
+          background: #e74c3c !important;
+          color: #fff !important;
+          font-weight: bold;
+          border: none;
+          padding: 8px 18px;
+          border-radius: 8px;
+          margin-top: 12px;
+          font-size: 1.1em;
+          cursor: pointer;
+        }
+        .btn-coup.piscar {
+          animation: piscarCoup 0.7s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="mesa-coup">
+        <div id="modoObsBanner" style="display:none;background:#f7e7b6;color:#b97a00;font-weight:bold;padding:8px 0 8px 0;border-radius:10px;margin-bottom:18px;text-align:center;font-size:1.1em;">Modo Observador (Game Master)
+            <button id="toggleObsView" style="margin-left:18px;padding:3px 12px;border-radius:6px;background:#b97a00;color:#fff;font-weight:bold;border:none;font-size:0.95em;cursor:pointer;">Esconder cartas</button>
+        </div>
+        <div class="banco-moedas">
+            <div style="color:#145c3a;font-weight:bold;">Banco de Moedas</div>
+            <div class="moedas" id="moedasBanco"></div>
+            <div style="display:flex;gap:8px;">
+                <button class="btn-pegar-moeda" onclick="pegarMoedaBanco(1)">Pegar 1 moeda</button>
+                <button class="btn-pegar-moeda" onclick="pegarMoedaBanco(2)">Pegar 2 moedas</button>
+            </div>
+        </div>
+        <div class="baralho">
+            <div style="color:#145c3a;font-weight:bold;">Baralho
+                <button id="btnEmbaralhar" style="margin-left:12px;padding:3px 12px;border-radius:6px;background:#2980b9;color:#fff;font-weight:bold;border:none;font-size:0.95em;cursor:pointer;display:none;">Embaralhar</button>
+            </div>
+            <div class="cartas-baralho" id="baralhoCartas" data-count="15"></div>
+        </div>
+        <div id="linhaDestaque" style="width:100%;display:flex;justify-content:center;margin-bottom:24px;"></div>
+        <div class="jogadores-mesa" id="jogadoresMesa"></div>
+    </div>
+    <script>
+// --- Configuração inicial ---
+// Função para criar e embaralhar o baralho
+function criarBaralho() {
+    const tiposCartas = [
+        'Duque', 'Assassina', 'Capitão', 'Condessa', 'Embaixador'
+    ];
+    let novoBaralho = [];
+    for (let tipo of tiposCartas) {
+        for (let i = 0; i < 3; i++) novoBaralho.push(tipo);
+    }
+    for (let i = novoBaralho.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [novoBaralho[i], novoBaralho[j]] = [novoBaralho[j], novoBaralho[i]];
+    }
+    return novoBaralho;
+}
+
+let baralho = criarBaralho();
+let moedasBanco = 50;
+let jogadores = [];
+for (let i = 0; i < 6; i++) {
+    jogadores.push({ nome: `Jogador ${i+1}`, moedas: 2, cartas: [baralho.pop(), baralho.pop()] });
+}
+// Adicionar array de cartas mortas para cada jogador
+for (let i = 0; i < jogadores.length; i++) {
+    jogadores[i].mortas = [false, false, false]; // até 3 cartas possíveis
+}
+let jogadorDaVez = 0; // Índice do jogador ativo
+let obsShowCartas = [true, true, true, true, true, true, true, true, true, true, true, true]; // até 6 jogadores x 2 cartas
+
+function renderBanco() {
+    const moedasDiv = document.getElementById('moedasBanco');
+    moedasDiv.innerHTML = '';
+    for (let i = 0; i < Math.min(moedasBanco, 10); i++) {
+        moedasDiv.innerHTML += '<div class="moeda">🪙</div>';
+    }
+    if (moedasBanco > 10) moedasDiv.innerHTML += `<span style="color:#888;font-size:1.1em;">+${moedasBanco-10}</span>`;
+}
+
+function renderBaralho() {
+    document.getElementById('baralhoCartas').setAttribute('data-count', baralho.length);
+}
+
+function renderJogadores() {
+    const linhaDestaque = document.getElementById('linhaDestaque');
+    const mesa = document.getElementById('jogadoresMesa');
+    linhaDestaque.innerHTML = '';
+    mesa.innerHTML = '';
+    const isObs = localStorage.getItem('coup_observador') === '1';
+    document.getElementById('modoObsBanner').style.display = isObs ? 'block' : 'none';
+    if (isObs) {
+        const btn = document.getElementById('toggleObsView');
+        btn.textContent = obsShowCartas.every(x => x) ? 'Esconder todas' : 'Mostrar todas';
+        btn.onclick = () => {
+            const novo = !obsShowCartas.every(x => x);
+            for (let i = 0; i < obsShowCartas.length; i++) obsShowCartas[i] = novo;
+            renderJogadores();
+        };
+    }
+    // Descobrir índice do jogador local
+    let idxLocal = jogadores.findIndex(j => j.nome === nick);
+    if (idxLocal === -1) idxLocal = 0; // fallback para Jogador 1
+    // Jogador local em destaque
+    const j = jogadores[idxLocal];
+    let cartasHtml = '';
+    for (let c = 0; c < j.cartas.length; c++) {
+        let morta = j.mortas[c];
+        if (isObs) {
+            const idxCarta = idxLocal * 2 + c;
+            if (obsShowCartas[idxCarta]) {
+                cartasHtml += `<div class="carta-jogador${morta ? ' carta-morta' : ''}" onclick="toggleObsCarta(${idxLocal},${c})">${j.cartas[c]}${morta ? '<span class="x-morta">X</span>' : ''}</div>`;
+            } else {
+                cartasHtml += `<div class="carta-jogador virada${morta ? ' carta-morta' : ''}" onclick="toggleObsCarta(${idxLocal},${c})" title="Carta virada">${morta ? '<span class="x-morta">X</span>' : ''}</div>`;
+            }
+        } else if (idxLocal === 0) {
+            cartasHtml += `<div class="carta-jogador virada${morta ? ' carta-morta' : ''}" onclick="revelarCarta(${c})" id="carta${c}">${morta ? '<span class="x-morta">X</span>' : ''}</div>`;
+        } else {
+            cartasHtml += `<div class="carta-jogador virada${morta ? ' carta-morta' : ''}" title="Carta virada">${morta ? '<span class="x-morta">X</span>' : ''}</div>`;
+        }
+    }
+    // Botão Coup
+    let coupBtn = '';
+    if (!isObs && j.moedas >= 7) {
+        let piscar = j.moedas >= 10 ? ' piscar' : '';
+        coupBtn = `<button class="btn-coup${piscar}" onclick="coupAcao()">Coup!</button>`;
+    }
+    // Desabilitar outros botões se moedas >= 10
+    let disableAcoes = !isObs && j.moedas >= 10;
+    linhaDestaque.innerHTML = `
+    <div class="jogador jogador-destaque">
+        <div class="jogador-nome">${j.nome} <span style='color:#27ae60;'>(Você)</span></div>
+        <div class="jogador-moedas">${'🪙'.repeat(j.moedas)}</div>
+        <div class="jogador-cartas">${cartasHtml}</div>
+        ${coupBtn}
+        ${!isObs && !disableAcoes ? `<button class='btn-pegar-moeda' onclick='contestarCarta(${idxLocal})' style='margin-top:10px;background:#e67e22;'>Contestar</button>
+        <button class='btn-pegar-moeda' onclick='bloquearAcao(${idxLocal})' style='margin-top:6px;background:#2980b9;'>Bloquear</button>
+        <button class='btn-pegar-moeda' onclick='comprarCarta()' style='margin-top:10px;background:#27ae60;'>Comprar carta</button>` : ''}
+    </div>
+    `;
+    // Demais jogadores
+    for (let i = 0; i < jogadores.length; i++) {
+        if (i === idxLocal) continue;
+        const j = jogadores[i];
+        let cartasHtml = '';
+        for (let c = 0; c < 2; c++) {
+            if (isObs) {
+                const idxCarta = i * 2 + c;
+                if (obsShowCartas[idxCarta]) {
+                    cartasHtml += `<div class="carta-jogador" onclick="toggleObsCarta(${i},${c})">${j.cartas[c]}</div>`;
+                } else {
+                    cartasHtml += `<div class="carta-jogador virada" onclick="toggleObsCarta(${i},${c})" title="Carta virada"></div>`;
+                }
+            } else {
+                cartasHtml += `<div class="carta-jogador virada" title="Carta virada"></div>`;
+            }
+        }
+        mesa.innerHTML += `
+        <div class="jogador jogador-menor">
+            <div class="jogador-nome">${j.nome}</div>
+            <div class="jogador-moedas">${'🪙'.repeat(j.moedas)}</div>
+            <div class="jogador-cartas">${cartasHtml}</div>
+            ${!isObs ? `<button class='btn-pegar-moeda' onclick='contestarCarta(${i})' style='margin-top:10px;background:#e67e22;'>Contestar</button>
+            <button class='btn-pegar-moeda' onclick='bloquearAcao(${i})' style='margin-top:6px;background:#2980b9;'>Bloquear</button>` : ''}
+        </div>
+        `;
+    }
+}
+
+function revelarCarta(idx) {
+    const cartaDiv = document.getElementById('carta' + idx);
+    cartaDiv.classList.remove('virada');
+    cartaDiv.textContent = jogadores[0].cartas[idx];
+    setTimeout(() => {
+        cartaDiv.classList.add('virada');
+        cartaDiv.textContent = '';
+    }, 2000);
+}
+
+function toggleObsCarta(jogador, carta) {
+    const idx = jogador * 2 + carta;
+    obsShowCartas[idx] = !obsShowCartas[idx];
+    renderJogadores();
+}
+
+function embaralharBaralho() {
+    for (let i = baralho.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [baralho[i], baralho[j]] = [baralho[j], baralho[i]];
+    }
+}
+// Embaralhar ao iniciar
+embaralharBaralho();
+renderBaralho();
+
+const WS_URL = 'wss://coup-multiplayer-server.onrender.com';
+let ws = null;
+let room = localStorage.getItem('coup_room') || '';
+let nick = localStorage.getItem('coup_nick') || '';
+function connectWS() {
+    ws = new WebSocket(WS_URL);
+    ws.onopen = () => {
+        ws.send(JSON.stringify({type: 'join', room, nick, senha: ''}));
+    };
+    ws.onmessage = (msg) => {
+        const data = JSON.parse(msg.data);
+        if (data.type === 'moeda') {
+            alert(`${data.nick} pegou ${data.qtd} moeda(s) do banco!`);
+        }
+        if (data.type === 'contestar') {
+            alert(`${data.nick} contestou uma carta!`);
+        }
+        if (data.type === 'bloquear') {
+            alert(`${data.nick} bloqueou uma ação!`);
+        }
+        if (data.type === 'comprar_carta') {
+            alert(`${data.nick} está comprando uma carta do baralho!`);
+        }
+    };
+}
+connectWS();
+
+function pegarMoedaBanco(qtd) {
+    if (ws && ws.readyState === 1) {
+        ws.send(JSON.stringify({type: 'moeda', room, nick, qtd}));
+    }
+    qtd = qtd || 1;
+    if (moedasBanco >= qtd) {
+        jogadores[0].moedas += qtd;
+        moedasBanco -= qtd;
+        renderBanco();
+        renderJogadores();
+    }
+}
+
+function contestarCarta(idxAlvo) {
+    let idxContestante = jogadores.findIndex(j => j.nome === nick);
+    if (idxContestante === -1) idxContestante = 0;
+    if (idxAlvo === idxContestante) {
+        alert('Você não pode contestar a si mesmo!');
+        return;
+    }
+    // Proclamação: pedir ao contestante qual carta está sendo proclamada
+    let proclamada = prompt('Qual carta está sendo proclamada? (Duque, Assassina, Capitão, Condessa, Embaixador)');
+    if (!proclamada) return;
+    proclamada = proclamada.trim();
+    // Jogador alvo escolhe qual carta revelar
+    let maoAlvo = jogadores[idxAlvo].cartas;
+    let mortasAlvo = jogadores[idxAlvo].mortas;
+    let opcoes = maoAlvo.map((c, i) => mortasAlvo[i] ? null : c).filter(c => c);
+    if (opcoes.length === 0) {
+        alert('O jogador alvo não tem cartas vivas para revelar!');
+        return;
+    }
+    let msg = `Jogador ${jogadores[idxAlvo].nome}, escolha qual carta revelar:\n`;
+    maoAlvo.forEach((c, i) => { if (!mortasAlvo[i]) msg += `${i+1} - ${c}\n`; });
+    let escolha = prompt(msg);
+    let idxRevelada = parseInt(escolha)-1;
+    if (isNaN(idxRevelada) || mortasAlvo[idxRevelada]) {
+        alert('Escolha inválida.');
+        return;
+    }
+    let cartaRevelada = maoAlvo[idxRevelada];
+    alert(`Carta revelada: ${cartaRevelada}`);
+    if (cartaRevelada.toLowerCase() === proclamada.toLowerCase()) {
+        // Revelou a carta correta
+        alert('A carta proclamada era verdadeira! O contestante perde uma carta.');
+        // Troca a carta revelada por uma nova do baralho
+        let nova = baralho.pop();
+        maoAlvo[idxRevelada] = nova;
+        // Contestante escolhe qual carta "matar"
+        let maoContestante = jogadores[idxContestante].cartas;
+        let mortasContestante = jogadores[idxContestante].mortas;
+        let opcoesVivas = maoContestante.map((c, i) => mortasContestante[i] ? null : c).filter(c => c);
+        let msg2 = `Jogador ${jogadores[idxContestante].nome}, escolha qual carta deseja perder:\n`;
+        maoContestante.forEach((c, i) => { if (!mortasContestante[i]) msg2 += `${i+1} - ${c}\n`; });
+        let escolha2 = prompt(msg2);
+        let idxMorta = parseInt(escolha2)-1;
+        if (isNaN(idxMorta) || mortasContestante[idxMorta]) {
+            alert('Escolha inválida. Ninguém perde carta.');
+        } else {
+            mortasContestante[idxMorta] = true;
+        }
+    } else {
+        // Revelou carta falsa
+        alert('A carta proclamada era falsa! O jogador alvo perde a carta revelada.');
+        mortasAlvo[idxRevelada] = true;
+    }
+    renderJogadores();
+}
+
+function bloquearAcao(idx) {
+    if (ws && ws.readyState === 1) {
+        ws.send(JSON.stringify({type: 'bloquear', room, nick}));
+    }
+    alert('Jogador ' + (idx+1) + ' deseja bloquear uma ação! (implemente lógica real depois)');
+}
+
+function comprarCarta() {
+    console.log('Comprar carta clicado');
+    let idxLocal = jogadores.findIndex(j => j.nome === nick);
+    if (idxLocal === -1) idxLocal = 0;
+    let cartasNaMao = jogadores[idxLocal].cartas;
+    if (baralho.length < 2) {
+        alert('Não há cartas suficientes no baralho para comprar 2 cartas!');
+        return;
+    }
+    if (ws && ws.readyState === 1) {
+        ws.send(JSON.stringify({type: 'comprar_carta', room, nick}));
+    }
+    // Comprar 2 cartas do baralho
+    const novaCarta1 = baralho.pop();
+    const novaCarta2 = baralho.pop();
+    // Montar lista de opções
+    let opcoes = cartasNaMao.concat([novaCarta1, novaCarta2]);
+    // Mostrar prompt para escolher quais cartas devolver
+    let msg = `Você comprou: ${novaCarta1} e ${novaCarta2}\n\nSuas cartas agora: `;
+    opcoes.forEach((c, i) => { msg += `\n${i+1} - ${c}`; });
+    msg += `\n\nDigite os números das DUAS cartas que deseja DEVOLVER ao baralho, separados por vírgula (ex: 2,4):`;
+    let escolha = prompt(msg);
+    if (!escolha) {
+        alert('Compra cancelada. As cartas compradas serão devolvidas ao baralho.');
+        baralho.push(novaCarta1, novaCarta2);
+        embaralharBaralho();
+        return;
+    }
+    let indices = escolha.split(',').map(x => parseInt(x.trim())-1).filter(x => x >= 0 && x < opcoes.length);
+    if (indices.length !== 2 || indices[0] === indices[1]) {
+        alert('Escolha inválida. As cartas compradas serão devolvidas ao baralho.');
+        baralho.push(novaCarta1, novaCarta2);
+        embaralharBaralho();
+        return;
+    }
+    // Devolver as cartas escolhidas
+    let devolvidas = [opcoes[indices[0]], opcoes[indices[1]]];
+    let novaMao = opcoes.filter((c, idx) => idx !== indices[0] && idx !== indices[1]);
+    jogadores[idxLocal].cartas = novaMao;
+    baralho.push(...devolvidas);
+    embaralharBaralho();
+    renderBaralho();
+    renderJogadores();
+}
+
+function coupAcao() {
+    let idxLocal = jogadores.findIndex(j => j.nome === nick);
+    if (idxLocal === -1) idxLocal = 0;
+    if (jogadores[idxLocal].moedas < 7) {
+        alert('Você precisa de pelo menos 7 moedas para dar um Coup!');
+        return;
+    }
+    // Escolher alvo
+    let alvos = jogadores.map((j, i) => (!j.mortas.every(x => x) && i !== idxLocal) ? `${i+1} - ${j.nome}` : null).filter(x => x);
+    if (alvos.length === 0) {
+        alert('Não há alvos válidos para Coup!');
+        return;
+    }
+    let escolhaAlvo = prompt('Escolha o jogador alvo para o Coup:\n' + alvos.join('\n'));
+    let idxAlvo = parseInt(escolhaAlvo)-1;
+    if (isNaN(idxAlvo) || idxAlvo === idxLocal || jogadores[idxAlvo].mortas.every(x => x)) {
+        alert('Alvo inválido.');
+        return;
+    }
+    // Escolher carta do alvo para matar (apenas 1 ou 2, sem mostrar nomes)
+    let maoAlvo = jogadores[idxAlvo].cartas;
+    let mortasAlvo = jogadores[idxAlvo].mortas;
+    let vivas = maoAlvo.map((c, i) => !mortasAlvo[i] ? i : null).filter(x => x !== null);
+    if (vivas.length === 0) {
+        alert('O alvo não tem cartas vivas!');
+        return;
+    }
+    let escolhaCarta;
+    while (true) {
+        let opcoes = vivas.map(i => (i+1)).join(' ou ');
+        escolhaCarta = prompt('Escolha qual carta do alvo será morta:\n' + opcoes);
+        let idxMorta = parseInt(escolhaCarta)-1;
+        if (vivas.includes(idxMorta)) {
+            mortasAlvo[idxMorta] = true;
+            break;
+        } else {
+            alert('Escolha inválida. Escolha uma carta viva.');
+        }
+    }
+    // Pagar Coup
+    jogadores[idxLocal].moedas -= jogadores[idxLocal].moedas >= 10 ? 10 : 7;
+    renderJogadores();
+}
+
+renderBanco();
+renderBaralho();
+renderJogadores();
+document.addEventListener('DOMContentLoaded', function() {
+    const isObs = localStorage.getItem('coup_observador') === '1';
+    const btn = document.getElementById('btnEmbaralhar');
+    if (!isObs && btn) {
+        btn.style.display = 'inline-block';
+        btn.onclick = embaralharBaralho;
+    }
+});
+    </script>
+</body>
+</html>
