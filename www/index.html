@@ -1480,22 +1480,22 @@
             });
             // Calcula a alma máxima
             const almaMaxima = magia * 5 + resiliencia * 3 + intelecto * 2 + 15;
+            const nivel = parseInt(document.getElementById('nivel-input').value) || 0;
             // Busca o status-item correto de Alma
             document.querySelectorAll('.status-item').forEach(item => {
                 const label = item.querySelector('label');
                 if (label && label.textContent.replace(/\s/g, '').includes('⭐Alma')) {
-                    // Atualiza o campo de alma máxima
-                    const almaSpan = item.querySelector('span');
-                    if (almaSpan) almaSpan.textContent = almaMaxima;
-                    // Atualiza o atributo max do input de alma
-                    const almaInput = item.querySelector('input');
-                    if (almaInput) {
-                        almaInput.max = almaMaxima;
-                        const nivel = parseInt(document.getElementById('nivel-input').value) || 0;
-                        if (nivel === 0) {
+                    if (nivel === 0) {
+                        // Atualiza o campo de alma máxima
+                        const almaSpan = item.querySelector('span');
+                        if (almaSpan) almaSpan.textContent = almaMaxima;
+                        // Atualiza o atributo max do input de alma e o valor apenas no nível 0
+                        const almaInput = item.querySelector('input');
+                        if (almaInput) {
+                            almaInput.max = almaMaxima;
                             almaInput.value = almaMaxima;
+                            atualizarStatus(almaInput);
                         }
-                        atualizarStatus(almaInput);
                     }
                 }
             });

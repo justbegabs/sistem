@@ -305,10 +305,16 @@ input::placeholder {
     top: 0;
     left: 0;
     height: 100%;
-    width: var(--progresso);
-    background-color: var(--cor-barra);
+    width: var(--progresso, 0%);
+    background-color: var(--cor-barra, #4CAF50);
     transition: width 0.3s ease;
 }
+
+/* Cores específicas para cada status */
+.barra-progresso.vida { --cor-barra: #ff3b30; }
+.barra-progresso.sanidade { --cor-barra: #ff69b4; }
+.barra-progresso.mana { --cor-barra: #ffd700; }
+.barra-progresso.alma { --cor-barra: #F2780C; }
 
 .status-bar input {
     width: 60px;

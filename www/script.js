@@ -323,6 +323,16 @@ document.addEventListener('DOMContentLoaded', () => {
     atualizarContadorAtributos();
     atualizarContadorPericias();
 
+    // Render inicial das barras de status com base nos valores atuais
+    document.querySelectorAll('.status-item').forEach(item => atualizarBarra(item));
+
+    // Atualização em tempo real das barras quando o usuário digita nos inputs dos status
+    document.querySelectorAll('.status-item input').forEach(input => {
+        input.addEventListener('input', function() {
+            atualizarStatus(this);
+        });
+    });
+
     // Adiciona listener para Constituição -> Defesa, Esquiva e Bloqueio (na ordem correta, com atraso para garantir DOM)
     document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
         const label = item.querySelector('label');
