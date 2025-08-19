@@ -68,26 +68,40 @@ function atualizarNivel(input) {
 
     // Atualiza o contador de atributos com base no nível
     atualizarContadorAtributos(valor);
+    // Atualiza os contadores de atributos distribuídos (denominador dinâmico por nível)
+    if (typeof atualizarContadorAtributosDistribuidos === 'function') {
+        atualizarContadorAtributosDistribuidos();
+    }
     // Atualiza o contador de perícias
     atualizarContadorPericias();
 }
 
 function atualizarContadorAtributos(nivel) {
-    const nivelInput = document.getElementById('nivel-input');
-    const contadorSpan = document.querySelector('.contador-atributos');
+    // Define o total máximo de pontos por nível conforme a regra fornecida
+    function maxPontosPorNivel(n) {
+        if (n >= 100) return 30;
+        if (n >= 90) return 27;
+        if (n >= 80) return 25;
+        if (n >= 65) return 23;
+        if (n >= 50) return 21;
+        if (n >= 35) return 19;
+        if (n >= 20) return 17;
+        if (n >= 5) return 15;
+        return 12; // nível 0..
+    }
 
-    if (nivelInput && contadorSpan) {
-        const pontosDisponiveis = nivel * 5;
-        contadorSpan.textContent = pontosDisponiveis;
+    const pontosDisponiveis = maxPontosPorNivel(nivel || 0);
 
-        // Atualizar dados
-        const inputs = document.querySelectorAll('.dados-container input');
-        inputs.forEach(input => {
-            const maxValue = Math.min(pontosDisponiveis, 20); // Máximo de 20 pontos por atributo
-            if (parseInt(input.value) > maxValue) {
-                input.value = maxValue;
-            }
-        });
+    // Atualiza os títulos das seções (denominadores) mantendo o numerador atual
+    const spanTeste = document.querySelector('.atributos-teste h2 span');
+    const spanSorte = document.querySelector('.atributos-sorte h2 span');
+    if (spanTeste) {
+        const usado = (spanTeste.textContent.split('/')[0] || '0').trim();
+        spanTeste.textContent = `${usado}/${pontosDisponiveis}`;
+    }
+    if (spanSorte) {
+        const usado = (spanSorte.textContent.split('/')[0] || '0').trim();
+        spanSorte.textContent = `${usado}/${pontosDisponiveis}`;
     }
 }
 
@@ -332,6 +346,45 @@ document.addEventListener('DOMContentLoaded', () => {
             atualizarStatus(this);
         });
     });
+
+    // Contador de pontos distribuídos nos atributos (Teste e Sorte)
+    function atualizarContadorAtributosDistribuidos() {
+        // Soma total distribuída (Teste + Sorte) considerando apenas valores positivos
+        const inputsTeste = document.querySelectorAll('.atributos-teste .atributo-item input');
+        const inputsSorte = document.querySelectorAll('.atributos-sorte .atributo-item input');
+
+        let totalDistribuido = 0;
+        inputsTeste.forEach(inp => { totalDistribuido += Math.max(0, parseInt(inp.value) || 0); });
+        inputsSorte.forEach(inp => { totalDistribuido += Math.max(0, parseInt(inp.value) || 0); });
+
+        // Calcula o denominador conforme o nível atual
+        const nivel = parseInt(document.getElementById('nivel-input')?.value) || 0;
+        function maxPontosPorNivel(n) {
+            if (n >= 100) return 30;
+            if (n >= 90) return 27;
+            if (n >= 80) return 25;
+            if (n >= 65) return 23;
+            if (n >= 50) return 21;
+            if (n >= 35) return 19;
+            if (n >= 20) return 17;
+            if (n >= 5) return 15;
+            return 12;
+        }
+        const maxPontos = maxPontosPorNivel(nivel);
+
+        // Atualiza ambos os contadores com o MESMO total (pool compartilhado)
+        const spanTeste = document.querySelector('.atributos-teste h2 span');
+        if (spanTeste) spanTeste.textContent = `${totalDistribuido}/${maxPontos}`;
+        const spanSorte = document.querySelector('.atributos-sorte h2 span');
+        if (spanSorte) spanSorte.textContent = `${totalDistribuido}/${maxPontos}`;
+    }
+
+    // Listeners para atualizar o contador ao digitar nos atributos
+    document.querySelectorAll('.atributos-teste .atributo-item input, .atributos-sorte .atributo-item input')
+        .forEach(inp => inp.addEventListener('input', atualizarContadorAtributosDistribuidos));
+
+    // Render inicial do contador
+    atualizarContadorAtributosDistribuidos();
 
     // Adiciona listener para Constituição -> Defesa, Esquiva e Bloqueio (na ordem correta, com atraso para garantir DOM)
     document.querySelectorAll('.atributos-teste .atributo-item').forEach(item => {
