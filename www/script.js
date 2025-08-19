@@ -28,6 +28,20 @@ function atualizarBarra(statusItem) {
     }
 }
 
+// Compatibilidade com chamadas inline no HTML (ex.: onchange="atualizarStatus(this)")
+function atualizarStatus(inputElement) {
+    if (!inputElement) return;
+    const statusItem = inputElement.closest('.status-item');
+    if (!statusItem) return;
+    // Garante que o valor não ultrapasse o máximo
+    const maxSpan = statusItem.querySelector('span');
+    const max = maxSpan ? parseInt(maxSpan.textContent) || 0 : 0;
+    if (max && parseInt(inputElement.value) > max) {
+        inputElement.value = max;
+    }
+    atualizarBarra(statusItem);
+}
+
 function getCorBarra(label) {
     const cores = {
         'Vida': '#ff0000',
