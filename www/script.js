@@ -274,44 +274,15 @@ window.abrirModalPericia = function abrirModalPericia(tipo) {
                 <img src="./img/dado.png" class="dado-icon" onclick="rolarD6(event, this)" alt="Rolar dado">
             </label>
             <div class="valor-container">
-                <input type="number" value="${valorExibido}" min="-5">
+                <button title="Remover d6" class="remover-d6-btn" onclick="removerD6(event, this)" style="display:inline-block;margin-right:6px;background:#fff;border:2px solid #0a3d62;color:#0a3d62;border-radius:8px;padding:2px 8px;font-size:1em;cursor:pointer;">✖</button>
+                <span title="Dado d6" style="display:inline-block;background:#fff;color:#0a3d62;border:2px solid #0a3d62;border-radius:8px;padding:2px 10px;font-size:1em;margin-left:0;font-weight:bold;vertical-align:middle;min-width:48px;text-align:center;">+${d6}<br><span style='font-size:0.85em;font-weight:normal;'>d6</span></span>
                 <span title="Bônus de Raça" style="display:inline-block;background:#fffbe6;color:#C24914;border:2px solid #C24914;border-radius:8px;padding:2px 10px;font-size:1em;margin-left:6px;font-weight:bold;vertical-align:middle;min-width:48px;text-align:center;">+${bonusRaca}<br><span style='font-size:0.85em;font-weight:normal;'>Raça</span></span>
                 <span title="Bônus de Origem" style="display:inline-block;background:#e6f7fa;color:#14808C;border:2px solid #14808C;border-radius:8px;padding:2px 10px;font-size:1em;margin-left:6px;font-weight:bold;vertical-align:middle;min-width:48px;text-align:center;">+${bonusOrigem}<br><span style='font-size:0.85em;font-weight:normal;'>Origem</span></span>
                 <span title="Bônus de Classe" style="display:inline-block;background:#f3e6fa;color:#6c3483;border:2px solid #8e44ad;border-radius:8px;padding:2px 10px;font-size:1em;margin-left:6px;font-weight:bold;vertical-align:middle;min-width:48px;text-align:center;">+${bonusClasse}<br><span style='font-size:0.85em;font-weight:normal;'>Classe</span></span>
                 <span title="Total de Bônus" style="display:inline-block;background:#eaf6fb;color:#0a3d62;border:2px solid #0a3d62;border-radius:8px;padding:2px 10px;font-size:1em;margin-left:10px;font-weight:bold;vertical-align:middle;min-width:60px;text-align:center;">${totalFinal}<br><span style='font-size:0.85em;font-weight:normal;'>Total</span></span>
             </div>
         `;
-        // Evento para salvar o valor ao alterar
-        const input = item.querySelector('input');
-        input.addEventListener('input', function () {
-            // Ao editar manualmente, zera o d6 salvo e salva o valor base
-            const valorManual = parseInt(this.value) || 0;
-            const tipoKey = normalizarChave(tipo);
-            const labelKey = normalizarChave(pericia);
-            let d6Rolado = 0;
-            if (window.dadosRoladosPericias && window.dadosRoladosPericias[tipoKey] && typeof window.dadosRoladosPericias[tipoKey][labelKey] !== 'undefined') {
-                d6Rolado = window.dadosRoladosPericias[tipoKey][labelKey];
-            }
-            let bonusRaca = 0;
-            if (window.bonusRacaPericias && window.bonusRacaPericias[tipo] && typeof window.bonusRacaPericias[tipo][pericia] !== 'undefined') {
-                bonusRaca = parseInt(window.bonusRacaPericias[tipo][pericia]) || 0;
-            }
-            let bonusOrigem = 0;
-            let bonusClasse = 0;
-            if (window.bonusClasseBruxa && tipo === 'Magia' && (pericia === 'Conhecimento Arcano' || pericia === 'Encantamento')) {
-                bonusClasse = 3;
-            }
-            // Salva apenas o valor base (descontando bônus e d6)
-            window.valoresPericias[tipo][pericia] = valorManual;
-            // Atualizar Esquiva se Reflexos, ou Bloqueio se Fortitude
-            if (labelKey === normalizarChave('Reflexos')) {
-                atualizarEsquiva();
-            }
-            if (labelKey === normalizarChave('Fortitude')) {
-                atualizarBloqueio();
-            }
-            atualizarContadorPericias();
-        });
+        // Sem input base (apenas d6 e bônus)
         lista.appendChild(item);
     });
 
@@ -1040,7 +1011,7 @@ function rolarD6(event, elemento) {
     window.dadosRoladosPericias[tipoKey][labelKey] = resultadoD6;
     // Calcula o novo valor a ser exibido no input (valor base + novo d6)
     const novoValorExibido = valorBase + resultadoD6;
-    input.value = novoValorExibido;
+    if (input) input.value = novoValorExibido;
     elemento.style.transform = 'rotate(360deg)';
     setTimeout(() => {
         elemento.style.transform = 'rotate(0deg)';
@@ -1066,6 +1037,11 @@ function rolarD6(event, elemento) {
         if (totalBox) {
             totalBox.innerHTML = `${totalFinal}<br><span style='font-size:0.85em;font-weight:normal;'>Total</span>`;
         }
+        // Atualiza a caixa do dado d6
+        const d6Box = item.querySelector('span[title="Dado d6"]');
+        if (d6Box) {
+            d6Box.innerHTML = `+${resultadoD6}<br><span style='font-size:0.85em;font-weight:normal;'>d6</span>`;
+        }
     }
     // Chamar funções de atualização após salvar os valores
     if (labelKey === normalizarChave('Reflexos')) {
@@ -1075,6 +1051,50 @@ function rolarD6(event, elemento) {
         atualizarBloqueio();
     }
     salvarPericiasRender();
+}
+
+// Remover o d6 aplicado à perícia (zera o bônus de dado e atualiza UI/total)
+function removerD6(event, elemento) {
+    if (event && event.stopPropagation) event.stopPropagation();
+
+    const item = elemento.closest('.pericia-item');
+    if (!item) return;
+    const input = item.querySelector('input');
+    const tipo = document.getElementById('modal-pericia-titulo').textContent.replace('Perícias de ', '').trim();
+    const periciaNome = item.querySelector('label').childNodes[0].textContent.trim();
+    const tipoKey = normalizarChave(tipo);
+    const labelKey = normalizarChave(periciaNome);
+
+    // Zera o d6 salvo
+    if (!window.dadosRoladosPericias) window.dadosRoladosPericias = {};
+    if (!window.dadosRoladosPericias[tipoKey]) window.dadosRoladosPericias[tipoKey] = {};
+    window.dadosRoladosPericias[tipoKey][labelKey] = 0;
+
+    // Valor base atual
+    const valorBase = window.valoresPericias && window.valoresPericias[tipo] && typeof window.valoresPericias[tipo][periciaNome] !== 'undefined'
+        ? parseInt(window.valoresPericias[tipo][periciaNome]) || 0
+        : 0;
+
+    // Bônus
+    let bonusRaca = 0;
+    if (window.bonusRacaPericias && window.bonusRacaPericias[tipo] && typeof window.bonusRacaPericias[tipo][periciaNome] !== 'undefined') {
+        bonusRaca = parseInt(window.bonusRacaPericias[tipo][periciaNome]) || 0;
+    }
+    let bonusOrigem = 0;
+    let bonusClasse = 0;
+    if (window.bonusClasseBruxa && tipo === 'Magia' && (periciaNome === 'Conhecimento Arcano' || periciaNome === 'Encantamento')) {
+        bonusClasse = 3;
+    }
+
+    // Atualiza input e total sem d6
+    if (input) input.value = valorBase;
+    const totalFinal = valorBase + bonusRaca + bonusOrigem + bonusClasse;
+    const totalBox = item.querySelector('span[title="Total de Bônus"]');
+    if (totalBox) totalBox.innerHTML = `${totalFinal}<br><span style='font-size:0.85em;font-weight:normal;'>Total</span>`;
+
+    // Atualiza a caixa d6 para 0
+    const d6Box = item.querySelector('span[title="Dado d6"]');
+    if (d6Box) d6Box.innerHTML = `+0<br><span style='font-size:0.85em;font-weight:normal;'>d6</span>`;
 }
 
 // Evento de clique no nome da perícia
